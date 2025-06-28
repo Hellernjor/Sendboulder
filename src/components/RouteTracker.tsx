@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Target, Plus, CheckCircle, XCircle, Calendar, Clock } from 'lucide-react';
+import { Target, Plus, CheckCircle, XCircle, Calendar, User } from 'lucide-react';
 import { Location } from './LocationManager';
 
 export interface Route {
@@ -40,7 +39,7 @@ const RouteTracker = () => {
     difficulty: 'V0'
   });
 
-  // Mock data - would come from props or context in real app
+  // Global locations shared by all users
   const locations: Location[] = [
     {
       id: '1',
@@ -48,8 +47,10 @@ const RouteTracker = () => {
       type: 'gym',
       address: '2123 W Elmore St, Seattle, WA 98199',
       createdBy: 'user123',
+      createdByUsername: 'john_climber',
       createdAt: new Date('2024-01-15'),
-      routeChangeFrequency: 'weekly'
+      routeChangeFrequency: 'weekly',
+      isGlobal: true
     },
     {
       id: '2',
@@ -57,8 +58,21 @@ const RouteTracker = () => {
       type: 'outdoor',
       address: 'Terrebonne, OR 97760',
       createdBy: 'user456',
+      createdByUsername: 'sarah_boulder',
       createdAt: new Date('2024-02-01'),
-      routeChangeFrequency: 'never'
+      routeChangeFrequency: 'never',
+      isGlobal: true
+    },
+    {
+      id: '3',
+      name: 'Brooklyn Boulders',
+      type: 'gym',
+      address: '575 Degraw St, Brooklyn, NY 11217',
+      createdBy: 'user789',
+      createdByUsername: 'mike_sends',
+      createdAt: new Date('2024-02-10'),
+      routeChangeFrequency: 'monthly',
+      isGlobal: true
     }
   ];
 
@@ -156,25 +170,31 @@ const RouteTracker = () => {
   return (
     <Card className="bg-slate-800/50 border-slate-700">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2 text-white">
-          <Target className="h-5 w-5" />
-          <span>Route Tracker</span>
+        <CardTitle className="flex items-center justify-between text-white">
+          <div className="flex items-center space-x-2">
+            <Target className="h-5 w-5" />
+            <span>Your Personal Routes</span>
+            <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
+              <User className="h-3 w-3 mr-1" />
+              Personal tracking
+            </Badge>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Location Selection */}
         <div>
-          <Label htmlFor="location-select" className="text-white">Select Location</Label>
+          <Label htmlFor="location-select" className="text-white">Select Global Location</Label>
           <select
             id="location-select"
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
             className="w-full h-10 bg-slate-800 border border-slate-600 rounded-md px-3 text-white mt-1"
           >
-            <option value="">Choose a location...</option>
+            <option value="">Choose from community locations...</option>
             {locations.map(location => (
               <option key={location.id} value={location.id}>
-                {location.name} ({location.type})
+                {location.name} ({location.type}) - added by {location.createdByUsername}
               </option>
             ))}
           </select>
@@ -189,10 +209,15 @@ const RouteTracker = () => {
                   <div>
                     <h3 className="text-white font-medium">{selectedLocationData?.name}</h3>
                     <p className="text-slate-400 text-sm">{selectedLocationData?.address}</p>
+                    <p className="text-slate-500 text-xs mt-1">
+                      Added by {selectedLocationData?.createdByUsername} • Community location
+                    </p>
                   </div>
-                  <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-                    Routes change {selectedLocationData?.routeChangeFrequency}
-                  </Badge>
+                  <div className="flex flex-col space-y-1">
+                    <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs">
+                      Routes change {selectedLocationData?.routeChangeFrequency}
+                    </Badge>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -201,6 +226,13 @@ const RouteTracker = () => {
             {showAddRoute && (
               <Card className="bg-slate-700/50 border-slate-600">
                 <CardContent className="p-4 space-y-3">
+                  <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 mb-4">
+                    <div className="flex items-center space-x-2 text-green-400">
+                      <User className="h-4 w-4" />
+                      <p className="text-sm">This route will be private to you but linked to this location</p>
+                    </div>
+                  </div>
+                  
                   <div>
                     <Label htmlFor="route-name" className="text-white">Route Name</Label>
                     <Input
@@ -244,7 +276,7 @@ const RouteTracker = () => {
 
                   <div className="flex space-x-2">
                     <Button onClick={handleAddRoute} className="bg-green-600 hover:bg-green-700">
-                      Add Route
+                      Add Personal Route
                     </Button>
                     <Button 
                       onClick={() => setShowAddRoute(false)} 
@@ -265,7 +297,7 @@ const RouteTracker = () => {
                 className="w-full bg-blue-600 hover:bg-blue-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Personal Route
+                Add Personal Route at {selectedLocationData?.name}
               </Button>
             )}
 
@@ -273,7 +305,10 @@ const RouteTracker = () => {
             <div className="space-y-2">
               <h3 className="text-white font-medium">Your Routes at {selectedLocationData?.name}</h3>
               {filteredRoutes.length === 0 ? (
-                <p className="text-slate-400 text-sm">No routes tracked at this location yet.</p>
+                <div className="text-center py-8">
+                  <p className="text-slate-400 text-sm">No personal routes tracked at this location yet.</p>
+                  <p className="text-slate-500 text-xs mt-1">Add your first route to start tracking your progress!</p>
+                </div>
               ) : (
                 filteredRoutes.map((route) => {
                   const routeAttempts = attempts.filter(a => a.routeId === route.id);
@@ -288,9 +323,12 @@ const RouteTracker = () => {
                             <div>
                               <div className="flex items-center space-x-2">
                                 <p className="text-white font-medium">{route.name}</p>
+                                <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
+                                  Personal
+                                </Badge>
                                 {!route.isActive && (
                                   <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30 text-xs">
-                                    Removed
+                                    Removed from gym
                                   </Badge>
                                 )}
                               </div>

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Plus, Building, Mountain, Edit, Trash2 } from 'lucide-react';
+import { MapPin, Plus, Building, Mountain, Edit, Trash2, Users, Globe } from 'lucide-react';
 
 export interface Location {
   id: string;
@@ -14,11 +14,14 @@ export interface Location {
   address?: string;
   coordinates?: { lat: number; lng: number };
   createdBy: string;
+  createdByUsername: string;
   createdAt: Date;
   routeChangeFrequency: 'weekly' | 'monthly' | 'rarely' | 'never';
+  isGlobal: boolean;
 }
 
 const LocationManager = () => {
+  // Mock data showing locations from different users - globally shared
   const [locations, setLocations] = useState<Location[]>([
     {
       id: '1',
@@ -26,8 +29,10 @@ const LocationManager = () => {
       type: 'gym',
       address: '2123 W Elmore St, Seattle, WA 98199',
       createdBy: 'user123',
+      createdByUsername: 'john_climber',
       createdAt: new Date('2024-01-15'),
-      routeChangeFrequency: 'weekly'
+      routeChangeFrequency: 'weekly',
+      isGlobal: true
     },
     {
       id: '2',
@@ -36,8 +41,21 @@ const LocationManager = () => {
       address: 'Terrebonne, OR 97760',
       coordinates: { lat: 44.3672, lng: -121.1419 },
       createdBy: 'user456',
+      createdByUsername: 'sarah_boulder',
       createdAt: new Date('2024-02-01'),
-      routeChangeFrequency: 'never'
+      routeChangeFrequency: 'never',
+      isGlobal: true
+    },
+    {
+      id: '3',
+      name: 'Brooklyn Boulders',
+      type: 'gym',
+      address: '575 Degraw St, Brooklyn, NY 11217',
+      createdBy: 'user789',
+      createdByUsername: 'mike_sends',
+      createdAt: new Date('2024-02-10'),
+      routeChangeFrequency: 'monthly',
+      isGlobal: true
     }
   ]);
 
@@ -59,8 +77,10 @@ const LocationManager = () => {
       address: newLocation.address,
       coordinates: newLocation.coordinates,
       createdBy: 'current-user',
+      createdByUsername: 'you',
       createdAt: new Date(),
-      routeChangeFrequency: newLocation.routeChangeFrequency || 'weekly'
+      routeChangeFrequency: newLocation.routeChangeFrequency || 'weekly',
+      isGlobal: true
     };
 
     setLocations([...locations, location]);
@@ -88,8 +108,12 @@ const LocationManager = () => {
       <CardHeader>
         <CardTitle className="flex items-center justify-between text-white">
           <div className="flex items-center space-x-2">
-            <MapPin className="h-5 w-5" />
-            <span>Climbing Locations</span>
+            <Globe className="h-5 w-5" />
+            <span>Global Climbing Locations</span>
+            <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs">
+              <Users className="h-3 w-3 mr-1" />
+              Shared by community
+            </Badge>
           </div>
           <Button 
             onClick={() => setShowAddForm(true)}
@@ -105,6 +129,13 @@ const LocationManager = () => {
         {showAddForm && (
           <Card className="bg-slate-700/50 border-slate-600">
             <CardContent className="p-4 space-y-4">
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-4">
+                <div className="flex items-center space-x-2 text-blue-400">
+                  <Globe className="h-4 w-4" />
+                  <p className="text-sm">This location will be visible to all users in the community</p>
+                </div>
+              </div>
+              
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="location-name" className="text-white">Location Name</Label>
@@ -158,7 +189,7 @@ const LocationManager = () => {
 
               <div className="flex space-x-2">
                 <Button onClick={handleAddLocation} className="bg-green-600 hover:bg-green-700">
-                  Add Location
+                  Add Global Location
                 </Button>
                 <Button 
                   onClick={() => setShowAddForm(false)} 
@@ -195,21 +226,35 @@ const LocationManager = () => {
                         <Badge className={`text-xs ${getFrequencyColor(location.routeChangeFrequency)}`}>
                           Routes change {location.routeChangeFrequency}
                         </Badge>
+                        <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs">
+                          <Users className="h-3 w-3 mr-1" />
+                          Added by {location.createdByUsername}
+                        </Badge>
                       </div>
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <Button size="sm" variant="ghost" className="text-slate-400 hover:text-white">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost" className="text-slate-400 hover:text-red-400">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {location.createdBy === 'current-user' && (
+                      <>
+                        <Button size="sm" variant="ghost" className="text-slate-400 hover:text-white">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="ghost" className="text-slate-400 hover:text-red-400">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="text-center pt-4">
+          <p className="text-slate-400 text-sm">
+            {locations.length} locations shared by the climbing community
+          </p>
         </div>
       </CardContent>
     </Card>
