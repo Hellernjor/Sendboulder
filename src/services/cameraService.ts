@@ -21,6 +21,9 @@ export class CameraService {
   async requestCameraAccess(): Promise<boolean> {
     try {
       console.log('Requesting camera access...');
+      console.log('User agent:', navigator.userAgent);
+      console.log('Location:', window.location.href);
+      console.log('Is secure context:', window.isSecureContext);
       
       // First check permission status
       const permissionStatus = await this.checkCameraPermission();
@@ -34,14 +37,35 @@ export class CameraService {
         throw new Error('Camera access requires HTTPS');
       }
 
-      this.stream = await navigator.mediaDevices.getUserMedia({
+      // Check if getUserMedia is available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera API not supported in this browser');
+      }
+
+      // Try to get camera access with fallback constraints
+      let constraints = {
         video: {
           facingMode: 'environment', // Back camera preferred
           width: { ideal: 1920 },
           height: { ideal: 1080 }
         },
         audio: false
-      });
+      };
+
+      try {
+        this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (error: any) {
+        console.log('Failed with environment camera, trying any camera:', error);
+        // Fallback to any available camera
+        constraints = {
+          video: {
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          },
+          audio: false
+        };
+        this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+      }
       
       console.log('Camera access granted successfully');
       return true;
@@ -59,6 +83,8 @@ export class CameraService {
         console.error('Camera not supported in this browser');
       } else if (error.name === 'NotReadableError') {
         console.error('Camera is already in use or hardware error');
+      } else if (error.name === 'SecurityError') {
+        console.error('Security error - possibly not HTTPS');
       }
       
       return false;
@@ -69,7 +95,9 @@ export class CameraService {
     if (this.stream && videoElement) {
       this.videoElement = videoElement;
       videoElement.srcObject = this.stream;
-      videoElement.play();
+      videoElement.play().catch(err => {
+        console.error('Error playing video:', err);
+      });
       console.log('Video stream attached successfully');
     }
   }

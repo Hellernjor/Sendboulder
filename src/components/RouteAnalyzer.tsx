@@ -34,7 +34,8 @@ const RouteAnalyzer = () => {
       protocol: location.protocol,
       hostname: location.hostname,
       isSecure: location.protocol === 'https:' || location.hostname === 'localhost',
-      userAgent: navigator.userAgent
+      userAgent: navigator.userAgent,
+      isSecureContext: window.isSecureContext
     });
     
     try {
@@ -53,6 +54,10 @@ const RouteAnalyzer = () => {
         
         if (!isSecure) {
           errorMessage += 'Camera requires HTTPS connection. ';
+        } else if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
+          errorMessage += 'On iOS: Go to Settings > Safari > Camera & Microphone Access > Allow. ';
+        } else if (navigator.userAgent.includes('Android')) {
+          errorMessage += 'On Android: Check site permissions in browser settings. ';
         } else {
           errorMessage += 'Please enable camera permissions in your browser settings. ';
         }
@@ -179,6 +184,7 @@ const RouteAnalyzer = () => {
               <li>• Position camera 3-6 feet from the wall</li>
               <li>• Make sure route holds are clearly visible</li>
               <li>• Take picture when ready for analysis</li>
+              <li>• If camera fails, check browser permissions</li>
             </ul>
           </div>
         </CardContent>
