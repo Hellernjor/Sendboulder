@@ -1,9 +1,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Camera, Play, Square, RotateCcw, CheckCircle, SwitchCamera, Smartphone } from 'lucide-react';
+import { Camera, Smartphone } from 'lucide-react';
 import { CameraService } from '@/services/cameraService';
+import CameraView from './analyzer/CameraView';
+import CameraControls from './analyzer/CameraControls';
 
 const RouteAnalyzer = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -91,114 +92,24 @@ const RouteAnalyzer = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Camera View */}
-        <div className="relative bg-slate-900 rounded-lg overflow-hidden">
-          <div className="aspect-video">
-            {isCameraActive ? (
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                autoPlay
-                playsInline
-                muted
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
-                {cameraError ? (
-                  <div className="text-center text-red-400 p-6">
-                    <Camera className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                    <p className="text-lg font-medium mb-2">Camera Error</p>
-                    <p className="text-sm">{cameraError}</p>
-                    <Button 
-                      onClick={startCamera} 
-                      className="mt-4 bg-blue-600 hover:bg-blue-700"
-                    >
-                      Try Again
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="text-center">
-                    <Camera className="h-16 w-16 text-slate-600 mx-auto mb-4" />
-                    <p className="text-slate-400 text-lg">Tap to start camera</p>
-                    <p className="text-slate-500 text-sm">Point at climbing wall for analysis</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-          
-          {/* Recording indicator */}
-          {isRecording && (
-            <div className="absolute top-4 right-4 flex items-center space-x-2 bg-red-500/20 px-3 py-1 rounded-full border border-red-500/30">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-red-400 text-sm font-medium">ANALYZING</span>
-            </div>
-          )}
+        <CameraView
+          videoRef={videoRef}
+          isCameraActive={isCameraActive}
+          isRecording={isRecording}
+          detectedRoute={detectedRoute}
+          cameraError={cameraError}
+          onStartCamera={startCamera}
+        />
 
-          {/* Detection overlay */}
-          {detectedRoute && (
-            <div className="absolute bottom-4 left-4 right-4">
-              <div className="bg-green-500/20 rounded-lg border border-green-500/30 p-3">
-                <div className="flex items-center justify-center space-x-2">
-                  <CheckCircle className="h-5 w-5 text-green-400" />
-                  <p className="text-green-400 font-medium">Detected: {detectedRoute}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Controls */}
-        <div className="flex justify-center space-x-4">
-          {!isRecording ? (
-            <Button 
-              onClick={handleStartRecording}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3"
-            >
-              <Play className="h-4 w-4 mr-2" />
-              {isCameraActive ? 'Start Analysis' : 'Start Camera'}
-            </Button>
-          ) : (
-            <Button 
-              onClick={handleStopRecording}
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-3"
-            >
-              <Square className="h-4 w-4 mr-2" />
-              Stop Analysis
-            </Button>
-          )}
-          
-          {isCameraActive && (
-            <>
-              <Button 
-                onClick={switchCamera}
-                variant="outline" 
-                className="border-slate-600 text-slate-300 hover:bg-slate-700"
-              >
-                <SwitchCamera className="h-4 w-4 mr-2" />
-                Switch
-              </Button>
-              
-              <Button 
-                onClick={capturePhoto}
-                variant="outline" 
-                className="border-slate-600 text-slate-300 hover:bg-slate-700"
-              >
-                <Camera className="h-4 w-4 mr-2" />
-                Capture
-              </Button>
-            </>
-          )}
-          
-          <Button 
-            onClick={stopCamera}
-            variant="outline" 
-            className="border-slate-600 text-slate-300 hover:bg-slate-700"
-          >
-            <RotateCcw className="h-4 w-4 mr-2" />
-            Reset
-          </Button>
-        </div>
+        <CameraControls
+          isRecording={isRecording}
+          isCameraActive={isCameraActive}
+          onStartRecording={handleStartRecording}
+          onStopRecording={handleStopRecording}
+          onSwitchCamera={switchCamera}
+          onCapturePhoto={capturePhoto}
+          onReset={stopCamera}
+        />
 
         {/* Route Colors Reference */}
         <div>
