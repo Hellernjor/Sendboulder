@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,57 +9,8 @@ import LocationCard from './location/LocationCard';
 import AddLocationForm from './location/AddLocationForm';
 
 const LocationManager = () => {
-  // Mock data showing locations from different users - globally shared
-  const [locations, setLocations] = useState<Location[]>([
-    {
-      id: '1',
-      name: 'Vertical World Seattle',
-      type: 'gym',
-      address: '2123 W Elmore St, Seattle, WA 98199',
-      createdBy: 'user123',
-      createdByUsername: 'john_climber',
-      createdAt: new Date('2024-01-15'),
-      routeChangeFrequency: 'weekly',
-      isGlobal: true,
-      gradeSystem: [
-        { id: '1', color: '#22c55e', name: 'Green', difficulty: 'beginner', order: 0 },
-        { id: '2', color: '#eab308', name: 'Yellow', difficulty: 'easy', order: 1 },
-        { id: '3', color: '#3b82f6', name: 'Blue', difficulty: 'intermediate', order: 2 },
-        { id: '4', color: '#f97316', name: 'Orange', difficulty: 'advanced', order: 3 },
-        { id: '5', color: '#ef4444', name: 'Red', difficulty: 'expert', order: 4 }
-      ]
-    },
-    {
-      id: '2',
-      name: 'Smith Rock State Park',
-      type: 'outdoor',
-      address: 'Terrebonne, OR 97760',
-      coordinates: { lat: 44.3672, lng: -121.1419 },
-      createdBy: 'user456',
-      createdByUsername: 'sarah_boulder',
-      createdAt: new Date('2024-02-01'),
-      routeChangeFrequency: 'never',
-      isGlobal: true
-    },
-    {
-      id: '3',
-      name: 'Brooklyn Boulders',
-      type: 'gym',
-      address: '575 Degraw St, Brooklyn, NY 11217',
-      createdBy: 'user789',
-      createdByUsername: 'mike_sends',
-      createdAt: new Date('2024-02-10'),
-      routeChangeFrequency: 'monthly',
-      isGlobal: true,
-      gradeSystem: [
-        { id: '1', color: '#10b981', name: 'White', difficulty: 'beginner', order: 0 },
-        { id: '2', color: '#eab308', name: 'Yellow', difficulty: 'easy', order: 1 },
-        { id: '3', color: '#f97316', name: 'Orange', difficulty: 'intermediate', order: 2 },
-        { id: '4', color: '#ef4444', name: 'Red', difficulty: 'advanced', order: 3 },
-        { id: '5', color: '#1f2937', name: 'Black', difficulty: 'expert', order: 4 }
-      ]
-    }
-  ]);
+  // Start with empty locations array - only real user data
+  const [locations, setLocations] = useState<Location[]>([]);
 
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -111,20 +63,37 @@ const LocationManager = () => {
         )}
 
         <div className="space-y-3">
-          {locations.map((location) => (
-            <LocationCard
-              key={location.id}
-              location={location}
-              onDelete={handleDeleteLocation}
-            />
-          ))}
+          {locations.length === 0 && !showAddForm ? (
+            <div className="text-center py-8">
+              <Globe className="h-12 w-12 text-slate-600 mx-auto mb-3" />
+              <p className="text-slate-400 text-lg mb-2">No locations added yet</p>
+              <p className="text-slate-500 text-sm mb-4">Be the first to add a climbing location for the community!</p>
+              <Button 
+                onClick={() => setShowAddForm(true)}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add First Location
+              </Button>
+            </div>
+          ) : (
+            locations.map((location) => (
+              <LocationCard
+                key={location.id}
+                location={location}
+                onDelete={handleDeleteLocation}
+              />
+            ))
+          )}
         </div>
 
-        <div className="text-center pt-4">
-          <p className="text-slate-400 text-sm">
-            {locations.length} locations shared by the climbing community
-          </p>
-        </div>
+        {locations.length > 0 && (
+          <div className="text-center pt-4">
+            <p className="text-slate-400 text-sm">
+              {locations.length} location{locations.length !== 1 ? 's' : ''} shared by the climbing community
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
