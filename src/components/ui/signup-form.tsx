@@ -24,14 +24,10 @@ const SignupForm = () => {
     return /iPad|iPhone|iPod/.test(navigator.userAgent);
   };
 
-  const openIOSSettings = () => {
-    // This will prompt the user to go to settings, but we can't directly open it from web
-    // We'll show instructions instead
-    setShowIOSInstructions(true);
-  };
-
   const requestCameraPermissions = async () => {
     setRequestingCamera(true);
+    console.log('Requesting camera permissions, iOS device:', isIOSDevice());
+    
     try {
       const cameraService = new CameraService();
       const hasAccess = await cameraService.requestCameraAccess();
@@ -44,9 +40,12 @@ const SignupForm = () => {
         cameraService.stopCamera();
         navigate('/dashboard');
       } else {
+        console.log('Camera access denied, showing iOS instructions for iOS device:', isIOSDevice());
         // If iOS device and camera denied, show specific instructions
         if (isIOSDevice()) {
-          openIOSSettings();
+          setShowIOSInstructions(true);
+          setRequestingCamera(false);
+          return; // Don't navigate yet, show instructions first
         } else {
           toast({
             title: "Camera access denied",
@@ -59,7 +58,10 @@ const SignupForm = () => {
     } catch (error) {
       console.error('Camera permission error:', error);
       if (isIOSDevice()) {
-        openIOSSettings();
+        console.log('Camera error on iOS, showing instructions');
+        setShowIOSInstructions(true);
+        setRequestingCamera(false);
+        return; // Don't navigate yet, show instructions first
       } else {
         toast({
           title: "Camera setup incomplete",
@@ -68,7 +70,9 @@ const SignupForm = () => {
         navigate('/dashboard');
       }
     } finally {
-      setRequestingCamera(false);
+      if (!isIOSDevice() || !showIOSInstructions) {
+        setRequestingCamera(false);
+      }
     }
   };
 
@@ -91,6 +95,7 @@ const SignupForm = () => {
           title: "Account created!",
           description: "Let's set up camera access for route analysis.",
         });
+        setIsLoading(false);
         await requestCameraPermissions();
       }
     } catch (error: any) {
