@@ -24,42 +24,31 @@ const CameraControls = ({
 }: CameraControlsProps) => {
   return (
     <div className="flex justify-center space-x-4">
-      {!isRecording ? (
+      {!isCameraActive ? (
         <Button 
           onClick={onStartRecording}
           className="bg-green-600 hover:bg-green-700 text-white px-6 py-3"
         >
           <Play className="h-4 w-4 mr-2" />
-          {isCameraActive ? 'Start Analysis' : 'Start Camera'}
+          Start Camera
         </Button>
       ) : (
-        <Button 
-          onClick={onStopRecording}
-          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3"
-        >
-          <Square className="h-4 w-4 mr-2" />
-          Stop Analysis
-        </Button>
-      )}
-      
-      {isCameraActive && (
         <>
+          <Button 
+            onClick={onCapturePhoto}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3"
+          >
+            <Camera className="h-4 w-4 mr-2" />
+            Take Picture of Route
+          </Button>
+          
           <Button 
             onClick={onSwitchCamera}
             variant="outline" 
             className="border-slate-600 text-slate-300 hover:bg-slate-700"
           >
             <SwitchCamera className="h-4 w-4 mr-2" />
-            Switch
-          </Button>
-          
-          <Button 
-            onClick={onCapturePhoto}
-            variant="outline" 
-            className="border-slate-600 text-slate-300 hover:bg-slate-700"
-          >
-            <Camera className="h-4 w-4 mr-2" />
-            Capture
+            Switch Camera
           </Button>
         </>
       )}
