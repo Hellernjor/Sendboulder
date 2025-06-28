@@ -3,7 +3,7 @@ export interface Route {
   id: string;
   name: string;
   color: string;
-  difficulty: string;
+  gradeId: string; // References the gym's specific grade
   locationId: string;
   isActive: boolean;
   createdAt: Date;

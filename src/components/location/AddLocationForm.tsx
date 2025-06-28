@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Globe } from 'lucide-react';
-import { Location } from '@/types/location';
+import { Location, GradeLevel } from '@/types/location';
+import GradeSystemManager from './GradeSystemManager';
 
 interface AddLocationFormProps {
   onAdd: (location: Omit<Location, 'id' | 'createdBy' | 'createdByUsername' | 'createdAt' | 'isGlobal'>) => void;
@@ -25,6 +26,15 @@ const AddLocationForm = ({ onAdd, onCancel }: AddLocationFormProps) => {
     routeChangeFrequency: 'weekly'
   });
 
+  // Default grade system for new gyms
+  const [gradeSystem, setGradeSystem] = useState<GradeLevel[]>([
+    { id: '1', color: '#22c55e', name: 'Green', difficulty: 'beginner', order: 0 },
+    { id: '2', color: '#eab308', name: 'Yellow', difficulty: 'easy', order: 1 },
+    { id: '3', color: '#3b82f6', name: 'Blue', difficulty: 'intermediate', order: 2 },
+    { id: '4', color: '#f97316', name: 'Orange', difficulty: 'advanced', order: 3 },
+    { id: '5', color: '#ef4444', name: 'Red', difficulty: 'expert', order: 4 }
+  ]);
+
   const handleSubmit = () => {
     if (!newLocation.name) return;
     
@@ -32,7 +42,8 @@ const AddLocationForm = ({ onAdd, onCancel }: AddLocationFormProps) => {
       name: newLocation.name,
       type: newLocation.type,
       address: newLocation.address,
-      routeChangeFrequency: newLocation.routeChangeFrequency
+      routeChangeFrequency: newLocation.routeChangeFrequency,
+      gradeSystem: newLocation.type === 'gym' ? gradeSystem : undefined
     });
 
     setNewLocation({
@@ -103,6 +114,16 @@ const AddLocationForm = ({ onAdd, onCancel }: AddLocationFormProps) => {
             <option value="never">Never (Outdoor)</option>
           </select>
         </div>
+
+        {newLocation.type === 'gym' && (
+          <div>
+            <Label className="text-white">Grade System (for gym routes)</Label>
+            <GradeSystemManager 
+              grades={gradeSystem}
+              onGradesChange={setGradeSystem}
+            />
+          </div>
+        )}
 
         <div className="flex space-x-2">
           <Button onClick={handleSubmit} className="bg-green-600 hover:bg-green-700">

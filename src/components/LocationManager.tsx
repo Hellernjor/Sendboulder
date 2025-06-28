@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,7 +19,14 @@ const LocationManager = () => {
       createdByUsername: 'john_climber',
       createdAt: new Date('2024-01-15'),
       routeChangeFrequency: 'weekly',
-      isGlobal: true
+      isGlobal: true,
+      gradeSystem: [
+        { id: '1', color: '#22c55e', name: 'Green', difficulty: 'beginner', order: 0 },
+        { id: '2', color: '#eab308', name: 'Yellow', difficulty: 'easy', order: 1 },
+        { id: '3', color: '#3b82f6', name: 'Blue', difficulty: 'intermediate', order: 2 },
+        { id: '4', color: '#f97316', name: 'Orange', difficulty: 'advanced', order: 3 },
+        { id: '5', color: '#ef4444', name: 'Red', difficulty: 'expert', order: 4 }
+      ]
     },
     {
       id: '2',
@@ -43,7 +49,14 @@ const LocationManager = () => {
       createdByUsername: 'mike_sends',
       createdAt: new Date('2024-02-10'),
       routeChangeFrequency: 'monthly',
-      isGlobal: true
+      isGlobal: true,
+      gradeSystem: [
+        { id: '1', color: '#10b981', name: 'White', difficulty: 'beginner', order: 0 },
+        { id: '2', color: '#eab308', name: 'Yellow', difficulty: 'easy', order: 1 },
+        { id: '3', color: '#f97316', name: 'Orange', difficulty: 'intermediate', order: 2 },
+        { id: '4', color: '#ef4444', name: 'Red', difficulty: 'advanced', order: 3 },
+        { id: '5', color: '#1f2937', name: 'Black', difficulty: 'expert', order: 4 }
+      ]
     }
   ]);
 

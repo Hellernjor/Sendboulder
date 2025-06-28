@@ -2,14 +2,16 @@
 import React from 'react';
 import RouteCard from './RouteCard';
 import { Route, Attempt } from '@/types/route';
+import { Location } from '@/types/location';
 
 interface RoutesListProps {
   routes: Route[];
   attempts: Attempt[];
   locationName: string;
+  location: Location;
 }
 
-const RoutesList = ({ routes, attempts, locationName }: RoutesListProps) => {
+const RoutesList = ({ routes, attempts, locationName, location }: RoutesListProps) => {
   if (routes.length === 0) {
     return (
       <div className="text-center py-8">
@@ -27,6 +29,7 @@ const RoutesList = ({ routes, attempts, locationName }: RoutesListProps) => {
           key={route.id}
           route={route}
           attempts={attempts}
+          location={location}
         />
       ))}
     </div>

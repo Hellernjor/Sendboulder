@@ -1,4 +1,12 @@
 
+export interface GradeLevel {
+  id: string;
+  color: string;
+  name: string;
+  difficulty: 'beginner' | 'easy' | 'intermediate' | 'advanced' | 'expert';
+  order: number;
+}
+
 export interface Location {
   id: string;
   name: string;
@@ -10,4 +18,5 @@ export interface Location {
   createdAt: Date;
   routeChangeFrequency: 'weekly' | 'monthly' | 'rarely' | 'never';
   isGlobal: boolean;
+  gradeSystem?: GradeLevel[];
 }

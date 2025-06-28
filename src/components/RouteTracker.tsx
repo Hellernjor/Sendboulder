@@ -15,7 +15,7 @@ const RouteTracker = () => {
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [showAddRoute, setShowAddRoute] = useState(false);
 
-  // Global locations shared by all users
+  // Global locations shared by all users - now with grade systems
   const locations: Location[] = [
     {
       id: '1',
@@ -26,7 +26,14 @@ const RouteTracker = () => {
       createdByUsername: 'john_climber',
       createdAt: new Date('2024-01-15'),
       routeChangeFrequency: 'weekly',
-      isGlobal: true
+      isGlobal: true,
+      gradeSystem: [
+        { id: '1', color: '#22c55e', name: 'Green', difficulty: 'beginner', order: 0 },
+        { id: '2', color: '#eab308', name: 'Yellow', difficulty: 'easy', order: 1 },
+        { id: '3', color: '#3b82f6', name: 'Blue', difficulty: 'intermediate', order: 2 },
+        { id: '4', color: '#f97316', name: 'Orange', difficulty: 'advanced', order: 3 },
+        { id: '5', color: '#ef4444', name: 'Red', difficulty: 'expert', order: 4 }
+      ]
     },
     {
       id: '2',
@@ -48,16 +55,23 @@ const RouteTracker = () => {
       createdByUsername: 'mike_sends',
       createdAt: new Date('2024-02-10'),
       routeChangeFrequency: 'monthly',
-      isGlobal: true
+      isGlobal: true,
+      gradeSystem: [
+        { id: '1', color: '#10b981', name: 'White', difficulty: 'beginner', order: 0 },
+        { id: '2', color: '#eab308', name: 'Yellow', difficulty: 'easy', order: 1 },
+        { id: '3', color: '#f97316', name: 'Orange', difficulty: 'intermediate', order: 2 },
+        { id: '4', color: '#ef4444', name: 'Red', difficulty: 'advanced', order: 3 },
+        { id: '5', color: '#1f2937', name: 'Black', difficulty: 'expert', order: 4 }
+      ]
     }
   ];
 
   const [routes, setRoutes] = useState<Route[]>([
     {
       id: '1',
-      name: 'Red Corner Problem',
-      color: 'Red',
-      difficulty: 'V4',
+      name: 'Corner Problem',
+      color: '#ef4444',
+      gradeId: '5',
       locationId: '1',
       isActive: true,
       createdAt: new Date('2024-01-20'),
@@ -66,9 +80,9 @@ const RouteTracker = () => {
     },
     {
       id: '2',
-      name: 'Blue Overhang',
-      color: 'Blue',
-      difficulty: 'V3',
+      name: 'Overhang Challenge',
+      color: '#3b82f6',
+      gradeId: '3',
       locationId: '1',
       isActive: false,
       createdAt: new Date('2024-01-15'),
@@ -148,7 +162,7 @@ const RouteTracker = () => {
               <AddRouteForm
                 onAdd={handleAddRoute}
                 onCancel={() => setShowAddRoute(false)}
-                locationId={selectedLocation}
+                location={selectedLocationData}
               />
             )}
 
@@ -156,6 +170,7 @@ const RouteTracker = () => {
               <Button 
                 onClick={() => setShowAddRoute(true)}
                 className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={selectedLocationData.type === 'gym' && (!selectedLocationData.gradeSystem || selectedLocationData.gradeSystem.length === 0)}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Personal Route at {selectedLocationData.name}
@@ -166,6 +181,7 @@ const RouteTracker = () => {
               routes={filteredRoutes}
               attempts={attempts}
               locationName={selectedLocationData.name}
+              location={selectedLocationData}
             />
           </>
         )}

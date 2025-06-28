@@ -4,37 +4,32 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Calendar } from 'lucide-react';
 import { Route, Attempt } from '@/types/route';
+import { Location } from '@/types/location';
 
 interface RouteCardProps {
   route: Route;
   attempts: Attempt[];
+  location: Location;
 }
 
-const RouteCard = ({ route, attempts }: RouteCardProps) => {
-  const getColorClass = (color: string) => {
-    const colorMap: { [key: string]: string } = {
-      'Red': 'bg-red-500',
-      'Blue': 'bg-blue-500',
-      'Green': 'bg-green-500',
-      'Yellow': 'bg-yellow-500',
-      'Purple': 'bg-purple-500',
-      'Black': 'bg-gray-800',
-      'White': 'bg-gray-100',
-      'Orange': 'bg-orange-500',
-      'Pink': 'bg-pink-500'
-    };
-    return colorMap[color] || 'bg-gray-500';
-  };
-
+const RouteCard = ({ route, attempts, location }: RouteCardProps) => {
   const routeAttempts = attempts.filter(a => a.routeId === route.id);
   const lastAttempt = routeAttempts[routeAttempts.length - 1];
+  
+  // Find the grade info from the location's grade system
+  const gradeInfo = location.gradeSystem?.find(g => g.id === route.gradeId);
+  const gradeName = gradeInfo?.name || 'Unknown Grade';
+  const difficultyLabel = gradeInfo?.difficulty || 'unknown';
 
   return (
     <Card className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-indigo-200 dark:border-indigo-600 hover:shadow-lg transition-all">
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className={`w-4 h-4 rounded-full ${getColorClass(route.color)} ring-2 ring-white shadow-sm`} />
+            <div 
+              className="w-4 h-4 rounded-full ring-2 ring-white shadow-sm" 
+              style={{ backgroundColor: route.color }}
+            />
             <div>
               <div className="flex items-center space-x-2">
                 <p className="text-indigo-800 dark:text-indigo-200 font-medium">{route.name}</p>
@@ -48,7 +43,7 @@ const RouteCard = ({ route, attempts }: RouteCardProps) => {
                 )}
               </div>
               <p className="text-indigo-600 dark:text-indigo-300 text-sm">
-                {route.difficulty} • {route.color}
+                {gradeName} • {difficultyLabel}
                 {lastAttempt && (
                   <span className="ml-2">
                     • Last: {lastAttempt.attempts} attempts 
