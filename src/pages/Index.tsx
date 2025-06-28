@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -317,7 +318,7 @@ const Index = () => {
                     size="lg"
                     className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-16 py-6 text-xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl"
                   >
-                    Start Your Free Trial
+                    Start Free
                     <ArrowRight className="ml-3 h-6 w-6" />
                   </Button>
                 </DialogTrigger>
@@ -328,7 +329,7 @@ const Index = () => {
             </div>
             
             <p className="text-sm text-slate-200">
-              14-day free trial • No commitment • Cancel anytime
+              Completely free • No commitment • No hidden fees
             </p>
           </div>
         </div>
