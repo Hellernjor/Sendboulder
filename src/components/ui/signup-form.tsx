@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Eye, EyeOff, Camera, Settings } from 'lucide-react';
+import { Mail, Eye, EyeOff, Camera, Settings, ExternalLink } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -19,23 +19,16 @@ const SignupForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const isIOSDevice = () => {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    console.log('Device detection - iOS:', isIOS, 'User Agent:', navigator.userAgent);
-    return isIOS;
-  };
-
   const requestCameraPermissions = async () => {
     setRequestingCamera(true);
-    const deviceIsIOS = isIOSDevice();
-    console.log('Starting camera permission request - iOS device:', deviceIsIOS);
+    console.log('Starting camera permission request');
     
     try {
       const cameraService = new CameraService();
-      const hasAccess = await cameraService.requestCameraAccess();
-      console.log('Camera access result:', hasAccess);
+      const result = await cameraService.requestCameraAccess();
+      console.log('Camera access result:', result);
       
-      if (hasAccess) {
+      if (result.success) {
         console.log('Camera access granted, navigating to dashboard');
         toast({
           title: "Camera access granted!",
@@ -44,31 +37,28 @@ const SignupForm = () => {
         cameraService.stopCamera();
         setRequestingCamera(false);
         navigate('/dashboard');
-      } else {
-        console.log('Camera access denied - iOS device:', deviceIsIOS);
+      } else if (result.needsIOSSettings) {
+        console.log('iOS settings needed, showing instructions');
         setRequestingCamera(false);
-        
-        if (deviceIsIOS) {
-          console.log('Showing iOS instructions');
-          setShowIOSInstructions(true);
-        } else {
-          toast({
-            title: "Camera access denied",
-            description: "You can enable camera access later in your browser settings to use route analysis.",
-            variant: "destructive",
-          });
-          navigate('/dashboard');
-        }
+        setShowIOSInstructions(true);
+      } else {
+        console.log('Camera access failed for other reasons');
+        setRequestingCamera(false);
+        toast({
+          title: "Camera access needed",
+          description: "You can enable camera access later in your browser settings to use route analysis.",
+          variant: "destructive",
+        });
+        navigate('/dashboard');
       }
     } catch (error) {
       console.error('Camera permission error:', error);
       setRequestingCamera(false);
       
-      const deviceIsIOS = isIOSDevice();
-      console.log('Camera error - iOS device:', deviceIsIOS);
-      
-      if (deviceIsIOS) {
-        console.log('Camera error on iOS, showing instructions');
+      // Always show iOS instructions if we detect iOS, even on unexpected errors
+      const cameraService = new CameraService();
+      if (cameraService.isIOSDevice()) {
+        console.log('iOS detected on error, showing instructions');
         setShowIOSInstructions(true);
       } else {
         toast({
@@ -141,30 +131,67 @@ const SignupForm = () => {
     console.log('Rendering iOS instructions screen');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md mx-auto bg-slate-800/90 border-slate-700 backdrop-blur-sm">
+        <Card className="w-full max-w-md mx-auto bg-slate-800/95 border-slate-700 backdrop-blur-sm shadow-2xl">
           <CardContent className="flex flex-col items-center justify-center py-8 space-y-6">
-            <Settings className="h-16 w-16 text-blue-400" />
-            <h3 className="text-2xl font-bold text-white text-center">Enable Camera Access</h3>
-            <div className="text-slate-300 text-sm space-y-4">
-              <p className="text-center font-medium">To use route analysis, please enable camera access in your iPhone settings:</p>
-              <div className="bg-slate-700/50 rounded-lg p-4">
-                <ol className="list-decimal list-inside space-y-3 text-left">
-                  <li>Open your iPhone <strong className="text-white">Settings</strong> app</li>
-                  <li>Scroll down and tap <strong className="text-white">Safari</strong></li>
-                  <li>Tap <strong className="text-white">Camera</strong></li>
-                  <li>Select <strong className="text-white">Allow</strong></li>
-                  <li>Return to this page and refresh</li>
-                </ol>
+            <div className="relative">
+              <Settings className="h-16 w-16 text-blue-400" />
+              <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs font-bold">!</span>
               </div>
-              <p className="text-center text-xs text-slate-400">After enabling, refresh this page to continue</p>
             </div>
+            
+            <div className="text-center space-y-2">
+              <h3 className="text-2xl font-bold text-white">Camera Access Required</h3>
+              <p className="text-slate-300 text-sm">To analyze climbing routes, we need camera permission</p>
+            </div>
+            
+            <div className="w-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg p-6 space-y-4">
+              <h4 className="text-white font-semibold text-center mb-4">Follow these steps:</h4>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold">1</div>
+                  <p className="text-slate-200 text-sm">Open your iPhone <strong className="text-white">Settings</strong> app</p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold">2</div>
+                  <p className="text-slate-200 text-sm">Scroll down and tap <strong className="text-white">Safari</strong></p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold">3</div>
+                  <p className="text-slate-200 text-sm">Tap <strong className="text-white">Camera</strong></p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold">4</div>
+                  <p className="text-slate-200 text-sm">Select <strong className="text-white">Allow</strong></p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 text-white text-sm font-bold">✓</div>
+                  <p className="text-slate-200 text-sm">Return here and refresh the page</p>
+                </div>
+              </div>
+            </div>
+            
             <div className="flex flex-col space-y-3 w-full">
               <Button
-                onClick={() => navigate('/dashboard')}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => {
+                  // Try to trigger camera request again
+                  setShowIOSInstructions(false);
+                  requestCameraPermissions();
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3"
               >
-                Continue to Dashboard
+                <Camera className="w-4 h-4 mr-2" />
+                Try Camera Again
               </Button>
+              
+              <Button
+                onClick={() => navigate('/dashboard')}
+                variant="outline"
+                className="w-full border-slate-600 text-slate-300 hover:bg-slate-700"
+              >
+                Skip for Now - Go to Dashboard
+              </Button>
+              
               <button
                 onClick={() => setShowIOSInstructions(false)}
                 className="text-slate-400 text-sm hover:text-white transition-colors"

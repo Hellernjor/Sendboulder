@@ -1,4 +1,3 @@
-
 export class CameraService {
   private stream: MediaStream | null = null;
   private videoElement: HTMLVideoElement | null = null;
@@ -18,16 +17,16 @@ export class CameraService {
     }
   }
 
-  async requestCameraAccess(): Promise<boolean> {
+  isIOSDevice(): boolean {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+  }
+
+  async requestCameraAccess(): Promise<{ success: boolean; needsIOSSettings: boolean }> {
     try {
       console.log('Requesting camera access...');
       console.log('User agent:', navigator.userAgent);
-      console.log('Location:', window.location.href);
+      console.log('Is iOS:', this.isIOSDevice());
       console.log('Is secure context:', window.isSecureContext);
-      
-      // First check permission status
-      const permissionStatus = await this.checkCameraPermission();
-      console.log('Permission status before request:', permissionStatus);
       
       // Check if we're on HTTPS or localhost
       const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
@@ -54,6 +53,8 @@ export class CameraService {
 
       try {
         this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+        console.log('Camera access granted successfully');
+        return { success: true, needsIOSSettings: false };
       } catch (error: any) {
         console.log('Failed with environment camera, trying any camera:', error);
         // Fallback to any available camera without facingMode constraint
@@ -65,29 +66,27 @@ export class CameraService {
           audio: false
         };
         this.stream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
+        console.log('Camera access granted with fallback constraints');
+        return { success: true, needsIOSSettings: false };
       }
-      
-      console.log('Camera access granted successfully');
-      return true;
     } catch (error: any) {
       console.error('Camera access error:', error);
       console.error('Error name:', error.name);
       console.error('Error message:', error.message);
       
-      // Provide more specific error messages
-      if (error.name === 'NotAllowedError') {
-        console.error('Camera permission denied by user');
-      } else if (error.name === 'NotFoundError') {
-        console.error('No camera device found');
-      } else if (error.name === 'NotSupportedError') {
-        console.error('Camera not supported in this browser');
-      } else if (error.name === 'NotReadableError') {
-        console.error('Camera is already in use or hardware error');
-      } else if (error.name === 'SecurityError') {
-        console.error('Security error - possibly not HTTPS');
-      }
+      // Check if this is a permission denial on iOS
+      const isIOSPermissionDenied = this.isIOSDevice() && 
+        (error.name === 'NotAllowedError' || 
+         error.name === 'PermissionDeniedError' ||
+         error.message.includes('Permission denied') ||
+         error.message.includes('permission denied'));
+
+      console.log('iOS permission denied:', isIOSPermissionDenied);
       
-      return false;
+      return { 
+        success: false, 
+        needsIOSSettings: isIOSPermissionDenied 
+      };
     }
   }
 
@@ -138,6 +137,6 @@ export class CameraService {
       // Logic to switch between cameras would go here
       return this.requestCameraAccess();
     }
-    return false;
+    return { success: false, needsIOSSettings: false };
   }
 }
