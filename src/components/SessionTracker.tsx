@@ -3,33 +3,56 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Plus, Clock } from 'lucide-react';
 
 const SessionTracker = () => {
+  const [isSessionActive, setIsSessionActive] = useState(false);
   const [currentSession, setCurrentSession] = useState({
     startTime: new Date(),
-    routes: [
-      { id: 1, color: 'Red', difficulty: 'V4', attempts: 3, completed: true },
-      { id: 2, color: 'Blue', difficulty: 'V3', attempts: 2, completed: true },
-      { id: 3, color: 'Green', difficulty: 'V2', attempts: 1, completed: true },
-      { id: 4, color: 'Yellow', difficulty: 'V5', attempts: 4, completed: false },
-    ]
+    routes: []
   });
 
-  const getColorClass = (color: string) => {
-    const colorMap: { [key: string]: string } = {
-      'Red': 'bg-red-500',
-      'Blue': 'bg-blue-500',
-      'Green': 'bg-green-500',
-      'Yellow': 'bg-yellow-500',
-      'Purple': 'bg-purple-500',
-    };
-    return colorMap[color] || 'bg-gray-500';
+  const startSession = () => {
+    setIsSessionActive(true);
+    setCurrentSession({
+      startTime: new Date(),
+      routes: []
+    });
   };
 
+  const endSession = () => {
+    setIsSessionActive(false);
+    setCurrentSession({
+      startTime: new Date(),
+      routes: []
+    });
+  };
+
+  if (!isSessionActive) {
+    return (
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2 text-white">
+            <Clock className="h-5 w-5" />
+            <span>Session Tracker</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="text-center py-8">
+            <p className="text-slate-400 mb-4">No active session</p>
+            <Button 
+              className="bg-green-600 hover:bg-green-700 text-white"
+              onClick={startSession}
+            >
+              Start Climbing Session
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const sessionDuration = Math.floor((Date.now() - currentSession.startTime.getTime()) / (1000 * 60));
-  const completedRoutes = currentSession.routes.filter(route => route.completed).length;
-  const totalAttempts = currentSession.routes.reduce((sum, route) => sum + route.attempts, 0);
 
   return (
     <Card className="bg-slate-800/50 border-slate-700">
@@ -48,11 +71,11 @@ const SessionTracker = () => {
         {/* Session Stats */}
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center p-3 bg-slate-700/50 rounded-lg">
-            <p className="text-2xl font-bold text-white">{completedRoutes}</p>
+            <p className="text-2xl font-bold text-white">0</p>
             <p className="text-slate-400 text-sm">Completed</p>
           </div>
           <div className="text-center p-3 bg-slate-700/50 rounded-lg">
-            <p className="text-2xl font-bold text-white">{totalAttempts}</p>
+            <p className="text-2xl font-bold text-white">0</p>
             <p className="text-slate-400 text-sm">Total Attempts</p>
           </div>
         </div>
@@ -60,27 +83,9 @@ const SessionTracker = () => {
         {/* Routes List */}
         <div className="space-y-2">
           <h3 className="text-white font-medium">Routes Attempted</h3>
-          {currentSession.routes.map((route) => (
-            <div 
-              key={route.id}
-              className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors"
-            >
-              <div className="flex items-center space-x-3">
-                <div className={`w-3 h-3 rounded-full ${getColorClass(route.color)}`} />
-                <div>
-                  <p className="text-white font-medium">{route.color} Route</p>
-                  <p className="text-slate-400 text-sm">{route.difficulty} • {route.attempts} attempts</p>
-                </div>
-              </div>
-              <div>
-                {route.completed ? (
-                  <CheckCircle className="h-5 w-5 text-green-400" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-red-400" />
-                )}
-              </div>
-            </div>
-          ))}
+          <div className="text-center py-4">
+            <p className="text-slate-400 text-sm">No routes attempted yet</p>
+          </div>
         </div>
 
         {/* Add Route Button */}
@@ -101,7 +106,8 @@ const SessionTracker = () => {
             Pause Session
           </Button>
           <Button 
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+            onClick={endSession}
           >
             End Session
           </Button>

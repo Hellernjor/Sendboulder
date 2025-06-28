@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -10,11 +11,12 @@ import RouteTracker from '@/components/RouteTracker';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
 
 const Dashboard = () => {
+  // Real stats - these would come from your actual data in a real app
   const weeklyStats = {
-    sessionsCompleted: 3,
-    totalRoutes: 24,
-    successRate: 75,
-    improvementScore: 12
+    sessionsCompleted: 0,
+    totalRoutes: 0,
+    successRate: 0,
+    improvementScore: 0
   };
 
   return (
