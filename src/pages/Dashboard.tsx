@@ -6,6 +6,8 @@ import { TrendingUp, Camera, Target, Clock, Award, BarChart3 } from 'lucide-reac
 import SessionTracker from '@/components/SessionTracker';
 import RouteAnalyzer from '@/components/RouteAnalyzer';
 import PerformanceChart from '@/components/PerformanceChart';
+import LocationManager from '@/components/LocationManager';
+import RouteTracker from '@/components/RouteTracker';
 
 const Dashboard = () => {
   const weeklyStats = {
@@ -79,6 +81,16 @@ const Dashboard = () => {
 
         {/* Main Content Grid */}
         <div className="grid lg:grid-cols-3 gap-6">
+          {/* Location Manager */}
+          <div className="lg:col-span-2">
+            <LocationManager />
+          </div>
+
+          {/* Route Tracker */}
+          <div>
+            <RouteTracker />
+          </div>
+
           {/* Route Analyzer */}
           <div className="lg:col-span-2">
             <RouteAnalyzer />
