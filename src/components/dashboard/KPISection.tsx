@@ -2,14 +2,36 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, Target, Clock, Award } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { getUserStats, getUserAttempts } from '@/lib/database-functions';
 
 const KPISection = () => {
-  // These will be calculated from real user data
+  // Get user stats
+  const { data: stats } = useQuery({
+    queryKey: ['user-stats'],
+    queryFn: () => getUserStats(),
+  });
+
+  // Get user attempts for session count
+  const { data: attempts } = useQuery({
+    queryKey: ['user-attempts'],
+    queryFn: () => getUserAttempts(),
+  });
+
+  // Calculate sessions (group attempts by date)
+  const totalSessions = React.useMemo(() => {
+    if (!attempts) return 0;
+    const sessionDates = new Set(
+      attempts.map(attempt => new Date(attempt.date).toDateString())
+    );
+    return sessionDates.size;
+  }, [attempts]);
+
   const kpis = {
-    totalSessions: 0,
-    totalRoutes: 0,
-    successRate: 0,
-    improvementScore: 0
+    totalSessions: totalSessions,
+    totalRoutes: stats?.completedAttempts || 0,
+    successRate: Math.round(stats?.successRate || 0),
+    improvementScore: stats?.totalAttempts || 0
   };
 
   return (
@@ -34,7 +56,7 @@ const KPISection = () => {
               <Target className="h-4 w-4 text-green-400 mr-1" />
             </div>
             <p className="text-xl font-bold text-white">{kpis.totalRoutes}</p>
-            <p className="text-slate-400 text-xs">Routes</p>
+            <p className="text-slate-400 text-xs">Routes Sent</p>
           </div>
           
           <div className="text-center p-3 bg-slate-700/50 rounded-lg">
@@ -49,8 +71,8 @@ const KPISection = () => {
             <div className="flex items-center justify-center mb-1">
               <TrendingUp className="h-4 w-4 text-purple-400 mr-1" />
             </div>
-            <p className="text-xl font-bold text-white">+{kpis.improvementScore}</p>
-            <p className="text-slate-400 text-xs">Score</p>
+            <p className="text-xl font-bold text-white">{kpis.improvementScore}</p>
+            <p className="text-slate-400 text-xs">Total Attempts</p>
           </div>
         </div>
       </CardContent>

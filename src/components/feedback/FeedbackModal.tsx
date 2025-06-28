@@ -3,24 +3,22 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Star, Heart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 interface FeedbackModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (feedback: { rating: number; stoke: number; comment: string }) => void;
+  onSubmit: (feedback: { stoke: number; comment: string }) => void;
 }
 
 const FeedbackModal = ({ isOpen, onClose, onSubmit }: FeedbackModalProps) => {
-  const [rating, setRating] = useState(0);
   const [stoke, setStoke] = useState(0);
   const [comment, setComment] = useState('');
 
   const handleSubmit = () => {
-    onSubmit({ rating, stoke, comment });
+    onSubmit({ stoke, comment });
     onClose();
     // Reset form
-    setRating(0);
     setStoke(0);
     setComment('');
   };
@@ -33,26 +31,6 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit }: FeedbackModalProps) => {
         </DialogHeader>
         
         <div className="space-y-6">
-          {/* Overall Rating */}
-          <div>
-            <p className="text-slate-300 mb-3">How would you rate BoulderFlow overall?</p>
-            <div className="flex space-x-2">
-              {[1, 2, 3, 4, 5].map((value) => (
-                <button
-                  key={value}
-                  onClick={() => setRating(value)}
-                  className="transition-colors"
-                >
-                  <Star
-                    className={`h-8 w-8 ${
-                      value <= rating ? 'text-yellow-400 fill-current' : 'text-slate-600'
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Stoke Level */}
           <div>
             <p className="text-slate-300 mb-3">What's your stoke level? (How excited are you about your climbing progress?)</p>
@@ -90,7 +68,7 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit }: FeedbackModalProps) => {
           <div className="flex space-x-3">
             <Button
               onClick={handleSubmit}
-              disabled={rating === 0 || stoke === 0}
+              disabled={stoke === 0}
               className="flex-1 bg-orange-600 hover:bg-orange-700"
             >
               Send Feedback

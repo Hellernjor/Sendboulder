@@ -12,7 +12,7 @@ import FeedbackModal from '@/components/feedback/FeedbackModal';
 const Dashboard = () => {
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
-  const handleFeedbackSubmit = (feedback: { rating: number; stoke: number; comment: string }) => {
+  const handleFeedbackSubmit = (feedback: { stoke: number; comment: string }) => {
     console.log('Feedback submitted:', feedback);
     // Here you would typically save the feedback to your database
   };
