@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Target, Clock, Award } from 'lucide-react';
 import KPISection from '@/components/dashboard/KPISection';
@@ -7,8 +7,16 @@ import RouteAnalyzer from '@/components/RouteAnalyzer';
 import LocationChoice from '@/components/dashboard/LocationChoice';
 import SessionTracker from '@/components/SessionTracker';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
+import FeedbackModal from '@/components/feedback/FeedbackModal';
 
 const Dashboard = () => {
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+
+  const handleFeedbackSubmit = (feedback: { rating: number; stoke: number; comment: string }) => {
+    console.log('Feedback submitted:', feedback);
+    // Here you would typically save the feedback to your database
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <div className="container mx-auto px-4 py-4">
@@ -37,7 +45,14 @@ const Dashboard = () => {
       </div>
       
       {/* Floating Feedback Button */}
-      <FeedbackButton />
+      <FeedbackButton onClick={() => setIsFeedbackModalOpen(true)} />
+      
+      {/* Feedback Modal */}
+      <FeedbackModal 
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        onSubmit={handleFeedbackSubmit}
+      />
     </div>
   );
 };
