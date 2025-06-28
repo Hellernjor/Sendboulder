@@ -16,25 +16,25 @@ const Index = () => {
       icon: Camera,
       title: 'Smart Route Vision',
       description: 'Point, shoot, climb. Our AI instantly reads routes by tape color and difficulty, so you can focus on the send.',
-      image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     },
     {
       icon: TrendingUp,
       title: 'Progress That Matters',
       description: 'See your climbing evolution with insights that actually help - success rates, weak points, and what to work on next.',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     },
     {
       icon: Target,
       title: 'Beta Optimization',
       description: 'Get real-time movement feedback. Learn the subtle tweaks that turn your projects into sends.',
-      image: 'https://images.unsplash.com/photo-1574825905286-5de9ebb53c85?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1500673922987-e212871fec22?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     },
     {
       icon: Clock,
       title: 'Session Intel',
       description: 'Every attempt counts. Track your sessions like a pro and watch patterns emerge in your climbing.',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     }
   ];
 
@@ -53,21 +53,21 @@ const Index = () => {
       grade: 'V8 Crusher',
       text: 'Went from flailing on V5s to sending V8s in 3 months. This app called out my bad footwork and now I climb way more efficiently.',
       rating: 5,
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+      image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
     },
     {
       name: 'Alex Chen',
       grade: 'V6 Regular',
       text: 'The route detection is spot-on. Love seeing my beta mapped out - helps me remember sequences for my projects.',
       rating: 5,
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+      image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
     },
     {
       name: 'Sam Rodriguez',
       grade: 'V7 Sender',
       text: 'Finally, an app that gets climbing. Not just tracking sends, but actually making me a better climber.',
       rating: 5,
-      image: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+      image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
     }
   ];
 
@@ -75,11 +75,11 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
       {/* Hero Section with Background */}
       <div className="relative">
-        {/* Background Image Overlay - Bouldering Illustration */}
+        {/* Background Image Overlay - Placeholder */}
         <div 
           className="absolute inset-0 opacity-30 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
+            backgroundImage: `url('https://images.unsplash.com/photo-1500673922987-e212871fec22?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-800/75 to-slate-900/85" />
@@ -151,12 +151,12 @@ const Index = () => {
       </div>
 
       <div className="container mx-auto px-4">
-        {/* Motivation Section with Bouldering Illustration */}
+        {/* Motivation Section with Placeholder */}
         <div className="relative mb-24 rounded-3xl overflow-hidden">
           <div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1574825905286-5de9ebb53c85?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
+              backgroundImage: `url('https://images.unsplash.com/photo-1518005020951-eccb494ad742?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-800/60 to-slate-900/80" />
@@ -189,7 +189,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Features - More Visual with Bouldering Illustrations */}
+        {/* Features - With Placeholders */}
         <div className="mb-24">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
             Built for Climbers, By Climbers
@@ -225,7 +225,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Testimonials - With Bouldering Illustrations */}
+        {/* Testimonials - With Placeholders */}
         <div className="mb-24">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
             Real Climbers, Real Results
@@ -294,12 +294,12 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Final CTA with Bouldering Illustration Background */}
+        {/* Final CTA with Placeholder Background */}
         <div className="relative text-center rounded-3xl overflow-hidden">
           <div 
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1574825905286-5de9ebb53c85?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
+              backgroundImage: `url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-orange-900/80 to-red-900/80 backdrop-blur-sm" />
