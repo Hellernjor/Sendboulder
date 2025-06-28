@@ -120,7 +120,7 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline"
-                className="border-slate-500 text-slate-200 hover:bg-slate-800/60 px-12 py-6 text-xl transition-all duration-300 backdrop-blur-sm"
+                className="border-slate-500 text-slate-800 hover:bg-slate-800/60 hover:text-slate-200 px-12 py-6 text-xl transition-all duration-300 backdrop-blur-sm bg-white/90"
                 onClick={() => navigate('/dashboard')}
               >
                 <Play className="mr-3 h-6 w-6" />
