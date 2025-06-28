@@ -1,47 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Clock, Play, Square } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 const SessionTracker = () => {
-  const [isSessionActive, setIsSessionActive] = useState(false);
-  const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
-  const [sessionDuration, setSessionDuration] = useState(0);
-  const [todaysSessions, setTodaysSessions] = useState(0);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [todaysRoutes, setTodaysRoutes] = useState(0);
 
-  // Update session duration every minute
+  // Update current time every minute
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isSessionActive && sessionStartTime) {
-      interval = setInterval(() => {
-        const duration = Math.floor((Date.now() - sessionStartTime.getTime()) / (1000 * 60));
-        setSessionDuration(duration);
-      }, 60000);
-    }
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
     return () => clearInterval(interval);
-  }, [isSessionActive, sessionStartTime]);
+  }, []);
 
-  const startSession = () => {
-    const now = new Date();
-    setIsSessionActive(true);
-    setSessionStartTime(now);
-    setSessionDuration(0);
-  };
-
-  const endSession = () => {
-    setIsSessionActive(false);
-    setSessionStartTime(null);
-    setSessionDuration(0);
-    setTodaysSessions(prev => prev + 1);
-  };
-
-  const formatDuration = (minutes: number) => {
-    if (minutes < 60) return `${minutes}m`;
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h ${mins}m`;
+  // Calculate session duration (last 24 hours)
+  const sessionStartTime = new Date(currentTime.getTime() - 24 * 60 * 60 * 1000);
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -50,63 +28,40 @@ const SessionTracker = () => {
         <CardTitle className="flex items-center justify-between text-white text-lg">
           <div className="flex items-center space-x-2">
             <Clock className="h-5 w-5" />
-            <span>Session Tracker</span>
+            <span>Current Session</span>
           </div>
-          {isSessionActive && (
-            <Badge variant="secondary" className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
-              {formatDuration(sessionDuration)}
-            </Badge>
-          )}
+          <Badge variant="secondary" className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs">
+            24h Rolling
+          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Session Info */}
+        <div className="text-center py-2 bg-slate-700/30 rounded-lg">
+          <p className="text-slate-300 text-sm">Session Period</p>
+          <p className="text-slate-400 text-xs">
+            {formatTime(sessionStartTime)} - {formatTime(currentTime)}
+          </p>
+        </div>
+
         {/* Today's Stats */}
         <div className="grid grid-cols-2 gap-3">
           <div className="text-center p-3 bg-slate-700/50 rounded-lg">
-            <p className="text-lg font-bold text-white">{todaysSessions}</p>
-            <p className="text-slate-400 text-xs">Today's Sessions</p>
+            <p className="text-lg font-bold text-white">{todaysRoutes}</p>
+            <p className="text-slate-400 text-xs">Routes Attempted</p>
           </div>
           <div className="text-center p-3 bg-slate-700/50 rounded-lg">
             <p className="text-lg font-bold text-white">0</p>
-            <p className="text-slate-400 text-xs">Routes Attempted</p>
+            <p className="text-slate-400 text-xs">Routes Completed</p>
           </div>
         </div>
 
-        {/* Session Controls */}
-        {!isSessionActive ? (
-          <Button 
-            onClick={startSession}
-            className="w-full bg-green-600 hover:bg-green-700 text-white"
-          >
-            <Play className="h-4 w-4 mr-2" />
-            Start Climbing Session
-          </Button>
-        ) : (
-          <div className="space-y-3">
-            <div className="text-center py-2">
-              <p className="text-slate-300 text-sm">Session in progress...</p>
-              <p className="text-slate-400 text-xs">
-                Started at {sessionStartTime?.toLocaleTimeString()}
-              </p>
-            </div>
-            
-            <div className="flex space-x-2">
-              <Button 
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                onClick={() => console.log('Adding route to session...')}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Route
-              </Button>
-              <Button 
-                className="bg-red-600 hover:bg-red-700 text-white"
-                onClick={endSession}
-              >
-                <Square className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+        {/* Session Note */}
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+          <p className="text-blue-300 text-sm text-center">
+            All activity in the last 24 hours counts as your current session
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
