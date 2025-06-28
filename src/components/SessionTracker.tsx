@@ -16,8 +16,8 @@ const SessionTracker = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Calculate session duration (last 24 hours)
-  const sessionStartTime = new Date(currentTime.getTime() - 24 * 60 * 60 * 1000);
+  // Calculate session duration (last 12 hours)
+  const sessionStartTime = new Date(currentTime.getTime() - 12 * 60 * 60 * 1000);
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
@@ -31,7 +31,7 @@ const SessionTracker = () => {
             <span>Current Session</span>
           </div>
           <Badge variant="secondary" className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs">
-            24h Rolling
+            12h Rolling
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -59,7 +59,7 @@ const SessionTracker = () => {
         {/* Session Note */}
         <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
           <p className="text-blue-300 text-sm text-center">
-            All activity in the last 24 hours counts as your current session
+            All activity in the last 12 hours counts as your current session
           </p>
         </div>
       </CardContent>
