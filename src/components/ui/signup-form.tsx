@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Eye, EyeOff, Camera } from 'lucide-react';
+import { Mail, Eye, EyeOff, Camera, Settings } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -16,8 +16,19 @@ const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [requestingCamera, setRequestingCamera] = useState(false);
+  const [showIOSInstructions, setShowIOSInstructions] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const isIOSDevice = () => {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent);
+  };
+
+  const openIOSSettings = () => {
+    // This will prompt the user to go to settings, but we can't directly open it from web
+    // We'll show instructions instead
+    setShowIOSInstructions(true);
+  };
 
   const requestCameraPermissions = async () => {
     setRequestingCamera(true);
@@ -30,24 +41,34 @@ const SignupForm = () => {
           title: "Camera access granted!",
           description: "You're all set to analyze climbing routes.",
         });
-        // Stop the camera immediately since we just needed permission
         cameraService.stopCamera();
+        navigate('/dashboard');
       } else {
-        toast({
-          title: "Camera access denied",
-          description: "You can enable camera access later in your browser settings to use route analysis.",
-          variant: "destructive",
-        });
+        // If iOS device and camera denied, show specific instructions
+        if (isIOSDevice()) {
+          openIOSSettings();
+        } else {
+          toast({
+            title: "Camera access denied",
+            description: "You can enable camera access later in your browser settings to use route analysis.",
+            variant: "destructive",
+          });
+          navigate('/dashboard');
+        }
       }
     } catch (error) {
       console.error('Camera permission error:', error);
-      toast({
-        title: "Camera setup incomplete",
-        description: "Don't worry, you can enable camera access later for route analysis.",
-      });
+      if (isIOSDevice()) {
+        openIOSSettings();
+      } else {
+        toast({
+          title: "Camera setup incomplete",
+          description: "Don't worry, you can enable camera access later for route analysis.",
+        });
+        navigate('/dashboard');
+      }
     } finally {
       setRequestingCamera(false);
-      navigate('/dashboard');
     }
   };
 
@@ -70,7 +91,6 @@ const SignupForm = () => {
           title: "Account created!",
           description: "Let's set up camera access for route analysis.",
         });
-        // Request camera permissions after successful signup
         await requestCameraPermissions();
       }
     } catch (error: any) {
@@ -107,6 +127,39 @@ const SignupForm = () => {
       });
     }
   };
+
+  if (showIOSInstructions) {
+    return (
+      <Card className="w-full max-w-md mx-auto bg-slate-800/80 border-slate-700 backdrop-blur-sm">
+        <CardContent className="flex flex-col items-center justify-center py-8 space-y-6">
+          <Settings className="h-12 w-12 text-blue-400" />
+          <h3 className="text-xl font-semibold text-white text-center">Enable Camera Access</h3>
+          <div className="text-slate-300 text-sm space-y-4">
+            <p className="text-center">To use route analysis, please enable camera access:</p>
+            <ol className="list-decimal list-inside space-y-2 text-left">
+              <li>Open your iPhone <strong>Settings</strong> app</li>
+              <li>Scroll down and tap <strong>Safari</strong></li>
+              <li>Tap <strong>Camera</strong></li>
+              <li>Select <strong>Allow</strong></li>
+              <li>Return to this page and refresh</li>
+            </ol>
+          </div>
+          <Button
+            onClick={() => navigate('/dashboard')}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            Continue to Dashboard
+          </Button>
+          <button
+            onClick={() => setShowIOSInstructions(false)}
+            className="text-slate-400 text-sm hover:text-white"
+          >
+            ← Back to signup
+          </button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (requestingCamera) {
     return (
