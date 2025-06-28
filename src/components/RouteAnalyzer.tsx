@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Camera, Smartphone } from 'lucide-react';
@@ -25,16 +24,36 @@ const RouteAnalyzer = () => {
 
   const startCamera = async () => {
     setCameraError(null);
+    console.log('Starting camera...');
+    
     try {
+      // Check permission status first
+      const permissionStatus = await cameraServiceRef.current.checkCameraPermission();
+      console.log('Current camera permission:', permissionStatus);
+      
       const hasAccess = await cameraServiceRef.current.requestCameraAccess();
       if (hasAccess && videoRef.current) {
         cameraServiceRef.current.attachToVideo(videoRef.current);
         setIsCameraActive(true);
+        console.log('Camera started successfully');
       } else {
-        setCameraError('Camera access denied. Please enable camera permissions.');
+        const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
+        let errorMessage = 'Camera access denied. ';
+        
+        if (!isSecure) {
+          errorMessage += 'Camera requires HTTPS connection. ';
+        } else {
+          errorMessage += 'Please enable camera permissions in your browser settings. ';
+        }
+        
+        errorMessage += `Current URL: ${location.protocol}//${location.hostname}`;
+        setCameraError(errorMessage);
+        console.error('Camera access failed:', errorMessage);
       }
     } catch (error) {
-      setCameraError('Failed to access camera. Make sure you\'re using HTTPS.');
+      const errorMessage = `Failed to access camera: ${error}`;
+      setCameraError(errorMessage);
+      console.error('Camera startup error:', error);
     }
   };
 
@@ -111,6 +130,17 @@ const RouteAnalyzer = () => {
           onReset={stopCamera}
         />
 
+        {/* Debug Info */}
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
+          <h4 className="text-yellow-400 font-medium mb-2">Debug Info</h4>
+          <div className="text-yellow-300 text-xs space-y-1">
+            <p>Protocol: {location.protocol}</p>
+            <p>Hostname: {location.hostname}</p>
+            <p>Is Secure: {(location.protocol === 'https:' || location.hostname === 'localhost').toString()}</p>
+            <p>User Agent: {navigator.userAgent.substring(0, 50)}...</p>
+          </div>
+        </div>
+
         {/* Route Colors Reference */}
         <div>
           <h3 className="text-white font-medium mb-3">Route Colors</h3>
@@ -138,6 +168,7 @@ const RouteAnalyzer = () => {
             <li>• Ensure good lighting for better detection</li>
             <li>• Position camera 3-6 feet from the wall</li>
             <li>• Make sure route holds are clearly visible</li>
+            <li>• Grant camera permission when prompted</li>
           </ul>
         </div>
       </CardContent>
