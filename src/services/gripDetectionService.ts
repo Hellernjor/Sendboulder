@@ -1,3 +1,4 @@
+
 import { supabase } from '@/lib/supabase';
 
 export interface DetectedGrip {
@@ -11,9 +12,12 @@ export class GripDetectionService {
   static async detectGrips(imageDataUrl: string): Promise<DetectedGrip[]> {
     try {
       console.log('Calling grip detection service...');
+      console.log('Image data URL length:', imageDataUrl.length);
       
       const { data, error } = await supabase.functions.invoke('detect-grips', {
-        body: { image: imageDataUrl }
+        body: { 
+          image: imageDataUrl 
+        }
       });
 
       if (error) {
