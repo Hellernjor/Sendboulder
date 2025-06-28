@@ -147,26 +147,6 @@ const SecuritySettings = () => {
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2">
               <div>
-                <p className="text-white">Two-Factor Authentication</p>
-                <p className="text-sm text-slate-400">Add an extra layer of security</p>
-              </div>
-              <Button variant="outline" className="border-slate-600 text-slate-300">
-                Enable 2FA
-              </Button>
-            </div>
-            
-            <div className="flex justify-between items-center py-2">
-              <div>
-                <p className="text-white">Login Sessions</p>
-                <p className="text-sm text-slate-400">Manage active sessions</p>
-              </div>
-              <Button variant="outline" className="border-slate-600 text-slate-300">
-                View Sessions
-              </Button>
-            </div>
-
-            <div className="flex justify-between items-center py-2">
-              <div>
                 <p className="text-white">Delete Account</p>
                 <p className="text-sm text-slate-400">Permanently delete your account</p>
               </div>
