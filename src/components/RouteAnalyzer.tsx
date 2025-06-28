@@ -69,13 +69,7 @@ const RouteAnalyzer = () => {
       startCamera();
     }
     setIsRecording(true);
-    // Simulate route detection after 3 seconds
-    setTimeout(() => {
-      if (Math.random() > 0.3) { // 70% success rate
-        const randomRoute = routeColors[Math.floor(Math.random() * routeColors.length)];
-        setDetectedRoute(randomRoute.name);
-      }
-    }, 3000);
+    // No fake route detection - only real AI analysis will set detectedRoute
   };
 
   const handleStopRecording = () => {
@@ -91,6 +85,7 @@ const RouteAnalyzer = () => {
     if (imageData) {
       console.log('Captured frame for analysis:', imageData);
       // Here you would typically send the image for AI analysis
+      // When real AI analysis is implemented, it would call setDetectedRoute() with results
     }
   };
 
