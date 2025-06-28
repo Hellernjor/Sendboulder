@@ -26,6 +26,14 @@ const RouteAnalyzer = () => {
     setCameraError(null);
     console.log('Starting camera...');
     
+    // Log debug info internally
+    console.log('Debug Info:', {
+      protocol: location.protocol,
+      hostname: location.hostname,
+      isSecure: location.protocol === 'https:' || location.hostname === 'localhost',
+      userAgent: navigator.userAgent
+    });
+    
     try {
       // Check permission status first
       const permissionStatus = await cameraServiceRef.current.checkCameraPermission();
@@ -124,17 +132,6 @@ const RouteAnalyzer = () => {
           onCapturePhoto={capturePhoto}
           onReset={stopCamera}
         />
-
-        {/* Debug Info */}
-        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
-          <h4 className="text-yellow-400 font-medium mb-2">Debug Info</h4>
-          <div className="text-yellow-300 text-xs space-y-1">
-            <p>Protocol: {location.protocol}</p>
-            <p>Hostname: {location.hostname}</p>
-            <p>Is Secure: {(location.protocol === 'https:' || location.hostname === 'localhost').toString()}</p>
-            <p>User Agent: {navigator.userAgent.substring(0, 50)}...</p>
-          </div>
-        </div>
 
         {/* Route Colors Reference */}
         <div>
