@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Target, Plus, CheckCircle, XCircle, Calendar, User } from 'lucide-react';
-import { Location } from './LocationManager';
+import { Location } from '@/types/location';
 
 export interface Route {
   id: string;
