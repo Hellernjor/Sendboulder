@@ -2,9 +2,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { X, Check, RotateCcw } from 'lucide-react';
+import { X, Check, RotateCcw, Loader2 } from 'lucide-react';
 import GradeSelector from './GradeSelector';
 import GripSelector from './GripSelector';
+import { GripDetectionService, DetectedGrip } from '@/services/gripDetectionService';
 
 interface RouteAnalysisModalProps {
   image: string;
@@ -15,28 +16,32 @@ interface RouteAnalysisModalProps {
 const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalProps) => {
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const [selectedGrips, setSelectedGrips] = useState<Array<{x: number, y: number}>>([]);
-  const [detectedGrips, setDetectedGrips] = useState<Array<{x: number, y: number, confidence: number}>>([]);
-  const [analysisComplete, setAnalysisComplete] = useState(false);
+  const [detectedGrips, setDetectedGrips] = useState<DetectedGrip[]>([]);
+  const [isDetecting, setIsDetecting] = useState(true);
   
   const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    // Simulate AI grip detection
-    const simulateGripDetection = () => {
-      // This would be replaced with actual AI analysis
-      const mockGrips = [
-        { x: 0.2, y: 0.3, confidence: 0.9 },
-        { x: 0.4, y: 0.5, confidence: 0.8 },
-        { x: 0.6, y: 0.4, confidence: 0.85 },
-        { x: 0.3, y: 0.7, confidence: 0.75 },
-      ];
-      setDetectedGrips(mockGrips);
-      setSelectedGrips(mockGrips.map(grip => ({x: grip.x, y: grip.y})));
+    const detectGrips = async () => {
+      setIsDetecting(true);
+      try {
+        console.log('Starting grip detection...');
+        const grips = await GripDetectionService.detectGrips(image);
+        setDetectedGrips(grips);
+        // Pre-select detected grips
+        setSelectedGrips(grips.map(grip => ({x: grip.x, y: grip.y})));
+        console.log('Grip detection completed:', grips);
+      } catch (error) {
+        console.error('Grip detection failed:', error);
+        // Continue without detected grips
+        setDetectedGrips([]);
+      } finally {
+        setIsDetecting(false);
+      }
     };
 
-    // Simulate processing delay
-    setTimeout(simulateGripDetection, 1500);
-  }, []);
+    detectGrips();
+  }, [image]);
 
   const handleComplete = () => {
     if (!selectedGrade || selectedGrips.length === 0) return;
@@ -47,8 +52,7 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
 
   const handleReset = () => {
     setSelectedGrips([]);
-    setDetectedGrips([]);
-    setAnalysisComplete(false);
+    setIsDetecting(false);
   };
 
   return (
@@ -79,13 +83,25 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
                 className="max-w-full max-h-full object-contain"
               />
               
+              {/* Detection Loading Overlay */}
+              {isDetecting && (
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
+                    <p>Detecting climbing grips...</p>
+                  </div>
+                </div>
+              )}
+              
               {/* Grip Overlay */}
-              <GripSelector
-                imageRef={imageRef}
-                detectedGrips={detectedGrips}
-                selectedGrips={selectedGrips}
-                onGripsChange={setSelectedGrips}
-              />
+              {!isDetecting && (
+                <GripSelector
+                  imageRef={imageRef}
+                  detectedGrips={detectedGrips}
+                  selectedGrips={selectedGrips}
+                  onGripsChange={setSelectedGrips}
+                />
+              )}
             </div>
 
             {/* Controls Section */}
@@ -100,12 +116,18 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
 
               <div>
                 <h3 className="text-white font-medium mb-3">Route Grips</h3>
-                <p className="text-slate-400 text-sm mb-3">
-                  {selectedGrips.length} grips selected
-                </p>
-                <p className="text-slate-300 text-xs">
-                  Tap on the image to add/remove grips. AI has pre-selected likely holds.
-                </p>
+                {isDetecting ? (
+                  <p className="text-slate-400 text-sm">Detecting grips...</p>
+                ) : (
+                  <>
+                    <p className="text-slate-400 text-sm mb-3">
+                      {selectedGrips.length} grips selected
+                    </p>
+                    <p className="text-slate-300 text-xs">
+                      Tap on the image to add/remove grips. Google Vision AI has pre-selected likely holds.
+                    </p>
+                  </>
+                )}
               </div>
 
               <div className="space-y-3">
@@ -113,6 +135,7 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
                   onClick={handleReset}
                   variant="outline"
                   className="w-full border-slate-600 text-slate-300 hover:bg-slate-700"
+                  disabled={isDetecting}
                 >
                   <RotateCcw className="h-4 w-4 mr-2" />
                   Reset Selection
@@ -120,7 +143,7 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
                 
                 <Button
                   onClick={handleComplete}
-                  disabled={!selectedGrade || selectedGrips.length === 0}
+                  disabled={!selectedGrade || selectedGrips.length === 0 || isDetecting}
                   className="w-full bg-green-600 hover:bg-green-700"
                 >
                   <Check className="h-4 w-4 mr-2" />
