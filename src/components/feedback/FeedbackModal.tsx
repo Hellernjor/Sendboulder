@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Send } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -33,10 +34,20 @@ const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
 
     setIsSubmitting(true);
     
-    // Simulate sending feedback (in real app, this would go to your backend)
-    setTimeout(() => {
-      console.log('Feedback submitted:', { feedback, email });
-      
+    try {
+      const { error } = await supabase
+        .from('feedback')
+        .insert([
+          {
+            email: email.trim() || null,
+            message: feedback.trim()
+          }
+        ]);
+
+      if (error) {
+        throw error;
+      }
+
       toast({
         title: "Thank you!",
         description: "Your feedback has been submitted successfully.",
@@ -44,9 +55,17 @@ const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
       
       setFeedback('');
       setEmail('');
-      setIsSubmitting(false);
       onClose();
-    }, 1000);
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit feedback. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
