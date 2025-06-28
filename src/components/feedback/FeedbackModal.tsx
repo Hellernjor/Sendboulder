@@ -3,134 +3,107 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { Send } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { Star, Heart } from 'lucide-react';
 
 interface FeedbackModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSubmit: (feedback: { rating: number; stoke: number; comment: string }) => void;
 }
 
-const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
-  const [feedback, setFeedback] = useState('');
-  const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+const FeedbackModal = ({ isOpen, onClose, onSubmit }: FeedbackModalProps) => {
+  const [rating, setRating] = useState(0);
+  const [stoke, setStoke] = useState(0);
+  const [comment, setComment] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!feedback.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter your feedback",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-    
-    try {
-      const { error } = await supabase
-        .from('feedback')
-        .insert([
-          {
-            email: email.trim() || null,
-            message: feedback.trim()
-          }
-        ]);
-
-      if (error) {
-        throw error;
-      }
-
-      toast({
-        title: "Thank you!",
-        description: "Your feedback has been submitted successfully.",
-      });
-      
-      setFeedback('');
-      setEmail('');
-      onClose();
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-      toast({
-        title: "Error",
-        description: "Failed to submit feedback. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleSubmit = () => {
+    onSubmit({ rating, stoke, comment });
+    onClose();
+    // Reset form
+    setRating(0);
+    setStoke(0);
+    setComment('');
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-md bg-slate-800 border-slate-700">
         <DialogHeader>
-          <DialogTitle className="text-purple-800 dark:text-purple-200">
-            Share Your Feedback
-          </DialogTitle>
+          <DialogTitle className="text-white text-xl">How's your climbing going?</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-6">
+          {/* Overall Rating */}
           <div>
-            <Label htmlFor="email" className="text-purple-600 dark:text-purple-300">
-              Email (optional)
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              className="mt-1"
-            />
+            <p className="text-slate-300 mb-3">How would you rate BoulderFlow overall?</p>
+            <div className="flex space-x-2">
+              {[1, 2, 3, 4, 5].map((value) => (
+                <button
+                  key={value}
+                  onClick={() => setRating(value)}
+                  className="transition-colors"
+                >
+                  <Star
+                    className={`h-8 w-8 ${
+                      value <= rating ? 'text-yellow-400 fill-current' : 'text-slate-600'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
           </div>
-          
+
+          {/* Stoke Level */}
           <div>
-            <Label htmlFor="feedback" className="text-purple-600 dark:text-purple-300">
-              Your Feedback *
-            </Label>
+            <p className="text-slate-300 mb-3">What's your stoke level? (How excited are you about your climbing progress?)</p>
+            <div className="flex space-x-2">
+              {[1, 2, 3, 4, 5].map((value) => (
+                <button
+                  key={value}
+                  onClick={() => setStoke(value)}
+                  className="transition-colors"
+                >
+                  <Heart
+                    className={`h-8 w-8 ${
+                      value <= stoke ? 'text-red-400 fill-current' : 'text-slate-600'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+            <p className="text-slate-500 text-sm mt-1">1 = Not stoked, 5 = Super stoked!</p>
+          </div>
+
+          {/* Comment */}
+          <div>
+            <p className="text-slate-300 mb-3">Tell us more about your experience:</p>
             <Textarea
-              id="feedback"
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-              placeholder="Tell us what you think about BoulderFlow! What features would you like to see? What can we improve?"
-              className="mt-1 min-h-[120px]"
-              required
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="How has BoulderFlow helped your climbing? Any suggestions?"
+              className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+              rows={4}
             />
           </div>
-          
-          <div className="flex justify-end space-x-2">
+
+          {/* Submit Button */}
+          <div className="flex space-x-3">
             <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={isSubmitting}
+              onClick={handleSubmit}
+              disabled={rating === 0 || stoke === 0}
+              className="flex-1 bg-orange-600 hover:bg-orange-700"
             >
-              Cancel
+              Send Feedback
             </Button>
             <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-purple-600 hover:bg-purple-700"
+              onClick={onClose}
+              variant="outline"
+              className="border-slate-600 text-slate-300 hover:bg-slate-700"
             >
-              {isSubmitting ? (
-                'Sending...'
-              ) : (
-                <>
-                  <Send className="w-4 h-4 mr-2" />
-                  Send Feedback
-                </>
-              )}
+              Later
             </Button>
           </div>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

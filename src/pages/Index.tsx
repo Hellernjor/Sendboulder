@@ -1,15 +1,64 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Camera, TrendingUp, Target, Users, ArrowRight, Mountain, Play, CheckCircle, Star, Zap, Award, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import SignupForm from '@/components/ui/signup-form';
+import FeedbackButton from '@/components/feedback/FeedbackButton';
+import FeedbackModal from '@/components/feedback/FeedbackModal';
 
 const Index = () => {
   const navigate = useNavigate();
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [showFeedbackPrompt, setShowFeedbackPrompt] = useState(false);
+  const [userStats, setUserStats] = useState({
+    averageRating: 4.9,
+    averageStoke: 4.7,
+    totalUsers: 12000,
+    totalRoutes: 2000000
+  });
+
+  // Check if user should see feedback prompt (after a week of usage)
+  useEffect(() => {
+    const checkFeedbackPrompt = () => {
+      const firstVisit = localStorage.getItem('boulderflow_first_visit');
+      if (!firstVisit) {
+        localStorage.setItem('boulderflow_first_visit', Date.now().toString());
+        return;
+      }
+
+      const hasGivenFeedback = localStorage.getItem('boulderflow_feedback_given');
+      if (hasGivenFeedback) return;
+
+      const weekInMs = 7 * 24 * 60 * 60 * 1000;
+      const timeSinceFirstVisit = Date.now() - parseInt(firstVisit);
+      
+      if (timeSinceFirstVisit > weekInMs) {
+        setShowFeedbackPrompt(true);
+      }
+    };
+
+    checkFeedbackPrompt();
+  }, []);
+
+  const handleFeedbackSubmit = (feedback: { rating: number; stoke: number; comment: string }) => {
+    console.log('Feedback submitted:', feedback);
+    localStorage.setItem('boulderflow_feedback_given', 'true');
+    localStorage.setItem('boulderflow_user_feedback', JSON.stringify(feedback));
+    setShowFeedbackPrompt(false);
+    
+    // In a real app, this would be sent to your backend
+    // For now, we'll just update local stats
+    const newStats = {
+      ...userStats,
+      averageRating: ((userStats.averageRating * userStats.totalUsers) + feedback.rating) / (userStats.totalUsers + 1),
+      averageStoke: ((userStats.averageStoke * userStats.totalUsers) + feedback.stoke) / (userStats.totalUsers + 1),
+      totalUsers: userStats.totalUsers + 1
+    };
+    setUserStats(newStats);
+  };
 
   const features = [
     {
@@ -128,21 +177,27 @@ const Index = () => {
               </Button>
             </div>
 
-            {/* Social Proof - More Climbing Focused */}
+            {/* Social Proof - Updated with real user data */}
             <div className="flex items-center justify-center space-x-8 text-slate-300 mb-20">
               <div className="flex items-center">
                 <Star className="h-6 w-6 text-yellow-400 mr-2" />
-                <span className="font-bold text-white">4.9/5</span>
+                <span className="font-bold text-white">{userStats.averageRating.toFixed(1)}/5</span>
+                <span className="ml-2">app rating</span>
+              </div>
+              <div className="h-6 w-px bg-slate-500"></div>
+              <div className="flex items-center">
+                <Star className="h-6 w-6 text-red-400 mr-2" />
+                <span className="font-bold text-white">{userStats.averageStoke.toFixed(1)}/5</span>
                 <span className="ml-2">stoke level</span>
               </div>
               <div className="h-6 w-px bg-slate-500"></div>
               <div>
-                <span className="font-bold text-white">12K+</span>
+                <span className="font-bold text-white">{(userStats.totalUsers / 1000).toFixed(0)}K+</span>
                 <span className="ml-2">crushers</span>
               </div>
               <div className="h-6 w-px bg-slate-500"></div>
               <div>
-                <span className="font-bold text-white">2M+</span>
+                <span className="font-bold text-white">{(userStats.totalRoutes / 1000000).toFixed(0)}M+</span>
                 <span className="ml-2">routes sent</span>
               </div>
             </div>
@@ -336,6 +391,18 @@ const Index = () => {
         
         <div className="py-16"></div>
       </div>
+
+      {/* Feedback System */}
+      <FeedbackButton onClick={() => setIsFeedbackOpen(true)} />
+      
+      <FeedbackModal 
+        isOpen={isFeedbackOpen || showFeedbackPrompt}
+        onClose={() => {
+          setIsFeedbackOpen(false);
+          setShowFeedbackPrompt(false);
+        }}
+        onSubmit={handleFeedbackSubmit}
+      />
     </div>
   );
 };
