@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -8,6 +7,7 @@ import RouteAnalyzer from '@/components/RouteAnalyzer';
 import PerformanceChart from '@/components/PerformanceChart';
 import LocationManager from '@/components/LocationManager';
 import RouteTracker from '@/components/RouteTracker';
+import FeedbackButton from '@/components/feedback/FeedbackButton';
 
 const Dashboard = () => {
   const weeklyStats = {
@@ -107,6 +107,9 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      
+      {/* Floating Feedback Button */}
+      <FeedbackButton />
     </div>
   );
 };
