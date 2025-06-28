@@ -4,18 +4,52 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Eye, EyeOff } from 'lucide-react';
+import { Mail, Eye, EyeOff, Camera } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { CameraService } from '@/services/cameraService';
 
 const SignupForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [requestingCamera, setRequestingCamera] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const requestCameraPermissions = async () => {
+    setRequestingCamera(true);
+    try {
+      const cameraService = new CameraService();
+      const hasAccess = await cameraService.requestCameraAccess();
+      
+      if (hasAccess) {
+        toast({
+          title: "Camera access granted!",
+          description: "You're all set to analyze climbing routes.",
+        });
+        // Stop the camera immediately since we just needed permission
+        cameraService.stopCamera();
+      } else {
+        toast({
+          title: "Camera access denied",
+          description: "You can enable camera access later in your browser settings to use route analysis.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Camera permission error:', error);
+      toast({
+        title: "Camera setup incomplete",
+        description: "Don't worry, you can enable camera access later for route analysis.",
+      });
+    } finally {
+      setRequestingCamera(false);
+      navigate('/dashboard');
+    }
+  };
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,9 +68,10 @@ const SignupForm = () => {
       if (data.user) {
         toast({
           title: "Account created!",
-          description: "Please check your email to verify your account.",
+          description: "Let's set up camera access for route analysis.",
         });
-        navigate('/dashboard');
+        // Request camera permissions after successful signup
+        await requestCameraPermissions();
       }
     } catch (error: any) {
       console.error('Signup error:', error);
@@ -45,7 +80,6 @@ const SignupForm = () => {
         description: error.message || "Failed to create account",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };
@@ -62,6 +96,8 @@ const SignupForm = () => {
       if (error) {
         throw error;
       }
+      
+      // Camera permissions will be handled on dashboard for OAuth users
     } catch (error: any) {
       console.error('Google signup error:', error);
       toast({
@@ -71,6 +107,24 @@ const SignupForm = () => {
       });
     }
   };
+
+  if (requestingCamera) {
+    return (
+      <Card className="w-full max-w-md mx-auto bg-slate-800/80 border-slate-700 backdrop-blur-sm">
+        <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
+          <Camera className="h-12 w-12 text-blue-400 animate-pulse" />
+          <h3 className="text-xl font-semibold text-white">Setting up camera access</h3>
+          <p className="text-slate-400 text-center text-sm">
+            Please allow camera access to enable route analysis features
+          </p>
+          <div className="flex items-center space-x-2 text-slate-300">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+            <span className="text-sm">Requesting permissions...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-md mx-auto bg-slate-800/80 border-slate-700 backdrop-blur-sm">
