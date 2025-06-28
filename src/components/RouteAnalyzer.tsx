@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Camera, Smartphone } from 'lucide-react';
@@ -29,42 +30,16 @@ const RouteAnalyzer = () => {
     setCameraError(null);
     console.log('Starting camera...');
     
-    // Log debug info internally
-    console.log('Debug Info:', {
-      protocol: location.protocol,
-      hostname: location.hostname,
-      isSecure: location.protocol === 'https:' || location.hostname === 'localhost',
-      userAgent: navigator.userAgent,
-      isSecureContext: window.isSecureContext
-    });
-    
     try {
-      // Check permission status first
-      const permissionStatus = await cameraServiceRef.current.checkCameraPermission();
-      console.log('Current camera permission:', permissionStatus);
+      const result = await cameraServiceRef.current.requestCameraAccess();
       
-      const hasAccess = await cameraServiceRef.current.requestCameraAccess();
-      if (hasAccess && videoRef.current) {
+      if (result.success && videoRef.current) {
         cameraServiceRef.current.attachToVideo(videoRef.current);
         setIsCameraActive(true);
         console.log('Camera started successfully');
       } else {
-        const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
-        let errorMessage = 'Camera access denied. ';
-        
-        if (!isSecure) {
-          errorMessage += 'Camera requires HTTPS connection. ';
-        } else if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
-          errorMessage += 'On iOS: Go to Settings > Safari > Camera & Microphone Access > Allow. ';
-        } else if (navigator.userAgent.includes('Android')) {
-          errorMessage += 'On Android: Check site permissions in browser settings. ';
-        } else {
-          errorMessage += 'Please enable camera permissions in your browser settings. ';
-        }
-        
-        errorMessage += `Current URL: ${location.protocol}//${location.hostname}`;
-        setCameraError(errorMessage);
-        console.error('Camera access failed:', errorMessage);
+        setCameraError(result.error || 'Failed to access camera');
+        console.error('Camera access failed:', result.error);
       }
     } catch (error) {
       const errorMessage = `Failed to access camera: ${error}`;
@@ -85,7 +60,6 @@ const RouteAnalyzer = () => {
       startCamera();
     }
     setIsRecording(true);
-    // No fake route detection - only real AI analysis will set detectedRoute
   };
 
   const handleStopRecording = () => {
@@ -99,7 +73,7 @@ const RouteAnalyzer = () => {
   const capturePhoto = () => {
     const imageData = cameraServiceRef.current.captureFrame();
     if (imageData) {
-      console.log('Captured frame for analysis:', imageData);
+      console.log('Captured frame for analysis');
       setCapturedImage(imageData);
       setShowAnalysisModal(true);
       setIsRecording(false);
@@ -110,7 +84,6 @@ const RouteAnalyzer = () => {
     setDetectedRoute(routeName);
     setShowAnalysisModal(false);
     setCapturedImage(null);
-    // Here you would typically save the route to the database
     console.log('Route analysis completed:', routeName);
   };
 
@@ -121,7 +94,6 @@ const RouteAnalyzer = () => {
 
   useEffect(() => {
     return () => {
-      // Cleanup camera on component unmount
       cameraServiceRef.current.stopCamera();
     };
   }, []);
@@ -184,13 +156,11 @@ const RouteAnalyzer = () => {
               <li>• Position camera 3-6 feet from the wall</li>
               <li>• Make sure route holds are clearly visible</li>
               <li>• Take picture when ready for analysis</li>
-              <li>• If camera fails, check browser permissions</li>
             </ul>
           </div>
         </CardContent>
       </Card>
 
-      {/* Route Analysis Modal */}
       {showAnalysisModal && capturedImage && (
         <RouteAnalysisModal
           image={capturedImage}

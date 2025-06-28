@@ -24,7 +24,6 @@ const SignupForm = () => {
     try {
       const cameraService = new CameraService();
       const result = await cameraService.requestCameraAccess();
-      console.log('Camera access result:', result);
       
       if (result.success) {
         console.log('Camera access granted, navigating to dashboard');
@@ -35,36 +34,30 @@ const SignupForm = () => {
         cameraService.stopCamera();
         setRequestingCamera(false);
         navigate('/dashboard');
-      } else if (result.needsIOSSettings) {
-        console.log('iOS settings needed, showing instructions');
-        setRequestingCamera(false);
-        setShowIOSInstructions(true);
       } else {
-        console.log('Camera access failed for other reasons');
+        console.log('Camera access failed:', result.error);
         setRequestingCamera(false);
-        toast({
-          title: "Camera access needed",
-          description: "You can enable camera access later in your browser settings to use route analysis.",
-          variant: "destructive",
-        });
-        navigate('/dashboard');
+        
+        // Show iOS instructions only if it's an iOS device and permission was denied
+        if (cameraService.isIOSDevice() && result.error?.includes('denied')) {
+          setShowIOSInstructions(true);
+        } else {
+          toast({
+            title: "Camera access needed",
+            description: result.error || "You can enable camera access later in your browser settings.",
+            variant: "destructive",
+          });
+          navigate('/dashboard');
+        }
       }
     } catch (error) {
       console.error('Camera permission error:', error);
       setRequestingCamera(false);
-      
-      // Always show iOS instructions if we detect iOS, even on unexpected errors
-      const cameraService = new CameraService();
-      if (cameraService.isIOSDevice()) {
-        console.log('iOS detected on error, showing instructions');
-        setShowIOSInstructions(true);
-      } else {
-        toast({
-          title: "Camera setup incomplete",
-          description: "Don't worry, you can enable camera access later for route analysis.",
-        });
-        navigate('/dashboard');
-      }
+      toast({
+        title: "Camera setup incomplete",
+        description: "Don't worry, you can enable camera access later for route analysis.",
+      });
+      navigate('/dashboard');
     }
   };
 
@@ -112,8 +105,6 @@ const SignupForm = () => {
       if (error) {
         throw error;
       }
-      
-      // Camera permissions will be handled on dashboard for OAuth users
     } catch (error: any) {
       console.error('Google signup error:', error);
       toast({
@@ -146,7 +137,6 @@ const SignupForm = () => {
     return <CameraPermissionScreen />;
   }
 
-  console.log('Rendering main signup form');
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
       <Card className="w-full max-w-md mx-auto bg-slate-800/90 border-slate-700 backdrop-blur-sm">
