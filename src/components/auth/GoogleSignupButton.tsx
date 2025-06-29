@@ -7,9 +7,24 @@ interface GoogleSignupButtonProps {
 }
 
 const GoogleSignupButton: React.FC<GoogleSignupButtonProps> = ({ onGoogleSignup }) => {
+  const handleGoogleSignup = async () => {
+    try {
+      await onGoogleSignup();
+    } catch (error) {
+      console.error('Google signup failed:', error);
+      // On Safari, sometimes a retry helps
+      if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
+        console.log('Safari detected, attempting retry...');
+        setTimeout(() => {
+          onGoogleSignup();
+        }, 1000);
+      }
+    }
+  };
+
   return (
     <Button
-      onClick={onGoogleSignup}
+      onClick={handleGoogleSignup}
       variant="outline"
       className="w-full bg-white border-slate-300 text-black hover:bg-gray-50 hover:border-slate-400"
     >

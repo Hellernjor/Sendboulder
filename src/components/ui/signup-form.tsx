@@ -94,22 +94,35 @@ const SignupForm = () => {
   };
 
   const handleGoogleSignup = async () => {
+    console.log('Starting Google OAuth flow');
+    
     try {
+      // Get the current URL for redirect
+      const redirectUrl = `${window.location.origin}/dashboard`;
+      console.log('Redirect URL:', redirectUrl);
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         }
       });
 
       if (error) {
+        console.error('Google OAuth error:', error);
         throw error;
       }
+      
+      console.log('Google OAuth initiated successfully');
     } catch (error: any) {
       console.error('Google signup error:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to sign up with Google",
+        title: "Authentication Error",
+        description: error.message || "Failed to sign up with Google. Please try again or use email signup.",
         variant: "destructive",
       });
     }
