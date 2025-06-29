@@ -2,14 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star } from 'lucide-react';
+import { getApprovedFeedback } from '@/lib/database-functions';
 
 interface FeedbackItem {
   id: string;
-  rating: number;
-  stoke: number;
-  comment: string;
-  image_url?: string;
-  display_name?: string;
+  message: string;
+  email?: string;
   created_at: string;
 }
 
@@ -40,44 +38,46 @@ const FeedbackDisplay = ({ onlyHighRatings = false, autoRotate = false, classNam
 
   const fetchFeedback = async () => {
     try {
-      // Mock data for now - in real app this would fetch from Supabase
+      const data = await getApprovedFeedback();
+      
+      // If no real feedback, show mock data for demo
+      if (!data || data.length === 0) {
+        const mockFeedback: FeedbackItem[] = [
+          {
+            id: '1',
+            message: 'SendBoulder completely transformed my climbing! The route recognition is spot-on and the progress tracking keeps me motivated.',
+            email: 'Alex Chen',
+            created_at: new Date().toISOString()
+          },
+          {
+            id: '2',
+            message: 'Finally, an app that gets climbing. Not just tracking sends, but actually making me a better climber. Love the beta optimization!',
+            email: 'Sam Rodriguez',
+            created_at: new Date().toISOString()
+          },
+          {
+            id: '3',
+            message: 'Went from flailing on V5s to sending V8s in 3 months. This app called out my bad footwork and now I climb way more efficiently.',
+            email: 'Jake Morrison',
+            created_at: new Date().toISOString()
+          }
+        ];
+        setFeedbackItems(mockFeedback);
+      } else {
+        setFeedbackItems(data);
+      }
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+      // Fall back to mock data
       const mockFeedback: FeedbackItem[] = [
         {
           id: '1',
-          rating: 6,
-          stoke: 5,
-          comment: 'BoulderFlow completely transformed my climbing! The route recognition is spot-on and the progress tracking keeps me motivated.',
-          display_name: 'Alex Chen',
-          created_at: new Date().toISOString(),
-          image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
-        },
-        {
-          id: '2',
-          rating: 5,
-          stoke: 5,
-          comment: 'Finally, an app that gets climbing. Not just tracking sends, but actually making me a better climber. Love the beta optimization!',
-          display_name: 'Sam Rodriguez',
-          created_at: new Date().toISOString(),
-          image_url: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
-        },
-        {
-          id: '3',
-          rating: 6,
-          stoke: 4,
-          comment: 'Went from flailing on V5s to sending V8s in 3 months. This app called out my bad footwork and now I climb way more efficiently.',
-          display_name: 'Jake Morrison',
-          created_at: new Date().toISOString(),
-          image_url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+          message: 'SendBoulder completely transformed my climbing! The route recognition is spot-on and the progress tracking keeps me motivated.',
+          email: 'Alex Chen',
+          created_at: new Date().toISOString()
         }
       ];
-
-      const filteredFeedback = onlyHighRatings 
-        ? mockFeedback.filter(item => item.rating >= 5)
-        : mockFeedback;
-
-      setFeedbackItems(filteredFeedback);
-    } catch (error) {
-      console.error('Error fetching feedback:', error);
+      setFeedbackItems(mockFeedback);
     } finally {
       setLoading(false);
     }
@@ -100,31 +100,24 @@ const FeedbackDisplay = ({ onlyHighRatings = false, autoRotate = false, classNam
           key={`${feedback.id}-${index}`} 
           className="bg-white/50 backdrop-blur-sm border border-orange-300/50 overflow-hidden shadow-lg transition-all duration-500"
         >
-          {feedback.image_url && (
-            <div className="relative h-40 overflow-hidden">
-              <img 
-                src={feedback.image_url} 
-                alt={feedback.display_name || 'User photo'}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 to-transparent" />
-            </div>
-          )}
+          <div className="relative h-40 overflow-hidden bg-gradient-to-br from-orange-300/40 to-blue-300/40">
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 to-transparent" />
+          </div>
           <CardContent className="p-8">
             <div className="flex mb-4">
-              {[...Array(feedback.rating)].map((_, i) => (
+              {[...Array(5)].map((_, i) => (
                 <Star key={i} className="h-5 w-5 text-yellow-500 fill-current" />
               ))}
             </div>
-            <p className="text-slate-700 mb-6 italic text-lg leading-relaxed">"{feedback.comment}"</p>
+            <p className="text-slate-700 mb-6 italic text-lg leading-relaxed">"{feedback.message}"</p>
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-600 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold">
-                  {feedback.display_name ? feedback.display_name.charAt(0) : 'A'}
+                  {feedback.email ? feedback.email.charAt(0) : 'A'}
                 </span>
               </div>
               <div>
-                <p className="text-slate-800 font-bold">{feedback.display_name || 'Anonymous'}</p>
+                <p className="text-slate-800 font-bold">{feedback.email || 'Anonymous'}</p>
                 <p className="text-slate-600 text-sm font-medium">Verified Crusher</p>
               </div>
             </div>

@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { Location, GradeLevel } from '@/types/location';
 import type { Route, Attempt } from '@/types/route';
@@ -401,7 +402,7 @@ export const deleteAttempt = async (attemptId: string) => {
   return data;
 };
 
-// Feedback functions with simplified types
+// Feedback functions
 interface FeedbackInput {
   rating: number;
   stoke: number;
@@ -412,28 +413,7 @@ interface FeedbackInput {
 }
 
 export const submitFeedback = async (feedback: FeedbackInput) => {
-  let imageUrl: string | null = null;
-
-  // Upload image if provided
-  if (feedback.imageFile) {
-    const fileExt = feedback.imageFile.name.split('.').pop();
-    const fileName = `${Date.now()}.${fileExt}`;
-    
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('feedback-images')
-      .upload(fileName, feedback.imageFile);
-
-    if (uploadError) {
-      console.error('Error uploading image:', uploadError);
-    } else {
-      const { data: { publicUrl } } = supabase.storage
-        .from('feedback-images')
-        .getPublicUrl(fileName);
-      imageUrl = publicUrl;
-    }
-  }
-
-  // Insert feedback using the correct schema
+  // Since the current schema only has message and email fields, we'll work with that
   const insertData = {
     message: feedback.comment,
     email: feedback.email || feedback.displayName || null
@@ -452,13 +432,11 @@ export const submitFeedback = async (feedback: FeedbackInput) => {
   return data;
 };
 
-export const getApprovedFeedback = async (onlyHighRatings = false) => {
-  let query = supabase
+export const getApprovedFeedback = async () => {
+  const { data, error } = await supabase
     .from('feedback')
     .select('*')
     .order('created_at', { ascending: false });
-
-  const { data, error } = await query;
 
   if (error) throw error;
   return data || [];
