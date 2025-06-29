@@ -6,12 +6,30 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, Plus, Navigation, Loader2 } from 'lucide-react';
 import { Location } from '@/types/location';
 import AddLocationModal from './AddLocationModal';
+import { getLocations } from '@/lib/database-functions';
 
 const LocationChoice = () => {
   const [locations, setLocations] = useState<Location[]>([]);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [showAddLocation, setShowAddLocation] = useState(false);
   const [loadingLocation, setLoadingLocation] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadLocations();
+    getUserLocation();
+  }, []);
+
+  const loadLocations = async () => {
+    try {
+      const data = await getLocations();
+      setLocations(data);
+    } catch (error) {
+      console.error('Error loading locations:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Get user's GPS location
   const getUserLocation = () => {
@@ -65,9 +83,15 @@ const LocationChoice = () => {
       return distanceA - distanceB;
     }) : locations;
 
-  useEffect(() => {
-    getUserLocation();
-  }, []);
+  if (loading) {
+    return (
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardContent className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <>

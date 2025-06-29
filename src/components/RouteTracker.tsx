@@ -1,37 +1,88 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Target, Plus, User } from 'lucide-react';
+import { Target, Plus, User, Loader2 } from 'lucide-react';
 import { Location } from '@/types/location';
 import { Route, Attempt } from '@/types/route';
 import LocationSelector from './route/LocationSelector';
 import LocationInfo from './route/LocationInfo';
 import AddRouteForm from './route/AddRouteForm';
 import RoutesList from './route/RoutesList';
+import { getLocations, createRoute, getUserRoutes, getUserAttempts } from '@/lib/database-functions';
+import { useToast } from '@/hooks/use-toast';
 
 const RouteTracker = () => {
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [showAddRoute, setShowAddRoute] = useState(false);
-
-  // Start with empty arrays - only real user data
-  const locations: Location[] = [];
+  const [locations, setLocations] = useState<Location[]>([]);
   const [routes, setRoutes] = useState<Route[]>([]);
-  const [attempts] = useState<Attempt[]>([]);
+  const [attempts, setAttempts] = useState<Attempt[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const handleAddRoute = (routeData: Omit<Route, 'id' | 'createdAt' | 'isActive' | 'personalRoute' | 'createdBy'>) => {
-    const route: Route = {
-      id: Date.now().toString(),
-      ...routeData,
-      isActive: true,
-      createdAt: new Date(),
-      personalRoute: true,
-      createdBy: 'current-user'
-    };
+  useEffect(() => {
+    loadLocations();
+  }, []);
 
-    setRoutes([...routes, route]);
-    setShowAddRoute(false);
+  useEffect(() => {
+    if (selectedLocation) {
+      loadRoutes();
+      loadAttempts();
+    }
+  }, [selectedLocation]);
+
+  const loadLocations = async () => {
+    try {
+      const data = await getLocations();
+      setLocations(data);
+    } catch (error) {
+      console.error('Error loading locations:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadRoutes = async () => {
+    try {
+      const data = await getUserRoutes(selectedLocation);
+      setRoutes(data);
+    } catch (error) {
+      console.error('Error loading routes:', error);
+    }
+  };
+
+  const loadAttempts = async () => {
+    try {
+      const data = await getUserAttempts(selectedLocation);
+      setAttempts(data);
+    } catch (error) {
+      console.error('Error loading attempts:', error);
+    }
+  };
+
+  const handleAddRoute = async (routeData: Omit<Route, 'id' | 'createdAt' | 'isActive' | 'personalRoute' | 'createdBy'>) => {
+    try {
+      await createRoute({
+        ...routeData,
+        isActive: true,
+        personalRoute: true
+      });
+      await loadRoutes();
+      setShowAddRoute(false);
+      toast({
+        title: "Success",
+        description: "Route added successfully!",
+      });
+    } catch (error) {
+      console.error('Error adding route:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add route. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const filteredRoutes = selectedLocation 
@@ -39,6 +90,16 @@ const RouteTracker = () => {
     : [];
 
   const selectedLocationData = locations.find(loc => loc.id === selectedLocation);
+
+  if (loading) {
+    return (
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardContent className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-slate-800/50 border-slate-700">

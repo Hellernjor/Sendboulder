@@ -1,36 +1,76 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Globe, Plus, Users } from 'lucide-react';
+import { Globe, Plus, Users, Loader2 } from 'lucide-react';
 import { Location } from '@/types/location';
 import LocationCard from './location/LocationCard';
 import AddLocationForm from './location/AddLocationForm';
+import { getLocations, createLocation } from '@/lib/database-functions';
+import { useToast } from '@/hooks/use-toast';
 
 const LocationManager = () => {
-  // Start with empty locations array - only real user data
   const [locations, setLocations] = useState<Location[]>([]);
-
   const [showAddForm, setShowAddForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const handleAddLocation = (locationData: Omit<Location, 'id' | 'createdBy' | 'createdByUsername' | 'createdAt' | 'isGlobal'>) => {
-    const location: Location = {
-      id: Date.now().toString(),
-      ...locationData,
-      createdBy: 'current-user',
-      createdByUsername: 'you',
-      createdAt: new Date(),
-      isGlobal: true
-    };
+  useEffect(() => {
+    loadLocations();
+  }, []);
 
-    setLocations([...locations, location]);
-    setShowAddForm(false);
+  const loadLocations = async () => {
+    try {
+      const data = await getLocations();
+      setLocations(data);
+    } catch (error) {
+      console.error('Error loading locations:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load locations. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddLocation = async (locationData: Omit<Location, 'id' | 'createdBy' | 'createdByUsername' | 'createdAt' | 'isGlobal'>) => {
+    try {
+      await createLocation({
+        ...locationData,
+        isGlobal: true
+      });
+      await loadLocations();
+      setShowAddForm(false);
+      toast({
+        title: "Success",
+        description: "Location added successfully!",
+      });
+    } catch (error) {
+      console.error('Error adding location:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add location. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDeleteLocation = (locationId: string) => {
     setLocations(locations.filter(loc => loc.id !== locationId));
   };
+
+  if (loading) {
+    return (
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardContent className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-slate-800/50 border-slate-700">

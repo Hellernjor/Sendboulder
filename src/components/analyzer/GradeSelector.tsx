@@ -19,7 +19,24 @@ const GradeSelector = ({ selectedGrade, onGradeSelect, locationId }: GradeSelect
   useEffect(() => {
     const loadGrades = async () => {
       try {
-        // For now, use mock data. In real implementation, load from selected gym
+        if (locationId) {
+          const data = await getGradeLevels(locationId);
+          setGrades(data);
+        } else {
+          // Use mock data when no location is selected
+          const mockGrades: GradeLevel[] = [
+            { id: '1', color: '#22c55e', name: 'Green', difficulty: 'beginner', order: 0 },
+            { id: '2', color: '#3b82f6', name: 'Blue', difficulty: 'easy', order: 1 },
+            { id: '3', color: '#ef4444', name: 'Red', difficulty: 'intermediate', order: 2 },
+            { id: '4', color: '#eab308', name: 'Yellow', difficulty: 'advanced', order: 3 },
+            { id: '5', color: '#8b5cf6', name: 'Purple', difficulty: 'expert', order: 4 },
+          ];
+          setGrades(mockGrades);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading grades:', error);
+        // Fallback to mock data
         const mockGrades: GradeLevel[] = [
           { id: '1', color: '#22c55e', name: 'Green', difficulty: 'beginner', order: 0 },
           { id: '2', color: '#3b82f6', name: 'Blue', difficulty: 'easy', order: 1 },
@@ -27,11 +44,7 @@ const GradeSelector = ({ selectedGrade, onGradeSelect, locationId }: GradeSelect
           { id: '4', color: '#eab308', name: 'Yellow', difficulty: 'advanced', order: 3 },
           { id: '5', color: '#8b5cf6', name: 'Purple', difficulty: 'expert', order: 4 },
         ];
-        
         setGrades(mockGrades);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error loading grades:', error);
         setLoading(false);
       }
     };

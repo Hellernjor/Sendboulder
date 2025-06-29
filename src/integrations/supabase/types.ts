@@ -9,6 +9,64 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      attempts: {
+        Row: {
+          attempts: number
+          completed: boolean
+          created_at: string | null
+          date: string | null
+          id: string
+          location_id: string
+          notes: string | null
+          route_id: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          completed: boolean
+          created_at?: string | null
+          date?: string | null
+          id?: string
+          location_id: string
+          notes?: string | null
+          route_id: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          completed?: boolean
+          created_at?: string | null
+          date?: string | null
+          id?: string
+          location_id?: string
+          notes?: string | null
+          route_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attempts_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attempts_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attempts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feedback: {
         Row: {
           created_at: string | null
@@ -29,6 +87,179 @@ export type Database = {
           message?: string
         }
         Relationships: []
+      }
+      grade_levels: {
+        Row: {
+          color: string
+          created_at: string | null
+          difficulty: string
+          id: string
+          location_id: string | null
+          name: string
+          order_index: number
+        }
+        Insert: {
+          color: string
+          created_at?: string | null
+          difficulty: string
+          id?: string
+          location_id?: string | null
+          name: string
+          order_index: number
+        }
+        Update: {
+          color?: string
+          created_at?: string | null
+          difficulty?: string
+          id?: string
+          location_id?: string | null
+          name?: string
+          order_index?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grade_levels_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string | null
+          coordinates: Json | null
+          created_at: string | null
+          created_by: string
+          created_by_username: string
+          id: string
+          is_global: boolean | null
+          name: string
+          route_change_frequency: string | null
+          type: string
+        }
+        Insert: {
+          address?: string | null
+          coordinates?: Json | null
+          created_at?: string | null
+          created_by: string
+          created_by_username: string
+          id?: string
+          is_global?: boolean | null
+          name: string
+          route_change_frequency?: string | null
+          type: string
+        }
+        Update: {
+          address?: string | null
+          coordinates?: Json | null
+          created_at?: string | null
+          created_by?: string
+          created_by_username?: string
+          id?: string
+          is_global?: boolean | null
+          name?: string
+          route_change_frequency?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      routes: {
+        Row: {
+          color: string
+          created_at: string | null
+          created_by: string
+          grade_id: string
+          id: string
+          is_active: boolean | null
+          location_id: string
+          name: string
+          personal_route: boolean | null
+          removed_at: string | null
+        }
+        Insert: {
+          color: string
+          created_at?: string | null
+          created_by: string
+          grade_id: string
+          id?: string
+          is_active?: boolean | null
+          location_id: string
+          name: string
+          personal_route?: boolean | null
+          removed_at?: string | null
+        }
+        Update: {
+          color?: string
+          created_at?: string | null
+          created_by?: string
+          grade_id?: string
+          id?: string
+          is_active?: boolean | null
+          location_id?: string
+          name?: string
+          personal_route?: boolean | null
+          removed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routes_grade_id_fkey"
+            columns: ["grade_id"]
+            isOneToOne: false
+            referencedRelation: "grade_levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routes_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
