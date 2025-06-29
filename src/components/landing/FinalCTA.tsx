@@ -13,12 +13,12 @@ interface FinalCTAProps {
 
 const FinalCTA = ({ isSignupOpen, setIsSignupOpen }: FinalCTAProps) => {
   return (
-    <div className="relative text-center rounded-3xl overflow-hidden bg-gradient-to-r from-slate-900 to-slate-800 shadow-2xl">
+    <div className="relative text-center rounded-3xl overflow-hidden bg-white/90 backdrop-blur-sm shadow-2xl border border-blue-200">
       <div className="relative p-8 md:p-16">
-        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 md:mb-6">
+        <h2 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4 md:mb-6">
           Ready to Level Up Your Climbing?
         </h2>
-        <p className="text-lg md:text-2xl text-orange-100 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+        <p className="text-lg md:text-2xl text-slate-600 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
           Join thousands of climbers who've already unlocked their potential. Your next grade is waiting.
         </p>
         
@@ -45,11 +45,11 @@ const FinalCTA = ({ isSignupOpen, setIsSignupOpen }: FinalCTAProps) => {
           />
         </div>
         
-        <p className="text-sm text-orange-200 font-medium mb-4">
+        <p className="text-sm text-slate-600 font-medium mb-4">
           Completely free • No commitment • No hidden fees
         </p>
         
-        <p className="text-xs text-orange-300 font-medium">
+        <p className="text-xs text-slate-500 font-medium">
           Love the app? Share it with your climbing crew! 🧗‍♂️
         </p>
       </div>
