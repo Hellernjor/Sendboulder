@@ -14,6 +14,7 @@ const RouteAnalyzer = () => {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const cameraServiceRef = useRef<CameraService>(new CameraService());
@@ -27,6 +28,7 @@ const RouteAnalyzer = () => {
   ];
 
   const startCamera = async () => {
+    setIsInitializing(true);
     setCameraError(null);
     console.log('Starting camera...');
     
@@ -34,9 +36,16 @@ const RouteAnalyzer = () => {
       const result = await cameraServiceRef.current.requestCameraAccess();
       
       if (result.success && videoRef.current) {
-        cameraServiceRef.current.attachToVideo(videoRef.current);
-        setIsCameraActive(true);
-        console.log('Camera started successfully');
+        console.log('Camera access granted, attaching to video element');
+        const attached = await cameraServiceRef.current.attachToVideo(videoRef.current);
+        
+        if (attached) {
+          setIsCameraActive(true);
+          console.log('Camera started successfully');
+        } else {
+          setCameraError('Failed to attach camera to video element');
+          console.error('Failed to attach camera to video element');
+        }
       } else {
         setCameraError(result.error || 'Failed to access camera');
         console.error('Camera access failed:', result.error);
@@ -45,6 +54,8 @@ const RouteAnalyzer = () => {
       const errorMessage = `Failed to access camera: ${error}`;
       setCameraError(errorMessage);
       console.error('Camera startup error:', error);
+    } finally {
+      setIsInitializing(false);
     }
   };
 
@@ -53,11 +64,12 @@ const RouteAnalyzer = () => {
     setIsCameraActive(false);
     setIsRecording(false);
     setDetectedRoute(null);
+    console.log('Camera stopped by user');
   };
 
-  const handleStartRecording = () => {
+  const handleStartRecording = async () => {
     if (!isCameraActive) {
-      startCamera();
+      await startCamera();
     }
     setIsRecording(true);
   };
@@ -67,7 +79,17 @@ const RouteAnalyzer = () => {
   };
 
   const switchCamera = async () => {
-    await cameraServiceRef.current.switchCamera();
+    setIsInitializing(true);
+    try {
+      const result = await cameraServiceRef.current.switchCamera();
+      if (result.success && videoRef.current) {
+        await cameraServiceRef.current.attachToVideo(videoRef.current);
+      }
+    } catch (error) {
+      console.error('Error switching camera:', error);
+    } finally {
+      setIsInitializing(false);
+    }
   };
 
   const capturePhoto = () => {
@@ -77,6 +99,9 @@ const RouteAnalyzer = () => {
       setCapturedImage(imageData);
       setShowAnalysisModal(true);
       setIsRecording(false);
+    } else {
+      console.error('Failed to capture frame');
+      setCameraError('Failed to capture photo. Please try again.');
     }
   };
 
@@ -116,6 +141,7 @@ const RouteAnalyzer = () => {
             detectedRoute={detectedRoute}
             cameraError={cameraError}
             onStartCamera={startCamera}
+            isInitializing={isInitializing}
           />
 
           <CameraControls
@@ -126,6 +152,7 @@ const RouteAnalyzer = () => {
             onSwitchCamera={switchCamera}
             onCapturePhoto={capturePhoto}
             onReset={stopCamera}
+            isInitializing={isInitializing}
           />
 
           {/* Route Colors Reference */}

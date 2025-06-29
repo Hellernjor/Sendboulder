@@ -12,8 +12,11 @@ export class CameraService {
         return { success: false, error: 'Camera API not supported in this browser' };
       }
 
-      // Simple, direct camera request
-      const constraints = {
+      // Stop any existing stream first
+      this.stopCamera();
+
+      // Request camera access with fallback constraints
+      let constraints = {
         video: { 
           facingMode: 'environment',
           width: { ideal: 1280 },
@@ -22,8 +25,28 @@ export class CameraService {
         audio: false
       };
 
-      this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+      try {
+        this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (error: any) {
+        console.log('Failed with environment camera, trying default camera');
+        // Fallback to any available camera
+        constraints = {
+          video: { 
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        };
+        this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+      }
+
       console.log('Camera access granted successfully');
+      console.log('Stream tracks:', this.stream.getTracks().map(track => ({
+        kind: track.kind,
+        enabled: track.enabled,
+        readyState: track.readyState
+      })));
+
       return { success: true };
     } catch (error: any) {
       console.error('Camera access error:', error);
@@ -42,6 +65,13 @@ export class CameraService {
           error: 'No camera found on this device.' 
         };
       }
+
+      if (error.name === 'NotReadableError') {
+        return { 
+          success: false, 
+          error: 'Camera is already in use by another application.' 
+        };
+      }
       
       return { 
         success: false, 
@@ -50,30 +80,62 @@ export class CameraService {
     }
   }
 
-  attachToVideo(videoElement: HTMLVideoElement) {
-    if (this.stream && videoElement) {
+  async attachToVideo(videoElement: HTMLVideoElement): Promise<boolean> {
+    if (!this.stream) {
+      console.error('No stream available to attach');
+      return false;
+    }
+
+    try {
       this.videoElement = videoElement;
       videoElement.srcObject = this.stream;
-      videoElement.play().catch(err => {
-        console.error('Error playing video:', err);
+      
+      // Wait for video to be ready
+      await new Promise<void>((resolve, reject) => {
+        videoElement.onloadedmetadata = () => {
+          console.log('Video metadata loaded');
+          resolve();
+        };
+        videoElement.onerror = (error) => {
+          console.error('Video error:', error);
+          reject(error);
+        };
+        
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          reject(new Error('Video loading timeout'));
+        }, 10000);
       });
-      console.log('Video stream attached successfully');
+
+      await videoElement.play();
+      console.log('Video stream attached and playing successfully');
+      return true;
+    } catch (error) {
+      console.error('Error attaching video:', error);
+      return false;
     }
   }
 
   stopCamera() {
     if (this.stream) {
-      this.stream.getTracks().forEach(track => track.stop());
+      this.stream.getTracks().forEach(track => {
+        track.stop();
+        console.log('Stopped track:', track.kind);
+      });
       this.stream = null;
       console.log('Camera stopped');
     }
     if (this.videoElement) {
       this.videoElement.srcObject = null;
+      this.videoElement = null;
     }
   }
 
   captureFrame(): string | null {
-    if (!this.videoElement) return null;
+    if (!this.videoElement) {
+      console.error('No video element available for capture');
+      return null;
+    }
     
     const canvas = document.createElement('canvas');
     canvas.width = this.videoElement.videoWidth;
@@ -101,5 +163,9 @@ export class CameraService {
 
   isIOSDevice(): boolean {
     return /iPad|iPhone|iPod/.test(navigator.userAgent);
+  }
+
+  hasStream(): boolean {
+    return this.stream !== null && this.stream.getTracks().length > 0;
   }
 }
