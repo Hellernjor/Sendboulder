@@ -1,6 +1,7 @@
 
 import React from 'react';
 import RouteCard from './RouteCard';
+import EmptyRoutesMessage from './EmptyRoutesMessage';
 import { Route, Attempt } from '@/types/route';
 import { Location } from '@/types/location';
 
@@ -13,12 +14,7 @@ interface RoutesListProps {
 
 const RoutesList = ({ routes, attempts, locationName, location }: RoutesListProps) => {
   if (routes.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-purple-400 text-sm">No personal routes tracked at this location yet.</p>
-        <p className="text-indigo-400 text-xs mt-1">Add your first route to start tracking your progress!</p>
-      </div>
-    );
+    return <EmptyRoutesMessage />;
   }
 
   return (

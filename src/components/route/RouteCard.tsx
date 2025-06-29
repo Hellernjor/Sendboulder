@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Calendar } from 'lucide-react';
 import { Route, Attempt } from '@/types/route';
 import { Location } from '@/types/location';
+import GradeBadge from './GradeBadge';
 
 interface RouteCardProps {
   route: Route;
@@ -33,24 +33,19 @@ const RouteCard = ({ route, attempts, location }: RouteCardProps) => {
             <div>
               <div className="flex items-center space-x-2">
                 <p className="text-indigo-800 dark:text-indigo-200 font-medium">{route.name}</p>
-                <Badge className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs">
-                  Personal
-                </Badge>
-                {!route.isActive && (
-                  <Badge className="bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30 text-xs">
-                    Removed from gym
-                  </Badge>
-                )}
+                <GradeBadge 
+                  gradeName={gradeName}
+                  difficultyLabel={difficultyLabel}
+                  isPersonal={true}
+                  isActive={route.isActive}
+                />
               </div>
-              <p className="text-indigo-600 dark:text-indigo-300 text-sm">
-                {gradeName} • {difficultyLabel}
-                {lastAttempt && (
-                  <span className="ml-2">
-                    • Last: {lastAttempt.attempts} attempts 
-                    {lastAttempt.completed ? ' ✓' : ' ✗'}
-                  </span>
-                )}
-              </p>
+              {lastAttempt && (
+                <p className="text-indigo-600 dark:text-indigo-300 text-sm">
+                  Last: {lastAttempt.attempts} attempts 
+                  {lastAttempt.completed ? ' ✓' : ' ✗'}
+                </p>
+              )}
             </div>
           </div>
           <div className="flex items-center space-x-2">
