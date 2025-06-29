@@ -36,14 +36,14 @@ const FeaturesSection = () => {
       <h2 className="text-3xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
         Built for Climbers, By Climbers
       </h2>
-      <p className="text-lg md:text-xl text-slate-800 text-center mb-12 md:mb-16 max-w-3xl mx-auto font-medium">
+      <p className="text-lg md:text-xl text-slate-600 text-center mb-12 md:mb-16 max-w-3xl mx-auto font-medium">
         Every feature designed to make you a stronger, smarter climber.
       </p>
       <div className="grid md:grid-cols-2 gap-8 md:gap-12">
         {features.map((feature, index) => (
           <Card 
             key={index} 
-            className="bg-white/80 backdrop-blur-sm border-2 border-orange-600/80 hover:border-orange-700/90 transition-all duration-300 hover:scale-105 group overflow-hidden shadow-xl hover:shadow-2xl rounded-2xl"
+            className="bg-white border border-orange-200 hover:border-orange-300 transition-all duration-300 hover:scale-105 group overflow-hidden shadow-lg hover:shadow-xl rounded-2xl"
           >
             <div className={`relative h-40 md:h-48 bg-gradient-to-br ${feature.gradient} flex items-center justify-center`}>
               <div className="p-4 md:p-6 bg-white/30 rounded-2xl backdrop-blur-sm border border-white/40">
@@ -52,7 +52,7 @@ const FeaturesSection = () => {
             </div>
             <CardContent className="p-6 md:p-8">
               <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-3 md:mb-4">{feature.title}</h3>
-              <p className="text-slate-800 leading-relaxed text-base md:text-lg font-medium">{feature.description}</p>
+              <p className="text-slate-600 leading-relaxed text-base md:text-lg font-medium">{feature.description}</p>
             </CardContent>
           </Card>
         ))}

@@ -74,7 +74,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-600 via-orange-500 to-amber-400 text-slate-900 overflow-hidden">
+    <div className="min-h-screen bg-white text-slate-900 overflow-hidden">
       {/* Hero Section */}
       <HeroSection 
         isSignupOpen={isSignupOpen}
@@ -97,7 +97,7 @@ const Index = () => {
           <h2 className="text-3xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
             Real Climbers, Real Results
           </h2>
-          <p className="text-lg md:text-xl text-slate-800 text-center mb-12 md:mb-16 font-medium">
+          <p className="text-lg md:text-xl text-slate-600 text-center mb-12 md:mb-16 font-medium">
             Don't just take our word for it - here's what the community says.
           </p>
           <FeedbackDisplay onlyHighRatings={true} autoRotate={true} />

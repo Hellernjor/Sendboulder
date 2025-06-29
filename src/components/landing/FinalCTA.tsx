@@ -13,8 +13,7 @@ interface FinalCTAProps {
 
 const FinalCTA = ({ isSignupOpen, setIsSignupOpen }: FinalCTAProps) => {
   return (
-    <div className="relative text-center rounded-3xl overflow-hidden bg-gradient-to-r from-slate-900 to-slate-800 shadow-2xl border-2 border-slate-700">
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-800/30 to-amber-800/30"></div>
+    <div className="relative text-center rounded-3xl overflow-hidden bg-gradient-to-r from-slate-900 to-slate-800 shadow-2xl">
       <div className="relative p-8 md:p-16">
         <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 md:mb-6">
           Ready to Level Up Your Climbing?
@@ -28,7 +27,7 @@ const FinalCTA = ({ isSignupOpen, setIsSignupOpen }: FinalCTAProps) => {
             <DialogTrigger asChild>
               <Button 
                 size="lg"
-                className="bg-gradient-to-r from-orange-700 to-amber-700 hover:from-orange-800 hover:to-amber-800 text-white px-12 md:px-16 py-6 md:py-8 text-lg md:text-2xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl rounded-2xl border-2 border-orange-600"
+                className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-12 md:px-16 py-6 md:py-8 text-lg md:text-2xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl rounded-2xl border-0"
               >
                 Start Free
                 <ArrowRight className="ml-2 md:ml-3 h-5 w-5 md:h-7 md:w-7" />
