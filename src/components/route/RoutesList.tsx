@@ -15,7 +15,7 @@ interface RoutesListProps {
 
 const RoutesList = ({ routes, attempts, locationName, location, onLogAttempt }: RoutesListProps) => {
   if (routes.length === 0) {
-    return <EmptyRoutesMessage locationName={locationName} />;
+    return <EmptyRoutesMessage />;
   }
 
   return (

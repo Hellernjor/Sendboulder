@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import LocationSelector from './route/LocationSelector';
 import LocationInfo from './route/LocationInfo';
 import AddRouteForm from './route/AddRouteForm';
 import RoutesList from './route/RoutesList';
+import QuickScoreSection from './route/QuickScoreSection';
 import { getLocations, createRoute, getUserRoutes, getUserAttempts, createAttempt } from '@/lib/database-functions';
 import { useToast } from '@/hooks/use-toast';
 
@@ -110,6 +110,44 @@ const RouteTracker = () => {
     }
   };
 
+  const handleQuickScore = async (gradeId: string, attemptCount: number, completed: boolean, notes?: string) => {
+    try {
+      // Create a temporary route entry for quick scores
+      const quickScoreRoute = await createRoute({
+        name: `Quick Score - ${new Date().toLocaleTimeString()}`,
+        color: selectedLocationData?.gradeSystem?.find(g => g.id === gradeId)?.color || '#666666',
+        gradeId,
+        locationId: selectedLocation,
+        isActive: true,
+        personalRoute: true
+      });
+
+      await createAttempt({
+        routeId: quickScoreRoute.id,
+        locationId: selectedLocation,
+        completed,
+        attempts: attemptCount,
+        date: new Date(),
+        notes
+      });
+
+      await loadRoutes();
+      await loadAttempts();
+      
+      toast({
+        title: "Success",
+        description: `Quick score logged! ${completed ? '🎉' : 'Keep trying!'}`,
+      });
+    } catch (error) {
+      console.error('Error logging quick score:', error);
+      toast({
+        title: "Error",
+        description: "Failed to log quick score. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const filteredRoutes = selectedLocation 
     ? routes.filter(route => route.locationId === selectedLocation)
     : [];
@@ -158,6 +196,13 @@ const RouteTracker = () => {
             {selectedLocation && selectedLocationData && (
               <>
                 <LocationInfo location={selectedLocationData} />
+
+                {selectedLocationData.type === 'gym' && selectedLocationData.gradeSystem && selectedLocationData.gradeSystem.length > 0 && (
+                  <QuickScoreSection 
+                    location={selectedLocationData}
+                    onLogAttempt={handleQuickScore}
+                  />
+                )}
 
                 {showAddRoute && (
                   <AddRouteForm
