@@ -1,20 +1,24 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle, XCircle, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { CheckCircle, XCircle, Calendar, Plus } from 'lucide-react';
 import { Route, Attempt } from '@/types/route';
 import { Location } from '@/types/location';
 import GradeBadge from './GradeBadge';
 import RouteAttemptsModal from './RouteAttemptsModal';
+import QuickLogModal from './QuickLogModal';
 
 interface RouteCardProps {
   route: Route;
   attempts: Attempt[];
   location: Location;
+  onLogAttempt?: (routeId: string, attempts: number, completed: boolean, notes?: string) => Promise<void>;
 }
 
-const RouteCard = ({ route, attempts, location }: RouteCardProps) => {
+const RouteCard = ({ route, attempts, location, onLogAttempt }: RouteCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isQuickLogOpen, setIsQuickLogOpen] = useState(false);
   
   const routeAttempts = attempts.filter(a => a.routeId === route.id);
   const lastAttempt = routeAttempts[routeAttempts.length - 1];
@@ -26,6 +30,17 @@ const RouteCard = ({ route, attempts, location }: RouteCardProps) => {
 
   const handleCardClick = () => {
     setIsModalOpen(true);
+  };
+
+  const handleQuickLogClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening the main modal
+    setIsQuickLogOpen(true);
+  };
+
+  const handleLogAttempt = async (routeId: string, attempts: number, completed: boolean, notes?: string) => {
+    if (onLogAttempt) {
+      await onLogAttempt(routeId, attempts, completed, notes);
+    }
   };
 
   return (
@@ -60,6 +75,16 @@ const RouteCard = ({ route, attempts, location }: RouteCardProps) => {
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              {onLogAttempt && (
+                <Button
+                  size="sm"
+                  onClick={handleQuickLogClick}
+                  className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 h-7"
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  Log
+                </Button>
+              )}
               <div className="text-right text-sm">
                 <p className="text-indigo-500 dark:text-indigo-400">
                   <Calendar className="h-3 w-3 inline mr-1" />
@@ -89,6 +114,14 @@ const RouteCard = ({ route, attempts, location }: RouteCardProps) => {
         location={location}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      <QuickLogModal
+        route={route}
+        location={location}
+        isOpen={isQuickLogOpen}
+        onClose={() => setIsQuickLogOpen(false)}
+        onLogAttempt={handleLogAttempt}
       />
     </>
   );

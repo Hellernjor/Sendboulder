@@ -10,7 +10,7 @@ import LocationSelector from './route/LocationSelector';
 import LocationInfo from './route/LocationInfo';
 import AddRouteForm from './route/AddRouteForm';
 import RoutesList from './route/RoutesList';
-import { getLocations, createRoute, getUserRoutes, getUserAttempts } from '@/lib/database-functions';
+import { getLocations, createRoute, getUserRoutes, getUserAttempts, createAttempt } from '@/lib/database-functions';
 import { useToast } from '@/hooks/use-toast';
 
 const RouteTracker = () => {
@@ -80,6 +80,31 @@ const RouteTracker = () => {
       toast({
         title: "Error",
         description: "Failed to add route. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleLogAttempt = async (routeId: string, attemptCount: number, completed: boolean, notes?: string) => {
+    try {
+      await createAttempt({
+        routeId,
+        locationId: selectedLocation,
+        completed,
+        attempts: attemptCount,
+        date: new Date(),
+        notes
+      });
+      await loadAttempts();
+      toast({
+        title: "Success",
+        description: `Attempt logged successfully! ${completed ? '🎉' : 'Keep trying!'}`,
+      });
+    } catch (error) {
+      console.error('Error logging attempt:', error);
+      toast({
+        title: "Error",
+        description: "Failed to log attempt. Please try again.",
         variant: "destructive",
       });
     }
@@ -158,6 +183,7 @@ const RouteTracker = () => {
                   attempts={attempts}
                   locationName={selectedLocationData.name}
                   location={selectedLocationData}
+                  onLogAttempt={handleLogAttempt}
                 />
               </>
             )}
