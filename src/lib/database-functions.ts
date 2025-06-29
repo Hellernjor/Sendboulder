@@ -401,16 +401,18 @@ export const deleteAttempt = async (attemptId: string) => {
   return data;
 };
 
-// Feedback functions
-export const submitFeedback = async (feedback: {
+// Feedback functions with simplified types
+interface FeedbackInput {
   rating: number;
   stoke: number;
   comment: string;
   displayName?: string;
   email?: string;
   imageFile?: File;
-}) => {
-  let imageUrl = null;
+}
+
+export const submitFeedback = async (feedback: FeedbackInput) => {
+  let imageUrl: string | null = null;
 
   // Upload image if provided
   if (feedback.imageFile) {
@@ -431,13 +433,15 @@ export const submitFeedback = async (feedback: {
     }
   }
 
-  // Insert feedback using the correct schema (message field instead of comment)
+  // Insert feedback using the correct schema
+  const insertData = {
+    message: feedback.comment,
+    email: feedback.email || feedback.displayName || null
+  };
+
   const { data, error } = await supabase
     .from('feedback')
-    .insert([{
-      message: feedback.comment, // Map comment to message field
-      email: feedback.email || feedback.displayName || null
-    }])
+    .insert([insertData])
     .select();
 
   if (error) {
@@ -452,12 +456,7 @@ export const getApprovedFeedback = async (onlyHighRatings = false) => {
   let query = supabase
     .from('feedback')
     .select('*')
-    .eq('approved', true)
     .order('created_at', { ascending: false });
-
-  if (onlyHighRatings) {
-    query = query.gte('rating', 5);
-  }
 
   const { data, error } = await query;
 
