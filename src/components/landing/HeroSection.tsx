@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Play, Zap } from 'lucide-react';
+import { Play, Zap, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import SignupForm from '@/components/ui/signup-form';
 import ShareButton from '@/components/ui/ShareButton';
