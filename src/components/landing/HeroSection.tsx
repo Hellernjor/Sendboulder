@@ -28,9 +28,9 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
           <div className="flex items-center justify-center mb-6 md:mb-8">
             <div className="mr-3 md:mr-4">
               <img 
-                src="/lovable-uploads/5fad8cc8-6eb6-480d-8d7b-557f03f5a467.png" 
+                src="/lovable-uploads/792f2868-5455-44fd-bf4a-85bd7bfdffb6.png" 
                 alt="SendBoulder Logo"
-                className="h-16 w-16 md:h-20 md:w-20 object-contain"
+                className="h-32 w-32 md:h-48 md:w-48 lg:h-56 lg:w-56 object-contain"
               />
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
