@@ -13,9 +13,9 @@ const FeedbackButton = ({ onClick }: FeedbackButtonProps) => {
       onClick={onClick}
       variant="outline"
       size="sm"
-      className="fixed bottom-4 right-4 z-50 bg-slate-800 border-slate-600 text-slate-300 hover:bg-slate-700"
+      className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 border-2 border-orange-400 text-white hover:text-white shadow-2xl rounded-2xl px-6 py-3 font-semibold transition-all duration-300 hover:scale-105"
     >
-      <MessageCircle className="h-4 w-4 mr-2" />
+      <MessageCircle className="h-5 w-5 mr-2" />
       Feedback
     </Button>
   );

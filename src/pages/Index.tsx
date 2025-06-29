@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -77,22 +78,26 @@ const Index = () => {
     {
       icon: Camera,
       title: 'Smart Route Vision',
-      description: 'Point, shoot, climb. Our AI instantly reads routes by tape color and difficulty, so you can focus on the send.'
+      description: 'Point, shoot, climb. Our AI instantly reads routes by tape color and difficulty, so you can focus on the send.',
+      gradient: 'from-orange-500 to-red-500'
     },
     {
       icon: TrendingUp,
       title: 'Progress That Matters',
-      description: 'See your climbing evolution with insights that actually help - success rates, weak points, and what to work on next.'
+      description: 'See your climbing evolution with insights that actually help - success rates, weak points, and what to work on next.',
+      gradient: 'from-blue-500 to-cyan-500'
     },
     {
       icon: Target,
       title: 'Beta Optimization',
-      description: 'Get real-time movement feedback. Learn the subtle tweaks that turn your projects into sends.'
+      description: 'Get real-time movement feedback. Learn the subtle tweaks that turn your projects into sends.',
+      gradient: 'from-green-500 to-emerald-500'
     },
     {
       icon: Clock,
       title: 'Session Intel',
-      description: 'Every attempt counts. Track your sessions like a pro and watch patterns emerge in your climbing.'
+      description: 'Every attempt counts. Track your sessions like a pro and watch patterns emerge in your climbing.',
+      gradient: 'from-purple-500 to-pink-500'
     }
   ];
 
@@ -106,23 +111,26 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-300 via-orange-200 to-blue-200 text-slate-900 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-orange-400 via-orange-300 to-amber-200 text-slate-900 overflow-hidden">
       {/* Hero Section */}
       <div className="relative">
-        <div className="container mx-auto px-4 py-20">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-amber-600/20 backdrop-blur-sm"></div>
+        <div className="container mx-auto px-4 py-20 relative z-10">
           <div className="text-center max-w-5xl mx-auto">
             <div className="flex items-center justify-center mb-8">
-              <Mountain className="h-14 w-14 text-slate-800 mr-4" />
-              <h1 className="text-6xl md:text-8xl font-bold text-slate-800 drop-shadow-lg">
-                Send<span className="text-orange-600">Boulder</span>
+              <div className="bg-gradient-to-r from-orange-600 to-amber-600 p-4 rounded-2xl shadow-2xl mr-4">
+                <Mountain className="h-14 w-14 text-white" />
+              </div>
+              <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent drop-shadow-lg">
+                Send<span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Boulder</span>
               </h1>
             </div>
             
-            <p className="text-2xl md:text-3xl text-slate-800 mb-6 leading-relaxed font-light drop-shadow-sm">
+            <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-6 leading-relaxed drop-shadow-sm">
               Your AI Climbing Coach
             </p>
             
-            <p className="text-xl text-slate-700 mb-12 max-w-4xl mx-auto leading-relaxed drop-shadow-sm">
+            <p className="text-xl text-slate-700 mb-12 max-w-4xl mx-auto leading-relaxed drop-shadow-sm font-medium">
               Stop guessing, start sending. Turn your phone into the ultimate climbing companion that reads routes, tracks your moves, and helps you level up faster than ever.
             </p>
             
@@ -131,10 +139,10 @@ const Index = () => {
                 <DialogTrigger asChild>
                   <Button 
                     size="lg"
-                    className="bg-slate-800 hover:bg-slate-700 text-white px-16 py-6 text-xl font-semibold transition-all duration-300 hover:scale-105 shadow-2xl border-0"
+                    className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-16 py-8 text-2xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl border-0 rounded-2xl"
                   >
                     Start Crushing
-                    <Zap className="ml-3 h-6 w-6" />
+                    <Zap className="ml-3 h-7 w-7" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="p-0 bg-transparent border-none shadow-none max-w-md">
@@ -145,36 +153,33 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline"
-                className="border-slate-800 text-slate-800 hover:bg-slate-800/10 px-12 py-6 text-xl transition-all duration-300 backdrop-blur-sm bg-white/60 shadow-lg"
+                className="border-3 border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white px-12 py-8 text-2xl font-semibold transition-all duration-300 backdrop-blur-sm bg-white/80 shadow-xl rounded-2xl"
                 onClick={() => navigate('/dashboard')}
               >
-                <Play className="mr-3 h-6 w-6" />
+                <Play className="mr-3 h-7 w-7" />
                 See It Work
               </Button>
             </div>
 
-            {/* Social Proof */}
+            {/* Enhanced Social Proof */}
             <div className="flex items-center justify-center space-x-8 text-slate-800 mb-20">
-              <div className="flex items-center">
+              <div className="flex items-center bg-white/60 backdrop-blur-sm px-6 py-4 rounded-xl shadow-lg border border-orange-300">
                 <Star className="h-6 w-6 text-yellow-500 mr-2" />
-                <span className="font-bold text-slate-900">{userStats.averageRating.toFixed(1)}/5</span>
-                <span className="ml-2">app rating</span>
+                <span className="font-bold text-slate-900 text-lg">{userStats.averageRating.toFixed(1)}/5</span>
+                <span className="ml-2 font-medium">app rating</span>
               </div>
-              <div className="h-6 w-px bg-slate-700"></div>
-              <div className="flex items-center">
+              <div className="flex items-center bg-white/60 backdrop-blur-sm px-6 py-4 rounded-xl shadow-lg border border-orange-300">
                 <Star className="h-6 w-6 text-red-500 mr-2" />
-                <span className="font-bold text-slate-900">{userStats.averageStoke.toFixed(1)}/5</span>
-                <span className="ml-2">stoke level</span>
+                <span className="font-bold text-slate-900 text-lg">{userStats.averageStoke.toFixed(1)}/5</span>
+                <span className="ml-2 font-medium">stoke level</span>
               </div>
-              <div className="h-6 w-px bg-slate-700"></div>
-              <div>
-                <span className="font-bold text-slate-900">{(userStats.totalUsers / 1000).toFixed(0)}K+</span>
-                <span className="ml-2">crushers</span>
+              <div className="bg-white/60 backdrop-blur-sm px-6 py-4 rounded-xl shadow-lg border border-orange-300">
+                <span className="font-bold text-slate-900 text-lg">{(userStats.totalUsers / 1000).toFixed(0)}K+</span>
+                <span className="ml-2 font-medium">crushers</span>
               </div>
-              <div className="h-6 w-px bg-slate-700"></div>
-              <div>
-                <span className="font-bold text-slate-900">{(userStats.totalRoutes / 1000000).toFixed(0)}M+</span>
-                <span className="ml-2">routes sent</span>
+              <div className="bg-white/60 backdrop-blur-sm px-6 py-4 rounded-xl shadow-lg border border-orange-300">
+                <span className="font-bold text-slate-900 text-lg">{(userStats.totalRoutes / 1000000).toFixed(0)}M+</span>
+                <span className="ml-2 font-medium">routes sent</span>
               </div>
             </div>
           </div>
@@ -182,111 +187,121 @@ const Index = () => {
       </div>
 
       <div className="container mx-auto px-4">
-        {/* Motivation Section */}
-        <div className="relative mb-24 rounded-3xl overflow-hidden bg-gradient-to-r from-orange-400/30 to-blue-300/30 backdrop-blur-sm border border-orange-300/50">
+        {/* Enhanced Motivation Section */}
+        <div className="relative mb-24 rounded-3xl overflow-hidden bg-gradient-to-r from-orange-500/40 to-amber-400/40 backdrop-blur-sm border-2 border-orange-400/60 shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-amber-600/10"></div>
           <div className="relative p-16 text-center">
-            <h2 className="text-5xl font-bold text-slate-800 mb-6">
+            <h2 className="text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-6">
               Your Next Send Awaits
             </h2>
-            <p className="text-2xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-2xl text-slate-700 max-w-3xl mx-auto leading-relaxed font-medium">
               Every crusher knows the feeling - that moment when everything clicks and you stick the crux. 
               We're here to make those moments happen more often.
             </p>
           </div>
         </div>
 
-        {/* Why Climbers Love Us */}
+        {/* Enhanced Benefits Section */}
         <div className="max-w-6xl mx-auto mb-24">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-slate-800">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
             Why Crushers Choose SendBoulder
           </h2>
-          <p className="text-xl text-slate-700 text-center mb-16 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-700 text-center mb-16 max-w-3xl mx-auto font-medium">
             Because sending is everything, and we help you send more.
           </p>
           <div className="grid md:grid-cols-2 gap-8">
             {benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center space-x-4 bg-white/50 backdrop-blur-sm p-6 rounded-xl border border-orange-300/50 shadow-lg">
-                <CheckCircle className="h-7 w-7 text-slate-800 flex-shrink-0" />
-                <span className="text-slate-800 text-lg font-medium">{benefit}</span>
+              <div key={index} className="flex items-center space-x-4 bg-white/70 backdrop-blur-sm p-8 rounded-2xl border-2 border-orange-300/60 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-2 rounded-xl">
+                  <CheckCircle className="h-7 w-7 text-white flex-shrink-0" />
+                </div>
+                <span className="text-slate-800 text-lg font-semibold">{benefit}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Features */}
+        {/* Enhanced Features */}
         <div className="mb-24">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-6 text-slate-800">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
             Built for Climbers, By Climbers
           </h2>
-          <p className="text-xl text-slate-700 text-center mb-16 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-700 text-center mb-16 max-w-3xl mx-auto font-medium">
             Every feature designed to make you a stronger, smarter climber.
           </p>
           <div className="grid md:grid-cols-2 gap-12">
             {features.map((feature, index) => (
               <Card 
                 key={index} 
-                className="bg-white/50 backdrop-blur-sm border border-orange-300/50 hover:border-orange-400/70 transition-all duration-300 hover:scale-105 group overflow-hidden shadow-lg"
+                className="bg-white/70 backdrop-blur-sm border-2 border-orange-300/60 hover:border-orange-400/80 transition-all duration-300 hover:scale-105 group overflow-hidden shadow-xl hover:shadow-2xl rounded-2xl"
               >
-                <div className="relative h-48 bg-gradient-to-br from-orange-300/40 to-blue-300/40 flex items-center justify-center">
-                  <div className="p-6 bg-white/30 rounded-xl backdrop-blur-sm">
-                    <feature.icon className="h-16 w-16 text-slate-800" />
+                <div className={`relative h-48 bg-gradient-to-br ${feature.gradient} flex items-center justify-center`}>
+                  <div className="p-6 bg-white/20 rounded-2xl backdrop-blur-sm border border-white/30">
+                    <feature.icon className="h-16 w-16 text-white drop-shadow-lg" />
                   </div>
                 </div>
                 <CardContent className="p-8">
                   <h3 className="text-2xl font-bold text-slate-800 mb-4">{feature.title}</h3>
-                  <p className="text-slate-700 leading-relaxed text-lg">{feature.description}</p>
+                  <p className="text-slate-700 leading-relaxed text-lg font-medium">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
         </div>
 
-        {/* Testimonials - Now using FeedbackDisplay */}
+        {/* Testimonials */}
         <div className="mb-24">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-6 text-slate-800">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
             Real Climbers, Real Results
           </h2>
-          <p className="text-xl text-slate-700 text-center mb-16">
+          <p className="text-xl text-slate-700 text-center mb-16 font-medium">
             Don't just take our word for it - here's what the community says.
           </p>
           <FeedbackDisplay onlyHighRatings={true} autoRotate={true} />
         </div>
 
-        {/* Stats */}
-        <div className="bg-white/50 backdrop-blur-sm rounded-3xl p-12 mb-24 border border-orange-300/50 shadow-lg">
-          <h2 className="text-3xl font-bold text-center mb-12 text-slate-800">The Numbers Don't Lie</h2>
+        {/* Enhanced Stats */}
+        <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-12 mb-24 border-2 border-orange-300/60 shadow-2xl">
+          <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">The Numbers Don't Lie</h2>
           <div className="grid md:grid-cols-3 gap-12 text-center">
             <div className="group">
               <div className="flex items-center justify-center mb-4">
-                <Award className="h-8 w-8 text-yellow-500 mr-2" />
-                <p className="text-5xl font-bold text-slate-800">85%</p>
+                <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-3 rounded-xl mr-4">
+                  <Award className="h-8 w-8 text-white" />
+                </div>
+                <p className="text-6xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">85%</p>
               </div>
-              <p className="text-slate-700 text-lg">Higher send rate after 30 days</p>
+              <p className="text-slate-700 text-lg font-semibold">Higher send rate after 30 days</p>
             </div>
             <div className="group">
               <div className="flex items-center justify-center mb-4">
-                <TrendingUp className="h-8 w-8 text-green-600 mr-2" />
-                <p className="text-5xl font-bold text-slate-800">3.2x</p>
+                <div className="bg-gradient-to-r from-green-400 to-blue-500 p-3 rounded-xl mr-4">
+                  <TrendingUp className="h-8 w-8 text-white" />
+                </div>
+                <p className="text-6xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">3.2x</p>
               </div>
-              <p className="text-slate-700 text-lg">Faster grade progression</p>
+              <p className="text-slate-700 text-lg font-semibold">Faster grade progression</p>
             </div>
             <div className="group">
               <div className="flex items-center justify-center mb-4">
-                <Target className="h-8 w-8 text-blue-600 mr-2" />
-                <p className="text-5xl font-bold text-slate-800">500+</p>
+                <div className="bg-gradient-to-r from-blue-400 to-purple-500 p-3 rounded-xl mr-4">
+                  <Target className="h-8 w-8 text-white" />
+                </div>
+                <p className="text-6xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">500+</p>
               </div>
-              <p className="text-slate-700 text-lg">Routes analyzed per session</p>
+              <p className="text-slate-700 text-lg font-semibold">Routes analyzed per session</p>
             </div>
           </div>
         </div>
 
-        {/* Final CTA */}
-        <div className="relative text-center rounded-3xl overflow-hidden bg-gradient-to-r from-slate-800/95 to-slate-700/95 backdrop-blur-sm">
+        {/* Enhanced Final CTA */}
+        <div className="relative text-center rounded-3xl overflow-hidden bg-gradient-to-r from-slate-800 to-slate-700 shadow-2xl border-2 border-slate-600">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-amber-600/20"></div>
           <div className="relative p-16">
             <h2 className="text-5xl font-bold text-white mb-6">
               Ready to Level Up Your Climbing?
             </h2>
-            <p className="text-2xl text-orange-100 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-2xl text-orange-100 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
               Join thousands of climbers who've already unlocked their potential. Your next grade is waiting.
             </p>
             
@@ -295,10 +310,10 @@ const Index = () => {
                 <DialogTrigger asChild>
                   <Button 
                     size="lg"
-                    className="bg-gradient-to-r from-orange-400 to-orange-300 hover:from-orange-500 hover:to-orange-400 text-slate-800 px-16 py-6 text-xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl"
+                    className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-16 py-8 text-2xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl rounded-2xl border-2 border-orange-400"
                   >
                     Start Free
-                    <ArrowRight className="ml-3 h-6 w-6" />
+                    <ArrowRight className="ml-3 h-7 w-7" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="p-0 bg-transparent border-none shadow-none max-w-md">
@@ -307,7 +322,7 @@ const Index = () => {
               </Dialog>
             </div>
             
-            <p className="text-sm text-orange-200">
+            <p className="text-sm text-orange-200 font-medium">
               Completely free • No commitment • No hidden fees
             </p>
           </div>
@@ -316,7 +331,7 @@ const Index = () => {
         <div className="py-16"></div>
       </div>
 
-      {/* Feedback System */}
+      {/* Enhanced Feedback System */}
       <FeedbackButton onClick={() => setIsFeedbackOpen(true)} />
       
       <FeedbackModal 
