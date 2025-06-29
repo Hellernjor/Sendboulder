@@ -64,26 +64,22 @@ const Index = () => {
     {
       icon: Camera,
       title: 'Smart Route Vision',
-      description: 'Point, shoot, climb. Our AI instantly reads routes by tape color and difficulty, so you can focus on the send.',
-      image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      description: 'Point, shoot, climb. Our AI instantly reads routes by tape color and difficulty, so you can focus on the send.'
     },
     {
       icon: TrendingUp,
       title: 'Progress That Matters',
-      description: 'See your climbing evolution with insights that actually help - success rates, weak points, and what to work on next.',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      description: 'See your climbing evolution with insights that actually help - success rates, weak points, and what to work on next.'
     },
     {
       icon: Target,
       title: 'Beta Optimization',
-      description: 'Get real-time movement feedback. Learn the subtle tweaks that turn your projects into sends.',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      description: 'Get real-time movement feedback. Learn the subtle tweaks that turn your projects into sends.'
     },
     {
       icon: Clock,
       title: 'Session Intel',
-      description: 'Every attempt counts. Track your sessions like a pro and watch patterns emerge in your climbing.',
-      image: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      description: 'Every attempt counts. Track your sessions like a pro and watch patterns emerge in your climbing.'
     }
   ];
 
@@ -121,32 +117,23 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
-      {/* Hero Section with Background */}
+    <div className="min-h-screen bg-gradient-to-br from-orange-500 via-orange-400 to-orange-300 text-slate-800 overflow-hidden">
+      {/* Hero Section */}
       <div className="relative">
-        {/* Background Image Overlay - Bouldering Action Shot */}
-        <div 
-          className="absolute inset-0 opacity-30 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-800/75 to-slate-900/85" />
-        
-        <div className="relative container mx-auto px-4 py-20">
+        <div className="container mx-auto px-4 py-20">
           <div className="text-center max-w-5xl mx-auto">
             <div className="flex items-center justify-center mb-8">
-              <Mountain className="h-14 w-14 text-orange-400 mr-4" />
-              <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-white via-orange-100 to-orange-200 bg-clip-text text-transparent">
-                Boulder<span className="text-orange-400">Flow</span>
+              <Mountain className="h-14 w-14 text-slate-700 mr-4" />
+              <h1 className="text-6xl md:text-8xl font-bold text-white drop-shadow-lg">
+                Boulder<span className="text-slate-700">Flow</span>
               </h1>
             </div>
             
-            <p className="text-2xl md:text-3xl text-slate-200 mb-6 leading-relaxed font-light">
+            <p className="text-2xl md:text-3xl text-slate-700 mb-6 leading-relaxed font-light drop-shadow-sm">
               Your AI Climbing Coach
             </p>
             
-            <p className="text-xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl text-slate-700 mb-12 max-w-4xl mx-auto leading-relaxed drop-shadow-sm">
               Stop guessing, start sending. Turn your phone into the ultimate climbing companion that reads routes, tracks your moves, and helps you level up faster than ever.
             </p>
             
@@ -155,7 +142,7 @@ const Index = () => {
                 <DialogTrigger asChild>
                   <Button 
                     size="lg"
-                    className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-16 py-6 text-xl font-semibold transition-all duration-300 hover:scale-105 shadow-2xl border-0"
+                    className="bg-slate-800 hover:bg-slate-700 text-white px-16 py-6 text-xl font-semibold transition-all duration-300 hover:scale-105 shadow-2xl border-0"
                   >
                     Start Crushing
                     <Zap className="ml-3 h-6 w-6" />
@@ -169,7 +156,7 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline"
-                className="border-slate-500 text-slate-800 hover:bg-slate-800/60 hover:text-slate-200 px-12 py-6 text-xl transition-all duration-300 backdrop-blur-sm bg-white/90"
+                className="border-slate-700 text-slate-800 hover:bg-slate-800/10 px-12 py-6 text-xl transition-all duration-300 backdrop-blur-sm bg-white/40 shadow-lg"
                 onClick={() => navigate('/dashboard')}
               >
                 <Play className="mr-3 h-6 w-6" />
@@ -177,27 +164,27 @@ const Index = () => {
               </Button>
             </div>
 
-            {/* Social Proof - Updated with real user data */}
-            <div className="flex items-center justify-center space-x-8 text-slate-300 mb-20">
+            {/* Social Proof */}
+            <div className="flex items-center justify-center space-x-8 text-slate-700 mb-20">
               <div className="flex items-center">
-                <Star className="h-6 w-6 text-yellow-400 mr-2" />
-                <span className="font-bold text-white">{userStats.averageRating.toFixed(1)}/5</span>
+                <Star className="h-6 w-6 text-yellow-600 mr-2" />
+                <span className="font-bold text-slate-800">{userStats.averageRating.toFixed(1)}/5</span>
                 <span className="ml-2">app rating</span>
               </div>
-              <div className="h-6 w-px bg-slate-500"></div>
+              <div className="h-6 w-px bg-slate-600"></div>
               <div className="flex items-center">
-                <Star className="h-6 w-6 text-red-400 mr-2" />
-                <span className="font-bold text-white">{userStats.averageStoke.toFixed(1)}/5</span>
+                <Star className="h-6 w-6 text-red-600 mr-2" />
+                <span className="font-bold text-slate-800">{userStats.averageStoke.toFixed(1)}/5</span>
                 <span className="ml-2">stoke level</span>
               </div>
-              <div className="h-6 w-px bg-slate-500"></div>
+              <div className="h-6 w-px bg-slate-600"></div>
               <div>
-                <span className="font-bold text-white">{(userStats.totalUsers / 1000).toFixed(0)}K+</span>
+                <span className="font-bold text-slate-800">{(userStats.totalUsers / 1000).toFixed(0)}K+</span>
                 <span className="ml-2">crushers</span>
               </div>
-              <div className="h-6 w-px bg-slate-500"></div>
+              <div className="h-6 w-px bg-slate-600"></div>
               <div>
-                <span className="font-bold text-white">{(userStats.totalRoutes / 1000000).toFixed(0)}M+</span>
+                <span className="font-bold text-slate-800">{(userStats.totalRoutes / 1000000).toFixed(0)}M+</span>
                 <span className="ml-2">routes sent</span>
               </div>
             </div>
@@ -206,20 +193,13 @@ const Index = () => {
       </div>
 
       <div className="container mx-auto px-4">
-        {/* Motivation Section with Bouldering Gym */}
-        <div className="relative mb-24 rounded-3xl overflow-hidden">
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1522163182402-834f871fd851?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-800/60 to-slate-900/80" />
+        {/* Motivation Section */}
+        <div className="relative mb-24 rounded-3xl overflow-hidden bg-gradient-to-r from-orange-600/20 to-orange-400/20 backdrop-blur-sm border border-orange-300/30">
           <div className="relative p-16 text-center">
-            <h2 className="text-5xl font-bold text-white mb-6">
+            <h2 className="text-5xl font-bold text-slate-800 mb-6">
               Your Next Send Awaits
             </h2>
-            <p className="text-2xl text-slate-200 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-2xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
               Every crusher knows the feeling - that moment when everything clicks and you stick the crux. 
               We're here to make those moments happen more often.
             </p>
@@ -228,69 +208,61 @@ const Index = () => {
 
         {/* Why Climbers Love Us */}
         <div className="max-w-6xl mx-auto mb-24">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-slate-800">
             Why Crushers Choose BoulderFlow
           </h2>
-          <p className="text-xl text-slate-400 text-center mb-16 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-700 text-center mb-16 max-w-3xl mx-auto">
             Because sending is everything, and we help you send more.
           </p>
           <div className="grid md:grid-cols-2 gap-8">
             {benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center space-x-4 bg-gradient-to-r from-slate-800/40 to-slate-700/40 p-6 rounded-xl backdrop-blur-sm border border-slate-600/30">
-                <CheckCircle className="h-7 w-7 text-orange-400 flex-shrink-0" />
-                <span className="text-slate-200 text-lg">{benefit}</span>
+              <div key={index} className="flex items-center space-x-4 bg-white/30 backdrop-blur-sm p-6 rounded-xl border border-orange-200/50 shadow-lg">
+                <CheckCircle className="h-7 w-7 text-slate-700 flex-shrink-0" />
+                <span className="text-slate-800 text-lg font-medium">{benefit}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Features - With Placeholders */}
+        {/* Features */}
         <div className="mb-24">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-6 text-slate-800">
             Built for Climbers, By Climbers
           </h2>
-          <p className="text-xl text-slate-400 text-center mb-16 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-700 text-center mb-16 max-w-3xl mx-auto">
             Every feature designed to make you a stronger, smarter climber.
           </p>
           <div className="grid md:grid-cols-2 gap-12">
             {features.map((feature, index) => (
               <Card 
                 key={index} 
-                className="bg-gradient-to-br from-slate-800/60 to-slate-700/60 border border-slate-600/40 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 backdrop-blur-sm group overflow-hidden"
+                className="bg-white/40 backdrop-blur-sm border border-orange-200/50 hover:border-orange-300/70 transition-all duration-300 hover:scale-105 group overflow-hidden shadow-lg"
               >
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={feature.image} 
-                    alt={feature.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
-                  <div className="absolute bottom-4 left-4">
-                    <div className="p-3 bg-gradient-to-br from-orange-500/30 to-red-500/30 rounded-xl backdrop-blur-sm">
-                      <feature.icon className="h-8 w-8 text-orange-400" />
-                    </div>
+                <div className="relative h-48 bg-gradient-to-br from-orange-300/30 to-orange-500/30 flex items-center justify-center">
+                  <div className="p-6 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <feature.icon className="h-16 w-16 text-slate-700" />
                   </div>
                 </div>
                 <CardContent className="p-8">
-                  <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
-                  <p className="text-slate-300 leading-relaxed text-lg">{feature.description}</p>
+                  <h3 className="text-2xl font-bold text-slate-800 mb-4">{feature.title}</h3>
+                  <p className="text-slate-700 leading-relaxed text-lg">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
         </div>
 
-        {/* Testimonials - With Placeholders */}
+        {/* Testimonials */}
         <div className="mb-24">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-6 text-slate-800">
             Real Climbers, Real Results
           </h2>
-          <p className="text-xl text-slate-400 text-center mb-16">
+          <p className="text-xl text-slate-700 text-center mb-16">
             Don't just take our word for it - here's what the community says.
           </p>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-gradient-to-br from-slate-800/60 to-slate-700/60 border border-slate-600/40 backdrop-blur-sm overflow-hidden">
+              <Card key={index} className="bg-white/40 backdrop-blur-sm border border-orange-200/50 overflow-hidden shadow-lg">
                 <div className="relative h-40 overflow-hidden">
                   <img 
                     src={testimonial.image} 
@@ -302,17 +274,17 @@ const Index = () => {
                 <CardContent className="p-8">
                   <div className="flex mb-6">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                      <Star key={i} className="h-5 w-5 text-yellow-600 fill-current" />
                     ))}
                   </div>
-                  <p className="text-slate-200 mb-6 italic text-lg leading-relaxed">"{testimonial.text}"</p>
+                  <p className="text-slate-700 mb-6 italic text-lg leading-relaxed">"{testimonial.text}"</p>
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-600 rounded-full flex items-center justify-center">
                       <span className="text-white font-bold">{testimonial.name.charAt(0)}</span>
                     </div>
                     <div>
-                      <p className="text-white font-bold">{testimonial.name}</p>
-                      <p className="text-orange-400 text-sm font-medium">{testimonial.grade}</p>
+                      <p className="text-slate-800 font-bold">{testimonial.name}</p>
+                      <p className="text-slate-600 text-sm font-medium">{testimonial.grade}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -321,48 +293,41 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Stats - More Climbing Language */}
-        <div className="bg-gradient-to-r from-slate-800/40 to-slate-700/40 rounded-3xl p-12 mb-24 backdrop-blur-sm border border-slate-600/30">
-          <h2 className="text-3xl font-bold text-center mb-12 text-white">The Numbers Don't Lie</h2>
+        {/* Stats */}
+        <div className="bg-white/30 backdrop-blur-sm rounded-3xl p-12 mb-24 border border-orange-200/50 shadow-lg">
+          <h2 className="text-3xl font-bold text-center mb-12 text-slate-800">The Numbers Don't Lie</h2>
           <div className="grid md:grid-cols-3 gap-12 text-center">
             <div className="group">
               <div className="flex items-center justify-center mb-4">
-                <Award className="h-8 w-8 text-orange-400 mr-2" />
-                <p className="text-5xl font-bold text-orange-400">85%</p>
+                <Award className="h-8 w-8 text-yellow-600 mr-2" />
+                <p className="text-5xl font-bold text-slate-800">85%</p>
               </div>
-              <p className="text-slate-300 text-lg">Higher send rate after 30 days</p>
+              <p className="text-slate-700 text-lg">Higher send rate after 30 days</p>
             </div>
             <div className="group">
               <div className="flex items-center justify-center mb-4">
-                <TrendingUp className="h-8 w-8 text-green-400 mr-2" />
-                <p className="text-5xl font-bold text-green-400">3.2x</p>
+                <TrendingUp className="h-8 w-8 text-green-600 mr-2" />
+                <p className="text-5xl font-bold text-slate-800">3.2x</p>
               </div>
-              <p className="text-slate-300 text-lg">Faster grade progression</p>
+              <p className="text-slate-700 text-lg">Faster grade progression</p>
             </div>
             <div className="group">
               <div className="flex items-center justify-center mb-4">
-                <Target className="h-8 w-8 text-blue-400 mr-2" />
-                <p className="text-5xl font-bold text-blue-400">500+</p>
+                <Target className="h-8 w-8 text-blue-600 mr-2" />
+                <p className="text-5xl font-bold text-slate-800">500+</p>
               </div>
-              <p className="text-slate-300 text-lg">Routes analyzed per session</p>
+              <p className="text-slate-700 text-lg">Routes analyzed per session</p>
             </div>
           </div>
         </div>
 
-        {/* Final CTA with Outdoor Bouldering */}
-        <div className="relative text-center rounded-3xl overflow-hidden">
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-900/80 to-red-900/80 backdrop-blur-sm" />
+        {/* Final CTA */}
+        <div className="relative text-center rounded-3xl overflow-hidden bg-gradient-to-r from-slate-800/90 to-slate-700/90 backdrop-blur-sm">
           <div className="relative p-16">
             <h2 className="text-5xl font-bold text-white mb-6">
               Ready to Level Up Your Climbing?
             </h2>
-            <p className="text-2xl text-slate-100 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-2xl text-orange-100 mb-12 max-w-3xl mx-auto leading-relaxed">
               Join thousands of climbers who've already unlocked their potential. Your next grade is waiting.
             </p>
             
@@ -371,7 +336,7 @@ const Index = () => {
                 <DialogTrigger asChild>
                   <Button 
                     size="lg"
-                    className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-16 py-6 text-xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl"
+                    className="bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500 text-slate-800 px-16 py-6 text-xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl"
                   >
                     Start Free
                     <ArrowRight className="ml-3 h-6 w-6" />
@@ -383,7 +348,7 @@ const Index = () => {
               </Dialog>
             </div>
             
-            <p className="text-sm text-slate-200">
+            <p className="text-sm text-orange-200">
               Completely free • No commitment • No hidden fees
             </p>
           </div>
