@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -65,7 +64,7 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit }: FeedbackModalProps) => {
         <div className="space-y-6">
           {/* Overall Rating */}
           <div>
-            <p className="text-slate-700 mb-3">Overall rating for BoulderFlow:</p>
+            <p className="text-slate-700 mb-3">Overall rating for SendBoulder:</p>
             <div className="flex space-x-2">
               {[1, 2, 3, 4, 5, 6].map((value) => (
                 <button
@@ -123,7 +122,7 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit }: FeedbackModalProps) => {
             <Textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="How has BoulderFlow helped your climbing? Any suggestions?"
+              placeholder="How has SendBoulder helped your climbing? Any suggestions?"
               className="bg-white/80 border-orange-200 text-slate-800 placeholder-slate-500"
               rows={4}
               maxLength={500}

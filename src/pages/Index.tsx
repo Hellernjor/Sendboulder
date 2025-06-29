@@ -114,7 +114,7 @@ const Index = () => {
             <div className="flex items-center justify-center mb-8">
               <Mountain className="h-14 w-14 text-slate-800 mr-4" />
               <h1 className="text-6xl md:text-8xl font-bold text-slate-800 drop-shadow-lg">
-                Boulder<span className="text-orange-600">Flow</span>
+                Send<span className="text-orange-600">Boulder</span>
               </h1>
             </div>
             
@@ -198,7 +198,7 @@ const Index = () => {
         {/* Why Climbers Love Us */}
         <div className="max-w-6xl mx-auto mb-24">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-slate-800">
-            Why Crushers Choose BoulderFlow
+            Why Crushers Choose SendBoulder
           </h2>
           <p className="text-xl text-slate-700 text-center mb-16 max-w-3xl mx-auto">
             Because sending is everything, and we help you send more.

@@ -406,8 +406,8 @@ export const submitFeedback = async (feedback: {
   rating: number;
   stoke: number;
   comment: string;
-  email?: string;
   displayName?: string;
+  email?: string;
   imageFile?: File;
 }) => {
   let imageUrl = null;
@@ -415,38 +415,36 @@ export const submitFeedback = async (feedback: {
   // Upload image if provided
   if (feedback.imageFile) {
     const fileExt = feedback.imageFile.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `feedback/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
+    const fileName = `${Date.now()}.${fileExt}`;
+    
+    const { data: uploadData, error: uploadError } = await supabase.storage
       .from('feedback-images')
-      .upload(filePath, feedback.imageFile);
+      .upload(fileName, feedback.imageFile);
 
     if (uploadError) {
       console.error('Error uploading image:', uploadError);
     } else {
-      const { data } = supabase.storage
+      const { data: { publicUrl } } = supabase.storage
         .from('feedback-images')
-        .getPublicUrl(filePath);
-      imageUrl = data.publicUrl;
+        .getPublicUrl(fileName);
+      imageUrl = publicUrl;
     }
   }
 
+  // Insert feedback using the correct schema (message field instead of comment)
   const { data, error } = await supabase
     .from('feedback')
     .insert([{
-      rating: feedback.rating,
-      stoke: feedback.stoke,
-      comment: feedback.comment,
-      email: feedback.email,
-      display_name: feedback.displayName,
-      image_url: imageUrl,
-      approved: false // Requires manual approval
+      message: feedback.comment, // Map comment to message field
+      email: feedback.email || feedback.displayName || null
     }])
-    .select()
-    .single();
+    .select();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error submitting feedback:', error);
+    throw error;
+  }
+
   return data;
 };
 

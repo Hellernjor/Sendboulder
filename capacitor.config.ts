@@ -2,7 +2,7 @@
 import { CapacitorConfig } from '@capacitor/core';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.7460d03049c94b8aaf5ac459e7304d4f',
+  appId: 'app.sendboulder.climbing',
   appName: 'SendBoulder',
   webDir: 'dist',
   server: {
