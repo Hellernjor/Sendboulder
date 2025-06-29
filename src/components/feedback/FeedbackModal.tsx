@@ -57,15 +57,15 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit }: FeedbackModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md bg-slate-800 border-slate-700 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-md bg-gradient-to-br from-orange-50 to-blue-50 border-orange-200 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-white text-xl">How's your climbing going?</DialogTitle>
+          <DialogTitle className="text-slate-800 text-xl">How's your climbing going?</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-6">
           {/* Overall Rating */}
           <div>
-            <p className="text-slate-300 mb-3">Overall rating for BoulderFlow:</p>
+            <p className="text-slate-700 mb-3">Overall rating for BoulderFlow:</p>
             <div className="flex space-x-2">
               {[1, 2, 3, 4, 5, 6].map((value) => (
                 <button
@@ -75,18 +75,18 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit }: FeedbackModalProps) => {
                 >
                   <Star
                     className={`h-8 w-8 ${
-                      value <= rating ? 'text-yellow-400 fill-current' : 'text-slate-600'
+                      value <= rating ? 'text-orange-400 fill-current' : 'text-slate-400'
                     }`}
                   />
                 </button>
               ))}
             </div>
-            <p className="text-slate-500 text-sm mt-1">1 = Poor, 6 = Outstanding</p>
+            <p className="text-slate-600 text-sm mt-1">1 = Poor, 6 = Outstanding</p>
           </div>
 
           {/* Stoke Level */}
           <div>
-            <p className="text-slate-300 mb-3">What's your stoke level? (How excited are you about your climbing progress?)</p>
+            <p className="text-slate-700 mb-3">What's your stoke level? (How excited are you about your climbing progress?)</p>
             <div className="flex space-x-2">
               {[1, 2, 3, 4, 5].map((value) => (
                 <button
@@ -96,49 +96,49 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit }: FeedbackModalProps) => {
                 >
                   <Heart
                     className={`h-8 w-8 ${
-                      value <= stoke ? 'text-red-400 fill-current' : 'text-slate-600'
+                      value <= stoke ? 'text-red-400 fill-current' : 'text-slate-400'
                     }`}
                   />
                 </button>
               ))}
             </div>
-            <p className="text-slate-500 text-sm mt-1">1 = Not stoked, 5 = Super stoked!</p>
+            <p className="text-slate-600 text-sm mt-1">1 = Not stoked, 5 = Super stoked!</p>
           </div>
 
           {/* Display Name */}
           <div>
-            <p className="text-slate-300 mb-3">Your name (optional):</p>
+            <p className="text-slate-700 mb-3">Your name (optional):</p>
             <Input
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="How should we display your name?"
-              className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+              className="bg-white/80 border-orange-200 text-slate-800 placeholder-slate-500"
               maxLength={50}
             />
           </div>
 
           {/* Comment */}
           <div>
-            <p className="text-slate-300 mb-3">Tell us more about your experience:</p>
+            <p className="text-slate-700 mb-3">Tell us more about your experience:</p>
             <Textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="How has BoulderFlow helped your climbing? Any suggestions?"
-              className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+              className="bg-white/80 border-orange-200 text-slate-800 placeholder-slate-500"
               rows={4}
               maxLength={500}
             />
-            <p className="text-slate-500 text-sm mt-1">{comment.length}/500</p>
+            <p className="text-slate-600 text-sm mt-1">{comment.length}/500</p>
           </div>
 
           {/* Image Upload */}
           <div>
-            <p className="text-slate-300 mb-3">Add a photo (optional):</p>
+            <p className="text-slate-700 mb-3">Add a photo (optional):</p>
             {!imagePreview ? (
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-600 border-dashed rounded-lg cursor-pointer bg-slate-700 hover:bg-slate-600 transition-colors">
+              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-orange-200 border-dashed rounded-lg cursor-pointer bg-white/60 hover:bg-white/80 transition-colors">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <Upload className="w-8 h-8 mb-2 text-slate-400" />
-                  <p className="text-sm text-slate-400">Click to upload image</p>
+                  <Upload className="w-8 h-8 mb-2 text-slate-600" />
+                  <p className="text-sm text-slate-600">Click to upload image</p>
                   <p className="text-xs text-slate-500">PNG, JPG up to 5MB</p>
                 </div>
                 <input
@@ -170,14 +170,14 @@ const FeedbackModal = ({ isOpen, onClose, onSubmit }: FeedbackModalProps) => {
             <Button
               onClick={handleSubmit}
               disabled={rating === 0 || stoke === 0 || comment.length < 10}
-              className="flex-1 bg-orange-600 hover:bg-orange-700"
+              className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
             >
               Send Feedback
             </Button>
             <Button
               onClick={onClose}
               variant="outline"
-              className="border-slate-600 text-slate-300 hover:bg-slate-700"
+              className="border-orange-300 text-slate-700 hover:bg-orange-50"
             >
               Later
             </Button>
