@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { Location, GradeLevel } from '@/types/location';
 import type { Route, Attempt } from '@/types/route';
@@ -519,4 +518,36 @@ export const updateUserProfile = async (updates: { username?: string; full_name?
 
   if (error) throw error;
   return data;
+};
+
+export const updateLocation = async (locationId: string, updates: Partial<Location>) => {
+  const { data, error } = await supabase
+    .from('locations')
+    .update({
+      name: updates.name,
+      type: updates.type,
+      address: updates.address,
+      coordinates: updates.coordinates,
+      route_change_frequency: updates.routeChangeFrequency,
+      is_global: updates.isGlobal
+    })
+    .eq('id', locationId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  
+  return {
+    id: data.id,
+    name: data.name,
+    type: data.type as 'gym' | 'outdoor',
+    address: data.address,
+    coordinates: data.coordinates as { lat: number; lng: number } | undefined,
+    createdBy: data.created_by,
+    createdByUsername: data.created_by_username,
+    createdAt: new Date(data.created_at),
+    routeChangeFrequency: data.route_change_frequency as 'weekly' | 'monthly' | 'rarely' | 'never',
+    isGlobal: data.is_global,
+    gradeSystem: [] // Grade system is handled separately via grade_levels table
+  };
 };
