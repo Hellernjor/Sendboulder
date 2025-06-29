@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { ArrowRight } from 'lucide-react';
 import SignupForm from '@/components/ui/signup-form';
+import ShareButton from '@/components/ui/ShareButton';
 
 interface FinalCTAProps {
   isSignupOpen: boolean;
@@ -37,10 +38,20 @@ const FinalCTA = ({ isSignupOpen, setIsSignupOpen }: FinalCTAProps) => {
               <SignupForm />
             </DialogContent>
           </Dialog>
+          
+          <ShareButton 
+            size="lg"
+            variant="outline"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 px-12 py-6 md:py-8 text-lg md:text-2xl font-bold shadow-2xl rounded-2xl transition-all duration-300 hover:scale-105"
+          />
         </div>
         
-        <p className="text-sm text-orange-200 font-medium">
+        <p className="text-sm text-orange-200 font-medium mb-4">
           Completely free • No commitment • No hidden fees
+        </p>
+        
+        <p className="text-xs text-orange-300 font-medium">
+          Love the app? Share it with your climbing crew! 🧗‍♂️
         </p>
       </div>
     </div>

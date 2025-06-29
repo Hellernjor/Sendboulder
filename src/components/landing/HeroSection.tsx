@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Play, Zap, User, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import SignupForm from '@/components/ui/signup-form';
+import ShareButton from '@/components/ui/ShareButton';
 
 interface HeroSectionProps {
   isSignupOpen: boolean;
@@ -46,7 +46,7 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
             Stop guessing, start sending. Turn your phone into the ultimate climbing companion that reads routes, tracks your moves, and helps you level up faster than ever.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center mb-12 md:mb-16 px-4">
+          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center mb-8 md:mb-12 px-4">
             <Dialog open={isSignupOpen} onOpenChange={setIsSignupOpen}>
               <DialogTrigger asChild>
                 <Button 
@@ -71,6 +71,15 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
               <Play className="mr-2 md:mr-3 h-5 w-5 md:h-7 md:w-7" />
               See It Work
             </Button>
+          </div>
+
+          {/* Share Button */}
+          <div className="flex justify-center mb-12 md:mb-16">
+            <ShareButton 
+              size="lg"
+              variant="outline"
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0 px-8 py-4 text-lg font-semibold shadow-xl rounded-2xl transition-all duration-300 hover:scale-105"
+            />
           </div>
 
           {/* Enhanced Social Proof */}
