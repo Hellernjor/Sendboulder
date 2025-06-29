@@ -22,8 +22,8 @@ const BenefitsSection = () => {
       </p>
       <div className="grid md:grid-cols-2 gap-6 md:gap-8">
         {benefits.map((benefit, index) => (
-          <div key={index} className="flex items-center space-x-4 bg-white p-6 md:p-8 rounded-2xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-            <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-2 rounded-xl">
+          <div key={index} className="flex items-center space-x-4 bg-white/80 backdrop-blur-sm p-6 md:p-8 rounded-2xl border border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-2 rounded-xl shadow-md">
               <CheckCircle className="h-6 w-6 md:h-7 md:w-7 text-white flex-shrink-0" />
             </div>
             <span className="text-slate-800 text-base md:text-lg font-semibold">{benefit}</span>

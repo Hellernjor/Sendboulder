@@ -22,7 +22,7 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
   const navigate = useNavigate();
 
   return (
-    <div className="relative bg-white border-b border-gray-100">
+    <div className="relative bg-gradient-to-br from-blue-50 to-blue-100 border-b border-blue-200 shadow-sm">
       <div className="container mx-auto px-4 py-12 md:py-20">
         <div className="text-center max-w-6xl mx-auto">
           <div className="flex items-center justify-center mb-6 md:mb-8">
@@ -30,7 +30,7 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
               <img 
                 src="/lovable-uploads/792f2868-5455-44fd-bf4a-85bd7bfdffb6.png" 
                 alt="SendBoulder Logo"
-                className="h-32 w-32 md:h-48 md:w-48 lg:h-56 lg:w-56 object-contain"
+                className="h-32 w-32 md:h-48 md:w-48 lg:h-56 lg:w-56 object-contain drop-shadow-lg"
               />
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
@@ -65,7 +65,7 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
             <Button 
               size="lg" 
               variant="outline"
-              className="border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 px-8 sm:px-10 md:px-12 py-6 md:py-8 text-lg sm:text-xl md:text-2xl font-semibold transition-all duration-300 bg-white shadow-lg rounded-2xl"
+              className="border-2 border-blue-300 text-slate-700 hover:bg-blue-50 hover:border-blue-400 px-8 sm:px-10 md:px-12 py-6 md:py-8 text-lg sm:text-xl md:text-2xl font-semibold transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-lg rounded-2xl"
               onClick={() => navigate('/dashboard')}
             >
               <Play className="mr-2 md:mr-3 h-5 w-5 md:h-7 md:w-7" />
@@ -84,25 +84,25 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
 
           {/* Enhanced Social Proof */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8 text-slate-900 mb-16 md:mb-20 px-4">
-            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-gray-200">
+            <div className="flex flex-col items-center bg-white/80 backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-blue-200">
               <div className="flex items-center mb-1">
                 <Star className="h-4 w-4 md:h-6 md:w-6 text-yellow-500 mr-1 md:mr-2" />
                 <span className="font-bold text-slate-900 text-sm md:text-lg">{userStats.averageRating.toFixed(1)}/5</span>
               </div>
               <span className="text-xs md:text-sm font-medium text-center text-slate-600">app rating</span>
             </div>
-            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-gray-200">
+            <div className="flex flex-col items-center bg-white/80 backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-blue-200">
               <div className="flex items-center mb-1">
                 <Star className="h-4 w-4 md:h-6 md:w-6 text-red-500 mr-1 md:mr-2" />
                 <span className="font-bold text-slate-900 text-sm md:text-lg">{userStats.averageStoke.toFixed(1)}/5</span>
               </div>
               <span className="text-xs md:text-sm font-medium text-center text-slate-600">stoke level</span>
             </div>
-            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-gray-200">
+            <div className="flex flex-col items-center bg-white/80 backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-blue-200">
               <span className="font-bold text-slate-900 text-sm md:text-lg">{(userStats.totalUsers / 1000).toFixed(0)}K+</span>
               <span className="text-xs md:text-sm font-medium text-center text-slate-600">crushers</span>
             </div>
-            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-gray-200">
+            <div className="flex flex-col items-center bg-white/80 backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-blue-200">
               <span className="font-bold text-slate-900 text-sm md:text-lg">{(userStats.totalRoutes / 1000000).toFixed(0)}M+</span>
               <span className="text-xs md:text-sm font-medium text-center text-slate-600">routes logged</span>
             </div>

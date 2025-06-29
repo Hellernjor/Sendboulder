@@ -74,7 +74,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 text-slate-900 overflow-hidden">
       {/* Hero Section */}
       <HeroSection 
         isSignupOpen={isSignupOpen}
