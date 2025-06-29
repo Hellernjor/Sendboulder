@@ -22,7 +22,7 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
   const navigate = useNavigate();
 
   return (
-    <div className="relative bg-gradient-to-br from-orange-50 to-amber-50 border-b border-orange-100">
+    <div className="relative bg-white border-b border-gray-100">
       <div className="container mx-auto px-4 py-12 md:py-20">
         <div className="text-center max-w-6xl mx-auto">
           <div className="flex items-center justify-center mb-6 md:mb-8">
@@ -39,11 +39,11 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
           </div>
           
           <p className="text-xl sm:text-2xl md:text-4xl font-bold text-slate-800 mb-4 md:mb-6 leading-relaxed">
-            Your AI Climbing Coach
+            Your Digital Climbing Logbook
           </p>
           
           <p className="text-base sm:text-lg md:text-xl text-slate-600 mb-8 md:mb-12 max-w-4xl mx-auto leading-relaxed font-medium px-4">
-            Stop guessing, start sending. Turn your phone into the ultimate climbing companion that reads routes, tracks your moves, and helps you level up faster than ever.
+            Track every route, log every send, and watch your climbing progress soar. The ultimate tool for documenting your climbing journey and hitting new grades.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center mb-8 md:mb-12 px-4">
@@ -53,7 +53,7 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
                   size="lg"
                   className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-8 sm:px-12 md:px-16 py-6 md:py-8 text-lg sm:text-xl md:text-2xl font-bold transition-all duration-300 hover:scale-105 shadow-lg border-0 rounded-2xl"
                 >
-                  Start Crushing
+                  Start Tracking
                   <Zap className="ml-2 md:ml-3 h-5 w-5 md:h-7 md:w-7" />
                 </Button>
               </DialogTrigger>
@@ -84,27 +84,27 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
 
           {/* Enhanced Social Proof */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8 text-slate-900 mb-16 md:mb-20 px-4">
-            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-orange-200">
+            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-gray-200">
               <div className="flex items-center mb-1">
                 <Star className="h-4 w-4 md:h-6 md:w-6 text-yellow-500 mr-1 md:mr-2" />
                 <span className="font-bold text-slate-900 text-sm md:text-lg">{userStats.averageRating.toFixed(1)}/5</span>
               </div>
               <span className="text-xs md:text-sm font-medium text-center text-slate-600">app rating</span>
             </div>
-            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-orange-200">
+            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-gray-200">
               <div className="flex items-center mb-1">
                 <Star className="h-4 w-4 md:h-6 md:w-6 text-red-500 mr-1 md:mr-2" />
                 <span className="font-bold text-slate-900 text-sm md:text-lg">{userStats.averageStoke.toFixed(1)}/5</span>
               </div>
               <span className="text-xs md:text-sm font-medium text-center text-slate-600">stoke level</span>
             </div>
-            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-orange-200">
+            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-gray-200">
               <span className="font-bold text-slate-900 text-sm md:text-lg">{(userStats.totalUsers / 1000).toFixed(0)}K+</span>
               <span className="text-xs md:text-sm font-medium text-center text-slate-600">crushers</span>
             </div>
-            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-orange-200">
+            <div className="flex flex-col items-center bg-white backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-gray-200">
               <span className="font-bold text-slate-900 text-sm md:text-lg">{(userStats.totalRoutes / 1000000).toFixed(0)}M+</span>
-              <span className="text-xs md:text-sm font-medium text-center text-slate-600">routes sent</span>
+              <span className="text-xs md:text-sm font-medium text-center text-slate-600">routes logged</span>
             </div>
           </div>
         </div>

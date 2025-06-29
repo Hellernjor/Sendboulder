@@ -7,26 +7,26 @@ const FeaturesSection = () => {
   const features = [
     {
       icon: Camera,
-      title: 'Smart Route Vision',
-      description: 'Point, shoot, climb. Our AI instantly reads routes by tape color and difficulty, so you can focus on the send.',
+      title: 'Route Documentation',
+      description: 'Capture photos of routes, log details, and keep a visual record of every climb you tackle.',
       gradient: 'from-orange-500 to-red-500'
     },
     {
       icon: TrendingUp,
-      title: 'Progress That Matters',
-      description: 'See your climbing evolution with insights that actually help - success rates, weak points, and what to work on next.',
+      title: 'Progress Tracking',
+      description: 'Watch your climbing evolution with detailed statistics, success rates, and grade progression over time.',
       gradient: 'from-blue-500 to-cyan-500'
     },
     {
       icon: Target,
-      title: 'Beta Optimization',
-      description: 'Get real-time movement feedback. Learn the subtle tweaks that turn your projects into sends.',
+      title: 'Personal Goals',
+      description: 'Set targets, track attempts, and celebrate when you finally stick that project you\'ve been working on.',
       gradient: 'from-green-500 to-emerald-500'
     },
     {
       icon: Clock,
-      title: 'Session Intel',
-      description: 'Every attempt counts. Track your sessions like a pro and watch patterns emerge in your climbing.',
+      title: 'Session Logging',
+      description: 'Record every climbing session with detailed logs of routes attempted, sends, and time spent climbing.',
       gradient: 'from-purple-500 to-pink-500'
     }
   ];
@@ -37,13 +37,13 @@ const FeaturesSection = () => {
         Built for Climbers, By Climbers
       </h2>
       <p className="text-lg md:text-xl text-slate-600 text-center mb-12 md:mb-16 max-w-3xl mx-auto font-medium">
-        Every feature designed to make you a stronger, smarter climber.
+        Every feature designed to help you track, improve, and celebrate your climbing.
       </p>
       <div className="grid md:grid-cols-2 gap-8 md:gap-12">
         {features.map((feature, index) => (
           <Card 
             key={index} 
-            className="bg-white border border-orange-200 hover:border-orange-300 transition-all duration-300 hover:scale-105 group overflow-hidden shadow-lg hover:shadow-xl rounded-2xl"
+            className="bg-white border border-gray-200 hover:border-orange-300 transition-all duration-300 hover:scale-105 group overflow-hidden shadow-lg hover:shadow-xl rounded-2xl"
           >
             <div className={`relative h-40 md:h-48 bg-gradient-to-br ${feature.gradient} flex items-center justify-center`}>
               <div className="p-4 md:p-6 bg-white/30 rounded-2xl backdrop-blur-sm border border-white/40">

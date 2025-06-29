@@ -95,7 +95,7 @@ const RouteAnalyzer = () => {
   const capturePhoto = () => {
     const imageData = cameraServiceRef.current.captureFrame();
     if (imageData) {
-      console.log('Captured frame for analysis');
+      console.log('Captured photo for route documentation');
       setCapturedImage(imageData);
       setShowAnalysisModal(true);
       setIsRecording(false);
@@ -109,7 +109,7 @@ const RouteAnalyzer = () => {
     setDetectedRoute(routeName);
     setShowAnalysisModal(false);
     setCapturedImage(null);
-    console.log('Route analysis completed:', routeName);
+    console.log('Route documented:', routeName);
   };
 
   const handleAnalysisCancel = () => {
@@ -129,7 +129,7 @@ const RouteAnalyzer = () => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2 text-white">
             <Camera className="h-5 w-5" />
-            <span>Route Analyzer</span>
+            <span>Route Documentation</span>
             <Smartphone className="h-4 w-4 text-blue-400" />
           </CardTitle>
         </CardHeader>
@@ -176,13 +176,13 @@ const RouteAnalyzer = () => {
 
           {/* Camera Tips */}
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-            <h4 className="text-blue-400 font-medium mb-2">Camera Tips</h4>
+            <h4 className="text-blue-400 font-medium mb-2">Photo Tips</h4>
             <ul className="text-blue-300 text-sm space-y-1">
               <li>• Hold phone steady and keep the wall in frame</li>
-              <li>• Ensure good lighting for better detection</li>
+              <li>• Ensure good lighting for clear documentation</li>
               <li>• Position camera 3-6 feet from the wall</li>
               <li>• Make sure route holds are clearly visible</li>
-              <li>• Take picture when ready for analysis</li>
+              <li>• Take picture to save route details</li>
             </ul>
           </div>
         </CardContent>

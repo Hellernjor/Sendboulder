@@ -61,7 +61,7 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-slate-700">
-            <h2 className="text-xl font-bold text-white">Analyze Route</h2>
+            <h2 className="text-xl font-bold text-white">Document Route</h2>
             <Button
               variant="ghost"
               size="icon"
@@ -79,7 +79,7 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
               <img
                 ref={imageRef}
                 src={image}
-                alt="Route analysis"
+                alt="Route documentation"
                 className="max-w-full max-h-full object-contain"
               />
               
@@ -88,7 +88,7 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                   <div className="text-center text-white">
                     <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
-                    <p>Detecting climbing grips...</p>
+                    <p>Detecting climbing holds...</p>
                   </div>
                 </div>
               )}
@@ -115,16 +115,16 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
               </div>
 
               <div>
-                <h3 className="text-white font-medium mb-3">Route Grips</h3>
+                <h3 className="text-white font-medium mb-3">Route Holds</h3>
                 {isDetecting ? (
-                  <p className="text-slate-400 text-sm">Detecting grips...</p>
+                  <p className="text-slate-400 text-sm">Detecting holds...</p>
                 ) : (
                   <>
                     <p className="text-slate-400 text-sm mb-3">
-                      {selectedGrips.length} grips selected
+                      {selectedGrips.length} holds selected
                     </p>
                     <p className="text-slate-300 text-xs">
-                      Tap on the image to add/remove grips. Google Vision AI has pre-selected likely holds.
+                      Tap on the image to add/remove holds. Detection has pre-selected likely holds.
                     </p>
                   </>
                 )}

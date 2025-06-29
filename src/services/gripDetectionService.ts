@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 
 export interface DetectedGrip {
@@ -11,7 +10,7 @@ export interface DetectedGrip {
 export class GripDetectionService {
   static async detectGrips(imageDataUrl: string): Promise<DetectedGrip[]> {
     try {
-      console.log('Calling grip detection service...');
+      console.log('Calling hold detection service...');
       console.log('Image data URL length:', imageDataUrl.length);
       
       const { data, error } = await supabase.functions.invoke('detect-grips', {
@@ -22,19 +21,19 @@ export class GripDetectionService {
 
       if (error) {
         console.error('Supabase function error:', error);
-        throw new Error(`Grip detection failed: ${error.message}`);
+        throw new Error(`Hold detection failed: ${error.message}`);
       }
 
       if (!data || !data.grips) {
-        console.warn('No grips detected in response');
+        console.warn('No holds detected in response');
         return [];
       }
 
-      console.log(`Detected ${data.grips.length} potential grips`);
+      console.log(`Detected ${data.grips.length} potential holds`);
       return data.grips;
 
     } catch (error) {
-      console.error('Error detecting grips:', error);
+      console.error('Error detecting holds:', error);
       // Return empty array instead of throwing to keep the UI working
       return [];
     }
