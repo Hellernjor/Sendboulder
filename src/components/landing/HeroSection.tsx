@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Play, Zap, User, Star } from 'lucide-react';
+import { Play, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import SignupForm from '@/components/ui/signup-form';
 import ShareButton from '@/components/ui/ShareButton';
@@ -26,12 +26,12 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
       <div className="container mx-auto px-4 py-12 md:py-20">
         <div className="text-center max-w-6xl mx-auto">
           <div className="flex items-center justify-center mb-6 md:mb-8">
-            <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-3 md:p-4 rounded-2xl shadow-lg mr-3 md:mr-4 relative">
-              {/* Boulder with climber representation */}
-              <div className="relative">
-                <div className="h-10 w-10 md:h-14 md:w-14 bg-gradient-to-br from-slate-600 to-slate-800 rounded-lg transform rotate-12 shadow-lg"></div>
-                <User className="h-4 w-4 md:h-6 md:w-6 text-orange-100 absolute -top-1 -right-1 transform -rotate-12" />
-              </div>
+            <div className="mr-3 md:mr-4">
+              <img 
+                src="/lovable-uploads/5fad8cc8-6eb6-480d-8d7b-557f03f5a467.png" 
+                alt="SendBoulder Logo"
+                className="h-16 w-16 md:h-20 md:w-20 object-contain"
+              />
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
               Send<span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">Boulder</span>
