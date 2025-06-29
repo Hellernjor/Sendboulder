@@ -10,28 +10,28 @@ import NotificationSettings from '@/components/account/NotificationSettings';
 
 const Account = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-white text-slate-900">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Account Settings</h1>
-          <p className="text-slate-400">Manage your profile, subscription, and preferences</p>
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Account Settings</h1>
+          <p className="text-slate-600">Manage your profile, subscription, and preferences</p>
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-slate-800/50">
-            <TabsTrigger value="profile" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-4 bg-gray-100">
+            <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:bg-white">
               <User className="h-4 w-4" />
               Profile
             </TabsTrigger>
-            <TabsTrigger value="subscription" className="flex items-center gap-2">
+            <TabsTrigger value="subscription" className="flex items-center gap-2 data-[state=active]:bg-white">
               <CreditCard className="h-4 w-4" />
               Subscription
             </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center gap-2">
+            <TabsTrigger value="security" className="flex items-center gap-2 data-[state=active]:bg-white">
               <Shield className="h-4 w-4" />
               Security
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center gap-2">
+            <TabsTrigger value="notifications" className="flex items-center gap-2 data-[state=active]:bg-white">
               <Bell className="h-4 w-4" />
               Notifications
             </TabsTrigger>

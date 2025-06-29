@@ -30,7 +30,7 @@ const CameraControls = ({
         <Button 
           onClick={onStartRecording}
           disabled={isInitializing}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 disabled:opacity-50"
+          className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 disabled:opacity-50 border-0"
         >
           {isInitializing ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -44,7 +44,7 @@ const CameraControls = ({
           <Button 
             onClick={onCapturePhoto}
             disabled={isInitializing}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 disabled:opacity-50"
+            className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-3 disabled:opacity-50 border-0"
           >
             <Camera className="h-4 w-4 mr-2" />
             Take Picture of Route
@@ -54,7 +54,7 @@ const CameraControls = ({
             onClick={onSwitchCamera}
             disabled={isInitializing}
             variant="outline" 
-            className="border-slate-600 text-slate-300 hover:bg-slate-700 disabled:opacity-50"
+            className="border-gray-300 text-slate-700 hover:bg-gray-50 disabled:opacity-50"
           >
             {isInitializing ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -70,7 +70,7 @@ const CameraControls = ({
         onClick={onReset}
         disabled={isInitializing}
         variant="outline" 
-        className="border-slate-600 text-slate-300 hover:bg-slate-700 disabled:opacity-50"
+        className="border-gray-300 text-slate-700 hover:bg-gray-50 disabled:opacity-50"
       >
         <RotateCcw className="h-4 w-4 mr-2" />
         Reset

@@ -18,14 +18,14 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-white text-slate-900">
       <div className="container mx-auto px-4 py-4">
         {/* Header - Mobile Optimized */}
         <div className="mb-6">
-          <h1 className="text-2xl md:text-4xl font-bold mb-1 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-4xl font-bold mb-1 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
             Boulder Flow Coach
           </h1>
-          <p className="text-slate-400 text-sm md:text-lg">Track your climbing progress</p>
+          <p className="text-slate-600 text-sm md:text-lg">Track your climbing progress</p>
         </div>
 
         {/* Mobile-First Flow */}

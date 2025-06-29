@@ -23,7 +23,7 @@ const EmailSignupForm: React.FC<EmailSignupFormProps> = ({ onSubmit, isLoading }
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="email" className="text-slate-300">Email</Label>
+        <Label htmlFor="email" className="text-slate-700">Email</Label>
         <Input
           id="email"
           type="email"
@@ -31,12 +31,12 @@ const EmailSignupForm: React.FC<EmailSignupFormProps> = ({ onSubmit, isLoading }
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-blue-500"
+          className="bg-white border-gray-300 text-slate-900 placeholder:text-slate-500 focus:border-orange-500"
         />
       </div>
       
       <div>
-        <Label htmlFor="password" className="text-slate-300">Password</Label>
+        <Label htmlFor="password" className="text-slate-700">Password</Label>
         <div className="relative">
           <Input
             id="password"
@@ -45,12 +45,12 @@ const EmailSignupForm: React.FC<EmailSignupFormProps> = ({ onSubmit, isLoading }
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-blue-500 pr-10"
+            className="bg-white border-gray-300 text-slate-900 placeholder:text-slate-500 focus:border-orange-500 pr-10"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -60,7 +60,7 @@ const EmailSignupForm: React.FC<EmailSignupFormProps> = ({ onSubmit, isLoading }
       <Button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+        className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0"
       >
         {isLoading ? (
           <div className="flex items-center">
