@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Target, Plus, User, Loader2, MapPin } from 'lucide-react';
-import { Location } from '@/types/location';
+import { Location, GradeLevel } from '@/types/location';
 import { Route, Attempt } from '@/types/route';
 import LocationSelector from './route/LocationSelector';
 import LocationInfo from './route/LocationInfo';
@@ -12,7 +13,7 @@ import RoutesList from './route/RoutesList';
 import QuickScoreSection from './route/QuickScoreSection';
 import AddLocationForm from './location/AddLocationForm';
 import GradeSystemManager from './location/GradeSystemManager';
-import { getLocations, createRoute, getUserRoutes, getUserAttempts, createAttempt, createLocation } from '@/lib/database-functions';
+import { getLocations, createRoute, getUserRoutes, getUserAttempts, createAttempt, createLocation, updateLocation } from '@/lib/database-functions';
 import { useToast } from '@/hooks/use-toast';
 
 const RouteTracker = () => {
@@ -180,9 +181,29 @@ const RouteTracker = () => {
     setShowGradeSetup(true);
   };
 
-  const handleGradeSetupComplete = async () => {
-    setShowGradeSetup(false);
-    await loadLocations(); // Reload to get updated grade system
+  const handleGradeSetupComplete = async (updatedGrades: GradeLevel[]) => {
+    if (selectedLocationData) {
+      try {
+        // Update the location with new grade system
+        await updateLocation(selectedLocationData.id, {
+          ...selectedLocationData,
+          gradeSystem: updatedGrades
+        });
+        await loadLocations();
+        setShowGradeSetup(false);
+        toast({
+          title: "Success",
+          description: "Grade system updated successfully!",
+        });
+      } catch (error) {
+        console.error('Error updating grade system:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update grade system. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   const filteredRoutes = selectedLocation 
@@ -292,10 +313,16 @@ const RouteTracker = () => {
         {showGradeSetup && selectedLocationData && (
           <div className="space-y-4">
             <GradeSystemManager
-              location={selectedLocationData}
-              onComplete={handleGradeSetupComplete}
-              onCancel={() => setShowGradeSetup(false)}
+              grades={selectedLocationData.gradeSystem || []}
+              onGradesChange={handleGradeSetupComplete}
             />
+            <Button 
+              onClick={() => setShowGradeSetup(false)}
+              variant="outline"
+              className="border-slate-600 text-slate-300"
+            >
+              Cancel
+            </Button>
           </div>
         )}
       </CardContent>
