@@ -16,7 +16,7 @@ export class CameraService {
       this.stopCamera();
 
       // Request camera access with fallback constraints
-      let constraints = {
+      let constraints: MediaStreamConstraints = {
         video: { 
           facingMode: 'environment',
           width: { ideal: 1280 },
@@ -30,14 +30,14 @@ export class CameraService {
       } catch (error: any) {
         console.log('Failed with environment camera, trying default camera');
         // Fallback to any available camera
-        constraints = {
+        const fallbackConstraints: MediaStreamConstraints = {
           video: { 
             width: { ideal: 1280 },
             height: { ideal: 720 }
           },
           audio: false
         };
-        this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+        this.stream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
       }
 
       console.log('Camera access granted successfully');
