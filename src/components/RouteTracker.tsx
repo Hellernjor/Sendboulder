@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Target, Plus, User, Loader2 } from 'lucide-react';
+import { Target, Plus, User, Loader2, MapPin } from 'lucide-react';
 import { Location } from '@/types/location';
 import { Route, Attempt } from '@/types/route';
 import LocationSelector from './route/LocationSelector';
@@ -10,12 +10,16 @@ import LocationInfo from './route/LocationInfo';
 import AddRouteForm from './route/AddRouteForm';
 import RoutesList from './route/RoutesList';
 import QuickScoreSection from './route/QuickScoreSection';
-import { getLocations, createRoute, getUserRoutes, getUserAttempts, createAttempt } from '@/lib/database-functions';
+import AddLocationForm from './location/AddLocationForm';
+import GradeSystemManager from './location/GradeSystemManager';
+import { getLocations, createRoute, getUserRoutes, getUserAttempts, createAttempt, createLocation } from '@/lib/database-functions';
 import { useToast } from '@/hooks/use-toast';
 
 const RouteTracker = () => {
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [showAddRoute, setShowAddRoute] = useState(false);
+  const [showAddLocation, setShowAddLocation] = useState(false);
+  const [showGradeSetup, setShowGradeSetup] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
   const [routes, setRoutes] = useState<Route[]>([]);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
@@ -148,6 +152,39 @@ const RouteTracker = () => {
     }
   };
 
+  const handleAddLocation = async (locationData: Omit<Location, 'id' | 'createdBy' | 'createdByUsername' | 'createdAt' | 'isGlobal'>) => {
+    try {
+      const newLocation = await createLocation({
+        ...locationData,
+        isGlobal: true
+      });
+      await loadLocations();
+      setShowAddLocation(false);
+      // Automatically select the new location
+      setSelectedLocation(newLocation.id);
+      toast({
+        title: "Success",
+        description: "Location added successfully!",
+      });
+    } catch (error) {
+      console.error('Error adding location:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add location. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSetupGrades = () => {
+    setShowGradeSetup(true);
+  };
+
+  const handleGradeSetupComplete = async () => {
+    setShowGradeSetup(false);
+    await loadLocations(); // Reload to get updated grade system
+  };
+
   const filteredRoutes = selectedLocation 
     ? routes.filter(route => route.locationId === selectedLocation)
     : [];
@@ -181,9 +218,16 @@ const RouteTracker = () => {
       <CardContent className="space-y-4">
         {locations.length === 0 ? (
           <div className="text-center py-8">
-            <Target className="h-12 w-12 text-slate-600 mx-auto mb-3" />
+            <MapPin className="h-12 w-12 text-slate-600 mx-auto mb-3" />
             <p className="text-slate-400 text-lg mb-2">No locations available</p>
-            <p className="text-slate-500 text-sm">Add some locations in the Global Climbing Locations section first to start tracking routes.</p>
+            <p className="text-slate-500 text-sm mb-4">Add a climbing location to start tracking routes and logging scores.</p>
+            <Button 
+              onClick={() => setShowAddLocation(true)}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add First Location
+            </Button>
           </div>
         ) : (
           <>
@@ -197,10 +241,11 @@ const RouteTracker = () => {
               <>
                 <LocationInfo location={selectedLocationData} />
 
-                {selectedLocationData.type === 'gym' && selectedLocationData.gradeSystem && selectedLocationData.gradeSystem.length > 0 && (
+                {selectedLocationData.type === 'gym' && (
                   <QuickScoreSection 
                     location={selectedLocationData}
                     onLogAttempt={handleQuickScore}
+                    onSetupGrades={handleSetupGrades}
                   />
                 )}
 
@@ -233,6 +278,25 @@ const RouteTracker = () => {
               </>
             )}
           </>
+        )}
+
+        {showAddLocation && (
+          <div className="space-y-4">
+            <AddLocationForm
+              onAdd={handleAddLocation}
+              onCancel={() => setShowAddLocation(false)}
+            />
+          </div>
+        )}
+
+        {showGradeSetup && selectedLocationData && (
+          <div className="space-y-4">
+            <GradeSystemManager
+              location={selectedLocationData}
+              onComplete={handleGradeSetupComplete}
+              onCancel={() => setShowGradeSetup(false)}
+            />
+          </div>
         )}
       </CardContent>
     </Card>
