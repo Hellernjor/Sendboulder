@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { Location, GradeLevel } from '@/types/location';
 import type { Route, Attempt } from '@/types/route';
@@ -400,6 +399,72 @@ export const deleteAttempt = async (attemptId: string) => {
 
   if (error) throw error;
   return data;
+};
+
+// Feedback functions
+export const submitFeedback = async (feedback: {
+  rating: number;
+  stoke: number;
+  comment: string;
+  email?: string;
+  displayName?: string;
+  imageFile?: File;
+}) => {
+  let imageUrl = null;
+
+  // Upload image if provided
+  if (feedback.imageFile) {
+    const fileExt = feedback.imageFile.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `feedback/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('feedback-images')
+      .upload(filePath, feedback.imageFile);
+
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError);
+    } else {
+      const { data } = supabase.storage
+        .from('feedback-images')
+        .getPublicUrl(filePath);
+      imageUrl = data.publicUrl;
+    }
+  }
+
+  const { data, error } = await supabase
+    .from('feedback')
+    .insert([{
+      rating: feedback.rating,
+      stoke: feedback.stoke,
+      comment: feedback.comment,
+      email: feedback.email,
+      display_name: feedback.displayName,
+      image_url: imageUrl,
+      approved: false // Requires manual approval
+    }])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const getApprovedFeedback = async (onlyHighRatings = false) => {
+  let query = supabase
+    .from('feedback')
+    .select('*')
+    .eq('approved', true)
+    .order('created_at', { ascending: false });
+
+  if (onlyHighRatings) {
+    query = query.gte('rating', 5);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw error;
+  return data || [];
 };
 
 // Analytics functions

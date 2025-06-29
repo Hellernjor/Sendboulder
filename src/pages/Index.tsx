@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import SignupForm from '@/components/ui/signup-form';
 import FeedbackButton from '@/components/feedback/FeedbackButton';
 import FeedbackModal from '@/components/feedback/FeedbackModal';
+import FeedbackDisplay from '@/components/feedback/FeedbackDisplay';
+import { submitFeedback } from '@/lib/database-functions';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -44,21 +45,32 @@ const Index = () => {
     checkFeedbackPrompt();
   }, []);
 
-  const handleFeedbackSubmit = (feedback: { rating: number; stoke: number; comment: string }) => {
-    console.log('Feedback submitted:', feedback);
-    localStorage.setItem('boulderflow_feedback_given', 'true');
-    localStorage.setItem('boulderflow_user_feedback', JSON.stringify(feedback));
-    setShowFeedbackPrompt(false);
-    
-    // In a real app, this would be sent to your backend
-    // For now, we'll just update local stats
-    const newStats = {
-      ...userStats,
-      averageRating: ((userStats.averageRating * userStats.totalUsers) + feedback.rating) / (userStats.totalUsers + 1),
-      averageStoke: ((userStats.averageStoke * userStats.totalUsers) + feedback.stoke) / (userStats.totalUsers + 1),
-      totalUsers: userStats.totalUsers + 1
-    };
-    setUserStats(newStats);
+  const handleFeedbackSubmit = async (feedback: { rating: number; stoke: number; comment: string; image?: File; displayName?: string }) => {
+    try {
+      await submitFeedback({
+        rating: feedback.rating,
+        stoke: feedback.stoke,
+        comment: feedback.comment,
+        displayName: feedback.displayName,
+        imageFile: feedback.image
+      });
+      
+      console.log('Feedback submitted successfully');
+      localStorage.setItem('boulderflow_feedback_given', 'true');
+      localStorage.setItem('boulderflow_user_feedback', JSON.stringify(feedback));
+      setShowFeedbackPrompt(false);
+      
+      // Update local stats
+      const newStats = {
+        ...userStats,
+        averageRating: ((userStats.averageRating * userStats.totalUsers) + feedback.rating) / (userStats.totalUsers + 1),
+        averageStoke: ((userStats.averageStoke * userStats.totalUsers) + feedback.stoke) / (userStats.totalUsers + 1),
+        totalUsers: userStats.totalUsers + 1
+      };
+      setUserStats(newStats);
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
   };
 
   const features = [
@@ -91,30 +103,6 @@ const Index = () => {
     'Personalized training insights',
     'Movement efficiency analysis',
     'Cross-route performance comparison'
-  ];
-
-  const testimonials = [
-    {
-      name: 'Jake Morrison',
-      grade: 'V8 Crusher',
-      text: 'Went from flailing on V5s to sending V8s in 3 months. This app called out my bad footwork and now I climb way more efficiently.',
-      rating: 5,
-      image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
-    },
-    {
-      name: 'Alex Chen',
-      grade: 'V6 Regular',
-      text: 'The route detection is spot-on. Love seeing my beta mapped out - helps me remember sequences for my projects.',
-      rating: 5,
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
-    },
-    {
-      name: 'Sam Rodriguez',
-      grade: 'V7 Sender',
-      text: 'Finally, an app that gets climbing. Not just tracking sends, but actually making me a better climber.',
-      rating: 5,
-      image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
-    }
   ];
 
   return (
@@ -253,7 +241,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Testimonials */}
+        {/* Testimonials - Now using FeedbackDisplay */}
         <div className="mb-24">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-6 text-slate-800">
             Real Climbers, Real Results
@@ -261,37 +249,7 @@ const Index = () => {
           <p className="text-xl text-slate-700 text-center mb-16">
             Don't just take our word for it - here's what the community says.
           </p>
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-white/50 backdrop-blur-sm border border-orange-300/50 overflow-hidden shadow-lg">
-                <div className="relative h-40 overflow-hidden">
-                  <img 
-                    src={testimonial.image} 
-                    alt={testimonial.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 to-transparent" />
-                </div>
-                <CardContent className="p-8">
-                  <div className="flex mb-6">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 text-yellow-500 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-slate-700 mb-6 italic text-lg leading-relaxed">"{testimonial.text}"</p>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-600 rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold">{testimonial.name.charAt(0)}</span>
-                    </div>
-                    <div>
-                      <p className="text-slate-800 font-bold">{testimonial.name}</p>
-                      <p className="text-slate-600 text-sm font-medium">{testimonial.grade}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <FeedbackDisplay onlyHighRatings={true} autoRotate={true} />
         </div>
 
         {/* Stats */}

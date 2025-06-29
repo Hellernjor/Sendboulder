@@ -1,4 +1,3 @@
-
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -64,12 +63,18 @@ CREATE TABLE IF NOT EXISTS attempts (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create feedback table (already exists but including for completeness)
+-- Updated feedback table with new structure
+DROP TABLE IF EXISTS feedback;
 CREATE TABLE IF NOT EXISTS feedback (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   email TEXT,
-  message TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  rating INTEGER CHECK (rating >= 1 AND rating <= 6) NOT NULL,
+  stoke INTEGER CHECK (stoke >= 1 AND stoke <= 5) NOT NULL,
+  comment TEXT NOT NULL,
+  image_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  approved BOOLEAN DEFAULT false,
+  display_name TEXT
 );
 
 -- Row Level Security Policies
@@ -146,11 +151,14 @@ CREATE POLICY "Users can update their own attempts" ON attempts
 CREATE POLICY "Users can delete their own attempts" ON attempts
   FOR DELETE USING (auth.uid() = user_id);
 
--- Feedback policies (already exists)
+-- Feedback policies
 ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Anyone can submit feedback" ON feedback
   FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Approved feedback is viewable by everyone" ON feedback
+  FOR SELECT USING (approved = true);
 
 -- Indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_locations_created_by ON locations(created_by);
