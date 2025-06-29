@@ -69,22 +69,40 @@ export type Database = {
       }
       feedback: {
         Row: {
+          approved: boolean | null
+          comment: string | null
           created_at: string | null
+          display_name: string | null
           email: string | null
           id: string
-          message: string
+          image_url: string | null
+          message: string | null
+          rating: number | null
+          stoke: number | null
         }
         Insert: {
+          approved?: boolean | null
+          comment?: string | null
           created_at?: string | null
+          display_name?: string | null
           email?: string | null
           id?: string
-          message: string
+          image_url?: string | null
+          message?: string | null
+          rating?: number | null
+          stoke?: number | null
         }
         Update: {
+          approved?: boolean | null
+          comment?: string | null
           created_at?: string | null
+          display_name?: string | null
           email?: string | null
           id?: string
-          message?: string
+          image_url?: string | null
+          message?: string | null
+          rating?: number | null
+          stoke?: number | null
         }
         Relationships: []
       }
