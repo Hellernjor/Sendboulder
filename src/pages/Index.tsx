@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -117,19 +118,19 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-500 via-orange-400 to-orange-300 text-slate-800 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-orange-300 via-orange-200 to-blue-200 text-slate-900 overflow-hidden">
       {/* Hero Section */}
       <div className="relative">
         <div className="container mx-auto px-4 py-20">
           <div className="text-center max-w-5xl mx-auto">
             <div className="flex items-center justify-center mb-8">
-              <Mountain className="h-14 w-14 text-slate-700 mr-4" />
-              <h1 className="text-6xl md:text-8xl font-bold text-white drop-shadow-lg">
-                Boulder<span className="text-slate-700">Flow</span>
+              <Mountain className="h-14 w-14 text-slate-800 mr-4" />
+              <h1 className="text-6xl md:text-8xl font-bold text-slate-800 drop-shadow-lg">
+                Boulder<span className="text-orange-600">Flow</span>
               </h1>
             </div>
             
-            <p className="text-2xl md:text-3xl text-slate-700 mb-6 leading-relaxed font-light drop-shadow-sm">
+            <p className="text-2xl md:text-3xl text-slate-800 mb-6 leading-relaxed font-light drop-shadow-sm">
               Your AI Climbing Coach
             </p>
             
@@ -156,7 +157,7 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline"
-                className="border-slate-700 text-slate-800 hover:bg-slate-800/10 px-12 py-6 text-xl transition-all duration-300 backdrop-blur-sm bg-white/40 shadow-lg"
+                className="border-slate-800 text-slate-800 hover:bg-slate-800/10 px-12 py-6 text-xl transition-all duration-300 backdrop-blur-sm bg-white/60 shadow-lg"
                 onClick={() => navigate('/dashboard')}
               >
                 <Play className="mr-3 h-6 w-6" />
@@ -165,26 +166,26 @@ const Index = () => {
             </div>
 
             {/* Social Proof */}
-            <div className="flex items-center justify-center space-x-8 text-slate-700 mb-20">
+            <div className="flex items-center justify-center space-x-8 text-slate-800 mb-20">
               <div className="flex items-center">
-                <Star className="h-6 w-6 text-yellow-600 mr-2" />
-                <span className="font-bold text-slate-800">{userStats.averageRating.toFixed(1)}/5</span>
+                <Star className="h-6 w-6 text-yellow-500 mr-2" />
+                <span className="font-bold text-slate-900">{userStats.averageRating.toFixed(1)}/5</span>
                 <span className="ml-2">app rating</span>
               </div>
-              <div className="h-6 w-px bg-slate-600"></div>
+              <div className="h-6 w-px bg-slate-700"></div>
               <div className="flex items-center">
-                <Star className="h-6 w-6 text-red-600 mr-2" />
-                <span className="font-bold text-slate-800">{userStats.averageStoke.toFixed(1)}/5</span>
+                <Star className="h-6 w-6 text-red-500 mr-2" />
+                <span className="font-bold text-slate-900">{userStats.averageStoke.toFixed(1)}/5</span>
                 <span className="ml-2">stoke level</span>
               </div>
-              <div className="h-6 w-px bg-slate-600"></div>
+              <div className="h-6 w-px bg-slate-700"></div>
               <div>
-                <span className="font-bold text-slate-800">{(userStats.totalUsers / 1000).toFixed(0)}K+</span>
+                <span className="font-bold text-slate-900">{(userStats.totalUsers / 1000).toFixed(0)}K+</span>
                 <span className="ml-2">crushers</span>
               </div>
-              <div className="h-6 w-px bg-slate-600"></div>
+              <div className="h-6 w-px bg-slate-700"></div>
               <div>
-                <span className="font-bold text-slate-800">{(userStats.totalRoutes / 1000000).toFixed(0)}M+</span>
+                <span className="font-bold text-slate-900">{(userStats.totalRoutes / 1000000).toFixed(0)}M+</span>
                 <span className="ml-2">routes sent</span>
               </div>
             </div>
@@ -194,7 +195,7 @@ const Index = () => {
 
       <div className="container mx-auto px-4">
         {/* Motivation Section */}
-        <div className="relative mb-24 rounded-3xl overflow-hidden bg-gradient-to-r from-orange-600/20 to-orange-400/20 backdrop-blur-sm border border-orange-300/30">
+        <div className="relative mb-24 rounded-3xl overflow-hidden bg-gradient-to-r from-orange-400/30 to-blue-300/30 backdrop-blur-sm border border-orange-300/50">
           <div className="relative p-16 text-center">
             <h2 className="text-5xl font-bold text-slate-800 mb-6">
               Your Next Send Awaits
@@ -216,8 +217,8 @@ const Index = () => {
           </p>
           <div className="grid md:grid-cols-2 gap-8">
             {benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center space-x-4 bg-white/30 backdrop-blur-sm p-6 rounded-xl border border-orange-200/50 shadow-lg">
-                <CheckCircle className="h-7 w-7 text-slate-700 flex-shrink-0" />
+              <div key={index} className="flex items-center space-x-4 bg-white/50 backdrop-blur-sm p-6 rounded-xl border border-orange-300/50 shadow-lg">
+                <CheckCircle className="h-7 w-7 text-slate-800 flex-shrink-0" />
                 <span className="text-slate-800 text-lg font-medium">{benefit}</span>
               </div>
             ))}
@@ -236,11 +237,11 @@ const Index = () => {
             {features.map((feature, index) => (
               <Card 
                 key={index} 
-                className="bg-white/40 backdrop-blur-sm border border-orange-200/50 hover:border-orange-300/70 transition-all duration-300 hover:scale-105 group overflow-hidden shadow-lg"
+                className="bg-white/50 backdrop-blur-sm border border-orange-300/50 hover:border-orange-400/70 transition-all duration-300 hover:scale-105 group overflow-hidden shadow-lg"
               >
-                <div className="relative h-48 bg-gradient-to-br from-orange-300/30 to-orange-500/30 flex items-center justify-center">
-                  <div className="p-6 bg-white/20 rounded-xl backdrop-blur-sm">
-                    <feature.icon className="h-16 w-16 text-slate-700" />
+                <div className="relative h-48 bg-gradient-to-br from-orange-300/40 to-blue-300/40 flex items-center justify-center">
+                  <div className="p-6 bg-white/30 rounded-xl backdrop-blur-sm">
+                    <feature.icon className="h-16 w-16 text-slate-800" />
                   </div>
                 </div>
                 <CardContent className="p-8">
@@ -262,7 +263,7 @@ const Index = () => {
           </p>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-white/40 backdrop-blur-sm border border-orange-200/50 overflow-hidden shadow-lg">
+              <Card key={index} className="bg-white/50 backdrop-blur-sm border border-orange-300/50 overflow-hidden shadow-lg">
                 <div className="relative h-40 overflow-hidden">
                   <img 
                     src={testimonial.image} 
@@ -274,7 +275,7 @@ const Index = () => {
                 <CardContent className="p-8">
                   <div className="flex mb-6">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 text-yellow-600 fill-current" />
+                      <Star key={i} className="h-5 w-5 text-yellow-500 fill-current" />
                     ))}
                   </div>
                   <p className="text-slate-700 mb-6 italic text-lg leading-relaxed">"{testimonial.text}"</p>
@@ -294,12 +295,12 @@ const Index = () => {
         </div>
 
         {/* Stats */}
-        <div className="bg-white/30 backdrop-blur-sm rounded-3xl p-12 mb-24 border border-orange-200/50 shadow-lg">
+        <div className="bg-white/50 backdrop-blur-sm rounded-3xl p-12 mb-24 border border-orange-300/50 shadow-lg">
           <h2 className="text-3xl font-bold text-center mb-12 text-slate-800">The Numbers Don't Lie</h2>
           <div className="grid md:grid-cols-3 gap-12 text-center">
             <div className="group">
               <div className="flex items-center justify-center mb-4">
-                <Award className="h-8 w-8 text-yellow-600 mr-2" />
+                <Award className="h-8 w-8 text-yellow-500 mr-2" />
                 <p className="text-5xl font-bold text-slate-800">85%</p>
               </div>
               <p className="text-slate-700 text-lg">Higher send rate after 30 days</p>
@@ -322,7 +323,7 @@ const Index = () => {
         </div>
 
         {/* Final CTA */}
-        <div className="relative text-center rounded-3xl overflow-hidden bg-gradient-to-r from-slate-800/90 to-slate-700/90 backdrop-blur-sm">
+        <div className="relative text-center rounded-3xl overflow-hidden bg-gradient-to-r from-slate-800/95 to-slate-700/95 backdrop-blur-sm">
           <div className="relative p-16">
             <h2 className="text-5xl font-bold text-white mb-6">
               Ready to Level Up Your Climbing?
@@ -336,7 +337,7 @@ const Index = () => {
                 <DialogTrigger asChild>
                   <Button 
                     size="lg"
-                    className="bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500 text-slate-800 px-16 py-6 text-xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl"
+                    className="bg-gradient-to-r from-orange-400 to-orange-300 hover:from-orange-500 hover:to-orange-400 text-slate-800 px-16 py-6 text-xl font-bold transition-all duration-300 hover:scale-105 shadow-2xl"
                   >
                     Start Free
                     <ArrowRight className="ml-3 h-6 w-6" />
