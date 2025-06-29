@@ -10,17 +10,22 @@ import BenefitsSection from '@/components/landing/BenefitsSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import StatsSection from '@/components/landing/StatsSection';
 import FinalCTA from '@/components/landing/FinalCTA';
+import { useStatsData } from '@/hooks/useStatsData';
 
 const Index = () => {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [showFeedbackPrompt, setShowFeedbackPrompt] = useState(false);
-  const [userStats, setUserStats] = useState({
-    averageRating: 4.9,
-    averageStoke: 4.7,
-    totalUsers: 12000,
-    totalRoutes: 2000000
-  });
+  
+  // Use real stats data from the database
+  const { averageStoke, totalUsers, totalRoutes, isLoading } = useStatsData();
+
+  const userStats = {
+    averageRating: 4.9, // This can be removed since we removed app rating
+    averageStoke,
+    totalUsers,
+    totalRoutes
+  };
 
   // Check if user should see feedback prompt (after a week of usage)
   useEffect(() => {
@@ -60,18 +65,20 @@ const Index = () => {
       localStorage.setItem('boulderflow_user_feedback', JSON.stringify(feedback));
       setShowFeedbackPrompt(false);
       
-      // Update local stats
-      const newStats = {
-        ...userStats,
-        averageRating: ((userStats.averageRating * userStats.totalUsers) + feedback.rating) / (userStats.totalUsers + 1),
-        averageStoke: ((userStats.averageStoke * userStats.totalUsers) + feedback.stoke) / (userStats.totalUsers + 1),
-        totalUsers: userStats.totalUsers + 1
-      };
-      setUserStats(newStats);
+      // The stats will automatically update on next page load/component mount
     } catch (error) {
       console.error('Error submitting feedback:', error);
     }
   };
+
+  // Show loading state if stats are still loading
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 flex items-center justify-center">
+        <div className="text-slate-600 text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 text-slate-900 overflow-hidden">
