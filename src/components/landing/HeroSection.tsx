@@ -83,14 +83,7 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
           </div>
 
           {/* Enhanced Social Proof */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8 text-slate-900 mb-16 md:mb-20 px-4">
-            <div className="flex flex-col items-center bg-white/80 backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-blue-200">
-              <div className="flex items-center mb-1">
-                <Star className="h-4 w-4 md:h-6 md:w-6 text-yellow-500 mr-1 md:mr-2" />
-                <span className="font-bold text-slate-900 text-sm md:text-lg">{userStats.averageRating.toFixed(1)}/5</span>
-              </div>
-              <span className="text-xs md:text-sm font-medium text-center text-slate-600">app rating</span>
-            </div>
+          <div className="grid grid-cols-3 gap-3 md:gap-8 text-slate-900 mb-16 md:mb-20 px-4">
             <div className="flex flex-col items-center bg-white/80 backdrop-blur-sm px-3 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border border-blue-200">
               <div className="flex items-center mb-1">
                 <Star className="h-4 w-4 md:h-6 md:w-6 text-red-500 mr-1 md:mr-2" />
