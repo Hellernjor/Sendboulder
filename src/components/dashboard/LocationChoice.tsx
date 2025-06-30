@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Plus, Navigation, Loader2 } from 'lucide-react';
+import { MapPin, Plus, Navigation, Loader2, Edit, Trash2 } from 'lucide-react';
 import { Location } from '@/types/location';
 import AddLocationModal from './AddLocationModal';
 import EditLocationModal from './EditLocationModal';
@@ -135,9 +135,9 @@ const LocationChoice = () => {
 
   if (loading) {
     return (
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="bg-white/80 border-blue-200 shadow-sm backdrop-blur-sm">
         <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
         </CardContent>
       </Card>
     );
@@ -145,11 +145,11 @@ const LocationChoice = () => {
 
   return (
     <>
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="bg-white/80 border-blue-200 shadow-sm backdrop-blur-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between text-white text-lg">
+          <CardTitle className="flex items-center justify-between text-slate-800 text-lg">
             <div className="flex items-center space-x-2">
-              <MapPin className="h-5 w-5" />
+              <MapPin className="h-5 w-5 text-blue-600" />
               <span>Choose Location</span>
             </div>
             <Button
@@ -157,6 +157,7 @@ const LocationChoice = () => {
               size="sm"
               onClick={getUserLocation}
               disabled={loadingLocation}
+              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
             >
               {loadingLocation ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -169,8 +170,8 @@ const LocationChoice = () => {
         <CardContent className="space-y-3">
           {locations.length === 0 ? (
             <div className="text-center py-6">
-              <MapPin className="h-8 w-8 text-slate-600 mx-auto mb-2" />
-              <p className="text-slate-400 text-sm mb-3">No locations available</p>
+              <MapPin className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+              <p className="text-slate-600 text-sm mb-3">No locations available</p>
               <Button 
                 onClick={() => setShowAddLocation(true)}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -195,19 +196,19 @@ const LocationChoice = () => {
                   return (
                     <div 
                       key={location.id}
-                      className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors"
+                      className="flex items-center justify-between p-3 bg-blue-50/50 rounded-lg hover:bg-blue-100/50 transition-colors border border-blue-100"
                     >
                       <div className="flex-1 cursor-pointer">
-                        <h3 className="text-white font-medium text-sm">{location.name}</h3>
+                        <h3 className="text-slate-800 font-medium text-sm">{location.name}</h3>
                         <div className="flex items-center space-x-2 mt-1">
                           <Badge 
                             variant={location.type === 'gym' ? 'default' : 'secondary'}
-                            className="text-xs"
+                            className="text-xs bg-blue-100 text-blue-700 border-blue-200"
                           >
                             {location.type}
                           </Badge>
                           {distance && (
-                            <span className="text-slate-400 text-xs">
+                            <span className="text-slate-500 text-xs">
                               {distance < 1 ? 
                                 `${Math.round(distance * 1000)}m` : 
                                 `${distance.toFixed(1)}km`
@@ -223,17 +224,17 @@ const LocationChoice = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => setEditingLocation(location)}
-                            className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/30 h-8 w-8 p-0"
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-100 h-8 w-8 p-0"
                           >
-                            <MapPin className="h-3 w-3" />
+                            <Edit className="h-3 w-3" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteLocation(location.id)}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-900/30 h-8 w-8 p-0"
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 p-0"
                           >
-                            ×
+                            <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>
                       )}
