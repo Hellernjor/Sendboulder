@@ -43,7 +43,7 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
             Track every route, log every send, and watch your climbing progress soar. The ultimate tool for documenting your climbing journey and hitting new grades.
           </p>
           
-          <div className="flex justify-center mb-8 md:mb-12 px-4">
+          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center mb-8 md:mb-12 px-4">
             <Dialog open={isSignupOpen} onOpenChange={setIsSignupOpen}>
               <DialogTrigger asChild>
                 <Button 
@@ -58,14 +58,11 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
                 <SignupForm />
               </DialogContent>
             </Dialog>
-          </div>
 
-          {/* Share Button */}
-          <div className="flex justify-center mb-12 md:mb-16">
             <ShareButton 
               size="lg"
               variant="outline"
-              className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0 px-8 py-4 text-lg font-semibold shadow-lg rounded-2xl transition-all duration-300 hover:scale-105"
+              className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0 px-8 sm:px-12 md:px-16 py-6 md:py-8 text-lg sm:text-xl md:text-2xl font-bold shadow-lg rounded-2xl transition-all duration-300 hover:scale-105"
             />
           </div>
 
