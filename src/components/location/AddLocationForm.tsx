@@ -55,10 +55,10 @@ const AddLocationForm = ({ onAdd, onCancel }: AddLocationFormProps) => {
   };
 
   return (
-    <Card className="bg-slate-700/50 border-slate-600">
+    <Card className="bg-white/80 border-blue-200 shadow-sm backdrop-blur-sm">
       <CardContent className="p-4 space-y-4">
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-4">
-          <div className="flex items-center space-x-2 text-blue-400">
+        <div className="bg-blue-50/80 border border-blue-200 rounded-lg p-3 mb-4">
+          <div className="flex items-center space-x-2 text-blue-700">
             <Globe className="h-4 w-4" />
             <p className="text-sm">This location will be visible to all users in the community</p>
           </div>
@@ -66,22 +66,22 @@ const AddLocationForm = ({ onAdd, onCancel }: AddLocationFormProps) => {
         
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="location-name" className="text-white">Location Name</Label>
+            <Label htmlFor="location-name" className="text-slate-700">Location Name</Label>
             <Input
               id="location-name"
               value={newLocation.name}
               onChange={(e) => setNewLocation({...newLocation, name: e.target.value})}
               placeholder="Enter location name"
-              className="bg-slate-800 border-slate-600 text-white"
+              className="bg-white/80 border-blue-200 text-slate-800"
             />
           </div>
           <div>
-            <Label htmlFor="location-type" className="text-white">Type</Label>
+            <Label htmlFor="location-type" className="text-slate-700">Type</Label>
             <select
               id="location-type"
               value={newLocation.type}
               onChange={(e) => setNewLocation({...newLocation, type: e.target.value as 'gym' | 'outdoor'})}
-              className="w-full h-10 bg-slate-800 border border-slate-600 rounded-md px-3 text-white"
+              className="w-full h-10 bg-white/80 border border-blue-200 rounded-md px-3 text-slate-800"
             >
               <option value="gym">Gym</option>
               <option value="outdoor">Outdoor</option>
@@ -90,23 +90,23 @@ const AddLocationForm = ({ onAdd, onCancel }: AddLocationFormProps) => {
         </div>
         
         <div>
-          <Label htmlFor="location-address" className="text-white">Address</Label>
+          <Label htmlFor="location-address" className="text-slate-700">Address</Label>
           <Input
             id="location-address"
             value={newLocation.address}
             onChange={(e) => setNewLocation({...newLocation, address: e.target.value})}
             placeholder="Enter address or general location"
-            className="bg-slate-800 border-slate-600 text-white"
+            className="bg-white/80 border-blue-200 text-slate-800"
           />
         </div>
 
         <div>
-          <Label htmlFor="route-frequency" className="text-white">Route Change Frequency</Label>
+          <Label htmlFor="route-frequency" className="text-slate-700">Route Change Frequency</Label>
           <select
             id="route-frequency"
             value={newLocation.routeChangeFrequency}
             onChange={(e) => setNewLocation({...newLocation, routeChangeFrequency: e.target.value as any})}
-            className="w-full h-10 bg-slate-800 border border-slate-600 rounded-md px-3 text-white"
+            className="w-full h-10 bg-white/80 border border-blue-200 rounded-md px-3 text-slate-800"
           >
             <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
@@ -117,7 +117,7 @@ const AddLocationForm = ({ onAdd, onCancel }: AddLocationFormProps) => {
 
         {newLocation.type === 'gym' && (
           <div>
-            <Label className="text-white">Grade System (for gym routes)</Label>
+            <Label className="text-slate-700">Grade System (for gym routes)</Label>
             <GradeSystemManager 
               grades={gradeSystem}
               onGradesChange={setGradeSystem}
@@ -132,7 +132,7 @@ const AddLocationForm = ({ onAdd, onCancel }: AddLocationFormProps) => {
           <Button 
             onClick={onCancel} 
             variant="outline" 
-            className="border-slate-600 text-slate-300 hover:bg-slate-700"
+            className="border-blue-300 text-slate-700 hover:bg-blue-50"
           >
             Cancel
           </Button>

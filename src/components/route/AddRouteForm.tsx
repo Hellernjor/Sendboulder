@@ -40,10 +40,10 @@ const AddRouteForm = ({ onAdd, onCancel, location }: AddRouteFormProps) => {
 
   if (gymGrades.length === 0) {
     return (
-      <Card className="bg-slate-700/50 border-slate-600">
+      <Card className="bg-white/80 border-blue-200 shadow-sm backdrop-blur-sm">
         <CardContent className="p-4">
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 text-center">
-            <p className="text-yellow-400 text-sm">
+          <div className="bg-yellow-50/80 border border-yellow-200 rounded-lg p-3 text-center">
+            <p className="text-yellow-700 text-sm">
               This gym doesn't have a grade system set up yet. Ask the gym owner to define their color grades!
             </p>
           </div>
@@ -51,7 +51,7 @@ const AddRouteForm = ({ onAdd, onCancel, location }: AddRouteFormProps) => {
             <Button 
               onClick={onCancel} 
               variant="outline" 
-              className="border-slate-600 text-slate-300 hover:bg-slate-700"
+              className="border-blue-300 text-slate-700 hover:bg-blue-50"
             >
               Cancel
             </Button>
@@ -62,33 +62,33 @@ const AddRouteForm = ({ onAdd, onCancel, location }: AddRouteFormProps) => {
   }
 
   return (
-    <Card className="bg-slate-700/50 border-slate-600">
+    <Card className="bg-white/80 border-blue-200 shadow-sm backdrop-blur-sm">
       <CardContent className="p-4 space-y-3">
-        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 mb-4">
-          <div className="flex items-center space-x-2 text-green-400">
+        <div className="bg-green-50/80 border border-green-200 rounded-lg p-3 mb-4">
+          <div className="flex items-center space-x-2 text-green-700">
             <User className="h-4 w-4" />
             <p className="text-sm">This route will be private to you but linked to this location</p>
           </div>
         </div>
         
         <div>
-          <Label htmlFor="route-name" className="text-white">Route Name</Label>
+          <Label htmlFor="route-name" className="text-slate-700">Route Name</Label>
           <Input
             id="route-name"
             value={newRoute.name}
             onChange={(e) => setNewRoute({...newRoute, name: e.target.value})}
             placeholder="Enter route name or description"
-            className="bg-slate-800 border-slate-600 text-white"
+            className="bg-white/80 border-blue-200 text-slate-800"
           />
         </div>
         
         <div>
-          <Label htmlFor="route-grade" className="text-white">Grade</Label>
+          <Label htmlFor="route-grade" className="text-slate-700">Grade</Label>
           <select
             id="route-grade"
             value={newRoute.gradeId}
             onChange={(e) => setNewRoute({...newRoute, gradeId: e.target.value})}
-            className="w-full h-10 bg-slate-800 border border-slate-600 rounded-md px-3 text-white"
+            className="w-full h-10 bg-white/80 border border-blue-200 rounded-md px-3 text-slate-800"
           >
             <option value="">Select a grade</option>
             {gymGrades.sort((a, b) => a.order - b.order).map(grade => (
@@ -106,7 +106,7 @@ const AddRouteForm = ({ onAdd, onCancel, location }: AddRouteFormProps) => {
           <Button 
             onClick={onCancel} 
             variant="outline" 
-            className="border-slate-600 text-slate-300 hover:bg-slate-700"
+            className="border-blue-300 text-slate-700 hover:bg-blue-50"
           >
             Cancel
           </Button>

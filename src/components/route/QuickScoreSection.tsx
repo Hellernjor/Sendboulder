@@ -19,17 +19,17 @@ const QuickScoreSection = ({ location, onLogAttempt, onSetupGrades }: QuickScore
   // If no grade system is set up, show setup prompt
   if (!location.gradeSystem || location.gradeSystem.length === 0) {
     return (
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="bg-white/80 border-blue-200 shadow-sm backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-white">
-            <Trophy className="h-5 w-5" />
+          <CardTitle className="flex items-center space-x-2 text-slate-800">
+            <Trophy className="h-5 w-5 text-orange-500" />
             <span>Quick Score</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-6">
-            <Settings className="h-12 w-12 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-400 text-lg mb-2">No grades configured</p>
+            <Settings className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+            <p className="text-slate-600 text-lg mb-2">No grades configured</p>
             <p className="text-slate-500 text-sm mb-4">
               Set up the grade system for {location.name} to start logging quick scores.
             </p>
@@ -63,10 +63,10 @@ const QuickScoreSection = ({ location, onLogAttempt, onSetupGrades }: QuickScore
 
   return (
     <>
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="bg-white/80 border-blue-200 shadow-sm backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-white">
-            <Trophy className="h-5 w-5" />
+          <CardTitle className="flex items-center space-x-2 text-slate-800">
+            <Trophy className="h-5 w-5 text-orange-500" />
             <span>Quick Score</span>
           </CardTitle>
         </CardHeader>
@@ -78,7 +78,7 @@ const QuickScoreSection = ({ location, onLogAttempt, onSetupGrades }: QuickScore
                 <Button
                   key={grade.id}
                   onClick={() => handleGradeClick(grade.id)}
-                  className="h-12 text-white font-medium border-2 transition-all hover:scale-105"
+                  className="h-12 text-white font-medium border-2 transition-all hover:scale-105 shadow-sm"
                   style={{ 
                     backgroundColor: grade.color,
                     borderColor: grade.color,
