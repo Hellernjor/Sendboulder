@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Navigation } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { Location } from '@/types/location';
+import GoogleMapSelector from '@/components/maps/GoogleMapSelector';
 
 interface AddLocationModalProps {
   onClose: () => void;
@@ -18,7 +19,12 @@ const AddLocationModal = ({ onClose, onAdd, userLocation }: AddLocationModalProp
   const [name, setName] = useState('');
   const [type, setType] = useState<'gym' | 'outdoor'>('gym');
   const [address, setAddress] = useState('');
-  const [useCurrentLocation, setUseCurrentLocation] = useState(false);
+  const [coordinates, setCoordinates] = useState<{lat: number, lng: number} | null>(userLocation);
+
+  const handleLocationSelect = (location: { lat: number; lng: number; address: string }) => {
+    setCoordinates({ lat: location.lat, lng: location.lng });
+    setAddress(location.address);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,12 +34,12 @@ const AddLocationModal = ({ onClose, onAdd, userLocation }: AddLocationModalProp
       name,
       type,
       address,
-      coordinates: useCurrentLocation && userLocation ? userLocation : undefined,
-      createdBy: 'current-user', // This will be replaced with actual user ID
-      createdByUsername: 'You', // This will be replaced with actual username
+      coordinates: coordinates || undefined,
+      createdBy: 'current-user',
+      createdByUsername: 'You',
       createdAt: new Date(),
       routeChangeFrequency: 'monthly',
-      isGlobal: true // All locations are global for community use
+      isGlobal: true
     };
 
     onAdd(newLocation);
@@ -41,7 +47,7 @@ const AddLocationModal = ({ onClose, onAdd, userLocation }: AddLocationModalProp
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-800 border-slate-700 text-white max-w-md">
+      <DialogContent className="bg-white border-slate-200 text-slate-900 max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <MapPin className="h-5 w-5" />
@@ -51,24 +57,24 @@ const AddLocationModal = ({ onClose, onAdd, userLocation }: AddLocationModalProp
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="name" className="text-slate-300">Location Name</Label>
+            <Label htmlFor="name" className="text-slate-700">Location Name</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Downtown Climbing Gym"
-              className="bg-slate-700 border-slate-600 text-white"
+              className="bg-white border-slate-300 text-slate-900"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="type" className="text-slate-300">Type</Label>
+            <Label htmlFor="type" className="text-slate-700">Type</Label>
             <Select value={type} onValueChange={(value: 'gym' | 'outdoor') => setType(value)}>
-              <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+              <SelectTrigger className="bg-white border-slate-300 text-slate-900">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-slate-700 border-slate-600">
+              <SelectContent className="bg-white border-slate-300">
                 <SelectItem value="gym">Gym</SelectItem>
                 <SelectItem value="outdoor">Outdoor</SelectItem>
               </SelectContent>
@@ -76,45 +82,38 @@ const AddLocationModal = ({ onClose, onAdd, userLocation }: AddLocationModalProp
           </div>
 
           <div>
-            <Label htmlFor="address" className="text-slate-300">Address</Label>
+            <Label htmlFor="location" className="text-slate-700">Location</Label>
+            <GoogleMapSelector
+              onLocationSelect={handleLocationSelect}
+              initialLocation={userLocation || undefined}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="address" className="text-slate-700">Address</Label>
             <Input
               id="address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="123 Main St, City, State"
-              className="bg-slate-700 border-slate-600 text-white"
+              placeholder="Address will be filled automatically from map selection"
+              className="bg-slate-50 border-slate-300 text-slate-900"
+              readOnly
             />
           </div>
 
-          {userLocation && (
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="useLocation"
-                checked={useCurrentLocation}
-                onChange={(e) => setUseCurrentLocation(e.target.checked)}
-                className="w-4 h-4"
-              />
-              <Label htmlFor="useLocation" className="text-slate-300 text-sm flex items-center">
-                <Navigation className="h-4 w-4 mr-1" />
-                Use my current GPS location
-              </Label>
-            </div>
-          )}
-
-          <div className="flex space-x-2 pt-2">
+          <div className="flex space-x-2 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
+              className="flex-1 border-slate-300 text-slate-700 hover:bg-slate-50"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-              disabled={!name.trim()}
+              disabled={!name.trim() || !coordinates}
             >
               Add Location
             </Button>
