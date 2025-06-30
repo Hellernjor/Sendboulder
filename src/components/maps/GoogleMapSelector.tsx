@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { MapPin, Navigation } from 'lucide-react';
@@ -22,14 +21,14 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
       try {
         // Get Google Maps API key from Supabase secrets
         const { data, error } = await supabase.functions.invoke('get-secrets', {
-          body: { secretName: 'GOOGLE_MAPS_API_KEY' }
+          body: { keys: ['GOOGLE_MAPS_API_KEY'] }
         });
 
-        if (error || !data?.secret) {
+        if (error || !data?.GOOGLE_MAPS_API_KEY) {
           throw new Error('Google Maps API key not found in Supabase secrets');
         }
 
-        const apiKey = data.secret;
+        const apiKey = data.GOOGLE_MAPS_API_KEY;
 
         const loader = new Loader({
           apiKey,
