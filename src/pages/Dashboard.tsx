@@ -15,7 +15,6 @@ import { supabase } from '@/lib/supabase';
 const Dashboard = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
@@ -125,28 +124,11 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="locations" className="space-y-6">
-            <LocationChoice onLocationSelect={setSelectedLocationId} />
+            <LocationChoice />
           </TabsContent>
 
           <TabsContent value="routes" className="space-y-6">
-            {selectedLocationId ? (
-              <RouteTracker locationId={selectedLocationId} />
-            ) : (
-              <Card className="bg-slate-800/50 border-slate-700">
-                <CardContent className="pt-6 text-center">
-                  <p className="text-slate-300 mb-4">Please select a location first to start tracking routes.</p>
-                  <Button
-                    onClick={() => {
-                      const locationTab = document.querySelector('[value="locations"]') as HTMLElement;
-                      locationTab?.click();
-                    }}
-                    className="bg-orange-500 hover:bg-orange-600"
-                  >
-                    Select Location
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
+            <RouteTracker />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
