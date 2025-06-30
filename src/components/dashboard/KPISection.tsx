@@ -4,27 +4,59 @@ import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, Target, Clock, Award } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getUserStats, getUserAttempts } from '@/lib/database-functions';
+import { Logger } from '@/lib/logger';
 
 const KPISection = () => {
+  Logger.component('KPISection', 'Component mounted');
+
   // Get user stats
-  const { data: stats } = useQuery({
+  const { data: stats, isLoading: statsLoading, error: statsError } = useQuery({
     queryKey: ['user-stats'],
-    queryFn: () => getUserStats(),
+    queryFn: () => {
+      Logger.db('KPISection', 'Fetching user stats');
+      return getUserStats();
+    },
+    onSuccess: (data) => {
+      Logger.success('KPISection', 'User stats loaded', data);
+    },
+    onError: (error) => {
+      Logger.error('KPISection', 'Failed to load user stats', error);
+    }
   });
 
   // Get user attempts for session count
-  const { data: attempts } = useQuery({
+  const { data: attempts, isLoading: attemptsLoading, error: attemptsError } = useQuery({
     queryKey: ['user-attempts'],
-    queryFn: () => getUserAttempts(),
+    queryFn: () => {
+      Logger.db('KPISection', 'Fetching user attempts');
+      return getUserAttempts();
+    },
+    onSuccess: (data) => {
+      Logger.success('KPISection', `Loaded ${data?.length || 0} attempts`, data);
+    },
+    onError: (error) => {
+      Logger.error('KPISection', 'Failed to load user attempts', error);
+    }
   });
 
   // Calculate sessions (group attempts by date)
   const totalSessions = React.useMemo(() => {
-    if (!attempts) return 0;
+    if (!attempts) {
+      Logger.debug('KPISection', 'No attempts data available for session calculation');
+      return 0;
+    }
+    
     const sessionDates = new Set(
       attempts.map(attempt => new Date(attempt.date).toDateString())
     );
-    return sessionDates.size;
+    
+    const sessionCount = sessionDates.size;
+    Logger.debug('KPISection', `Calculated ${sessionCount} unique sessions`, {
+      totalAttempts: attempts.length,
+      uniqueDates: Array.from(sessionDates)
+    });
+    
+    return sessionCount;
   }, [attempts]);
 
   const kpis = {
@@ -33,6 +65,14 @@ const KPISection = () => {
     successRate: Math.round(stats?.successRate || 0),
     improvementScore: stats?.totalAttempts || 0
   };
+
+  Logger.debug('KPISection', 'Calculated KPIs', {
+    kpis,
+    statsLoading,
+    attemptsLoading,
+    hasStatsError: !!statsError,
+    hasAttemptsError: !!attemptsError
+  });
 
   return (
     <Card className="bg-white/80 border-blue-200 shadow-sm backdrop-blur-sm mb-6">

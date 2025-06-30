@@ -10,6 +10,7 @@ import EditLocationModal from './EditLocationModal';
 import { getLocations, updateLocation, deleteLocation } from '@/lib/database-functions';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { Logger } from '@/lib/logger';
 
 const LocationChoice = () => {
   const [locations, setLocations] = useState<Location[]>([]);
@@ -22,16 +23,19 @@ const LocationChoice = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    Logger.component('LocationChoice', 'Component mounted, loading initial data');
     loadLocations();
     getUserLocation();
   }, []);
 
   const loadLocations = async () => {
+    Logger.db('LocationChoice', 'Loading locations from database');
     try {
       const data = await getLocations();
+      Logger.success('LocationChoice', `Loaded ${data.length} locations`, { locations: data });
       setLocations(data);
     } catch (error) {
-      console.error('Error loading locations:', error);
+      Logger.error('LocationChoice', 'Failed to load locations', error);
       toast({
         title: "Error",
         description: "Failed to load locations. Please try again.",
@@ -44,23 +48,30 @@ const LocationChoice = () => {
 
   // Get user's GPS location
   const getUserLocation = () => {
+    Logger.debug('LocationChoice', 'Requesting user GPS location');
     setLoadingLocation(true);
+    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setUserLocation({
+          const location = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
-          });
+          };
+          Logger.success('LocationChoice', 'Got user GPS location', location);
+          setUserLocation(location);
           setLoadingLocation(false);
         },
         (error) => {
-          console.error('Error getting location:', error);
+          Logger.error('LocationChoice', 'Failed to get GPS location', {
+            code: error.code,
+            message: error.message
+          });
           setLoadingLocation(false);
         }
       );
     } else {
-      console.error('Geolocation is not supported by this browser.');
+      Logger.error('LocationChoice', 'Geolocation not supported by browser');
       setLoadingLocation(false);
     }
   };
@@ -76,14 +87,23 @@ const LocationChoice = () => {
       Math.sin(dLng/2) * Math.sin(dLng/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     const distance = R * c;
+    
+    Logger.debug('LocationChoice', `Calculated distance: ${distance.toFixed(2)}km`, {
+      from: { lat: lat1, lng: lng1 },
+      to: { lat: lat2, lng: lng2 }
+    });
+    
     return distance;
   };
 
   const handleEditLocation = async (locationData: Partial<Location>) => {
     if (!editingLocation) return;
     
+    Logger.db('LocationChoice', 'Updating location', { locationId: editingLocation.id, data: locationData });
+    
     try {
       await updateLocation(editingLocation.id, locationData);
+      Logger.success('LocationChoice', 'Location updated successfully');
       await loadLocations();
       setEditingLocation(null);
       toast({
@@ -91,7 +111,7 @@ const LocationChoice = () => {
         description: "Location updated successfully!",
       });
     } catch (error) {
-      console.error('Error updating location:', error);
+      Logger.error('LocationChoice', 'Failed to update location', error);
       toast({
         title: "Error",
         description: "Failed to update location. Please try again.",
@@ -101,15 +121,18 @@ const LocationChoice = () => {
   };
 
   const handleDeleteLocation = async (locationId: string) => {
+    Logger.db('LocationChoice', 'Deleting location', { locationId });
+    
     try {
       await deleteLocation(locationId);
+      Logger.success('LocationChoice', 'Location deleted successfully');
       setLocations(locations.filter(loc => loc.id !== locationId));
       toast({
         title: "Success",
         description: "Location deleted successfully!",
       });
     } catch (error) {
-      console.error('Error deleting location:', error);
+      Logger.error('LocationChoice', 'Failed to delete location', error);
       toast({
         title: "Error",
         description: "Failed to delete location. Please try again.",
@@ -132,6 +155,14 @@ const LocationChoice = () => {
       );
       return distanceA - distanceB;
     }) : locations;
+
+  Logger.debug('LocationChoice', 'Rendering component', {
+    locationsCount: locations.length,
+    hasUserLocation: !!userLocation,
+    loading,
+    showAddLocation,
+    editingLocation: !!editingLocation
+  });
 
   if (loading) {
     return (
@@ -258,8 +289,12 @@ const LocationChoice = () => {
 
       {showAddLocation && (
         <AddLocationModal
-          onClose={() => setShowAddLocation(false)}
+          onClose={() => {
+            Logger.debug('LocationChoice', 'Closing add location modal');
+            setShowAddLocation(false);
+          }}
           onAdd={(newLocation) => {
+            Logger.success('LocationChoice', 'New location added', newLocation);
             setLocations([...locations, newLocation]);
             setShowAddLocation(false);
           }}
@@ -270,7 +305,10 @@ const LocationChoice = () => {
       {editingLocation && (
         <EditLocationModal
           location={editingLocation}
-          onClose={() => setEditingLocation(null)}
+          onClose={() => {
+            Logger.debug('LocationChoice', 'Closing edit location modal');
+            setEditingLocation(null);
+          }}
           onSave={handleEditLocation}
           userLocation={userLocation}
         />

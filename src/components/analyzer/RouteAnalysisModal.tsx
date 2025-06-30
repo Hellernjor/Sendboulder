@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { X, Check, RotateCcw, Loader2 } from 'lucide-react';
 import GradeSelector from './GradeSelector';
 import GripSelector from './GripSelector';
 import { GripDetectionService, DetectedGrip } from '@/services/gripDetectionService';
+import { Logger } from '@/lib/logger';
 
 interface RouteAnalysisModalProps {
   image: string;
@@ -22,21 +22,32 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
   const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
+    Logger.component('RouteAnalysisModal', 'Component mounted, starting grip detection');
+    
     const detectGrips = async () => {
       setIsDetecting(true);
       try {
-        console.log('Starting grip detection...');
+        Logger.debug('RouteAnalysisModal', 'Starting grip detection process', {
+          imageLength: image.length,
+          hasImageRef: !!imageRef.current
+        });
+        
         const grips = await GripDetectionService.detectGrips(image);
+        Logger.success('RouteAnalysisModal', `Detected ${grips.length} grips`, grips);
+        
         setDetectedGrips(grips);
         // Pre-select detected grips
-        setSelectedGrips(grips.map(grip => ({x: grip.x, y: grip.y})));
-        console.log('Grip detection completed:', grips);
+        const preselectedGrips = grips.map(grip => ({x: grip.x, y: grip.y}));
+        setSelectedGrips(preselectedGrips);
+        Logger.debug('RouteAnalysisModal', 'Pre-selected detected grips', preselectedGrips);
+        
       } catch (error) {
-        console.error('Grip detection failed:', error);
+        Logger.error('RouteAnalysisModal', 'Grip detection failed', error);
         // Continue without detected grips
         setDetectedGrips([]);
       } finally {
         setIsDetecting(false);
+        Logger.debug('RouteAnalysisModal', 'Grip detection process completed');
       }
     };
 
@@ -44,19 +55,52 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
   }, [image]);
 
   const handleComplete = () => {
-    if (!selectedGrade || selectedGrips.length === 0) return;
+    Logger.debug('RouteAnalysisModal', 'Completing route analysis', {
+      selectedGrade,
+      gripsCount: selectedGrips.length,
+      canComplete: !!(selectedGrade && selectedGrips.length > 0)
+    });
+    
+    if (!selectedGrade || selectedGrips.length === 0) {
+      Logger.warn('RouteAnalysisModal', 'Cannot complete - missing grade or grips');
+      return;
+    }
     
     const routeName = `${selectedGrade} Route`;
+    Logger.success('RouteAnalysisModal', `Route analysis completed: ${routeName}`);
     onComplete(routeName);
   };
 
   const handleReset = () => {
+    Logger.debug('RouteAnalysisModal', 'Resetting grip selection');
     setSelectedGrips([]);
     setIsDetecting(false);
   };
 
+  const handleCancel = () => {
+    Logger.debug('RouteAnalysisModal', 'Route analysis cancelled');
+    onCancel();
+  };
+
+  const handleGradeSelect = (grade: string) => {
+    Logger.debug('RouteAnalysisModal', `Grade selected: ${grade}`);
+    setSelectedGrade(grade);
+  };
+
+  const handleGripsChange = (grips: Array<{x: number, y: number}>) => {
+    Logger.debug('RouteAnalysisModal', `Grips updated - count: ${grips.length}`, grips);
+    setSelectedGrips(grips);
+  };
+
+  Logger.debug('RouteAnalysisModal', 'Rendering modal', {
+    isDetecting,
+    selectedGrade,
+    gripsCount: selectedGrips.length,
+    detectedGripsCount: detectedGrips.length
+  });
+
   return (
-    <Dialog open={true} onOpenChange={onCancel}>
+    <Dialog open={true} onOpenChange={handleCancel}>
       <DialogContent className="max-w-full h-full bg-slate-900 border-slate-700 p-0">
         <div className="flex flex-col h-full">
           {/* Header */}
@@ -65,7 +109,7 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
             <Button
               variant="ghost"
               size="icon"
-              onClick={onCancel}
+              onClick={handleCancel}
               className="text-slate-400 hover:text-white"
             >
               <X className="h-5 w-5" />
@@ -99,7 +143,7 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
                   imageRef={imageRef}
                   detectedGrips={detectedGrips}
                   selectedGrips={selectedGrips}
-                  onGripsChange={setSelectedGrips}
+                  onGripsChange={handleGripsChange}
                 />
               )}
             </div>
@@ -110,7 +154,7 @@ const RouteAnalysisModal = ({ image, onComplete, onCancel }: RouteAnalysisModalP
                 <h3 className="text-white font-medium mb-3">Select Grade</h3>
                 <GradeSelector
                   selectedGrade={selectedGrade}
-                  onGradeSelect={setSelectedGrade}
+                  onGradeSelect={handleGradeSelect}
                 />
               </div>
 
