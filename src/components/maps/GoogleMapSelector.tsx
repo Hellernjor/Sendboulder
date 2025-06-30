@@ -1,6 +1,7 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
-import { MapPin, Navigation } from 'lucide-react';
+import { MapPin, Navigation, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 
@@ -19,16 +20,27 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
   useEffect(() => {
     const initializeMap = async () => {
       try {
+        console.log('Initializing Google Maps...');
+        
         // Get Google Maps API key from Supabase secrets
-        const { data, error } = await supabase.functions.invoke('get-secrets', {
+        const { data, error: secretError } = await supabase.functions.invoke('get-secrets', {
           body: { keys: ['GOOGLE_MAPS_API_KEY'] }
         });
 
-        if (error || !data?.GOOGLE_MAPS_API_KEY) {
-          throw new Error('Google Maps API key not found in Supabase secrets');
+        console.log('Secrets response:', { data, error: secretError });
+
+        if (secretError) {
+          console.error('Error fetching secrets:', secretError);
+          throw new Error(`Failed to fetch API key: ${secretError.message}`);
+        }
+
+        if (!data?.GOOGLE_MAPS_API_KEY) {
+          console.error('Google Maps API key not found in secrets');
+          throw new Error('Google Maps API key not configured. Please add GOOGLE_MAPS_API_KEY to your Supabase secrets.');
         }
 
         const apiKey = data.GOOGLE_MAPS_API_KEY;
+        console.log('Got API key, loading Google Maps...');
 
         const loader = new Loader({
           apiKey,
@@ -37,8 +49,12 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         });
 
         const google = await loader.load();
+        console.log('Google Maps loaded successfully');
         
-        if (!mapRef.current) return;
+        if (!mapRef.current) {
+          console.error('Map container not found');
+          return;
+        }
 
         // Default to user's location or San Francisco
         const defaultLocation = initialLocation || { lat: 37.7749, lng: -122.4194 };
@@ -165,12 +181,13 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
 
   if (error) {
     return (
-      <div className="h-64 bg-red-50 rounded-lg flex items-center justify-center">
+      <div className="h-64 bg-red-50 rounded-lg flex items-center justify-center border border-red-200">
         <div className="text-center max-w-sm px-4">
-          <MapPin className="h-8 w-8 text-red-500 mx-auto mb-2" />
-          <p className="text-red-600 text-sm">{error}</p>
-          <p className="text-slate-600 text-xs mt-2">
-            Please ensure the Google Maps API key is configured in your Supabase secrets.
+          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+          <p className="text-red-600 text-sm font-medium mb-2">Map Loading Error</p>
+          <p className="text-red-600 text-xs mb-3">{error}</p>
+          <p className="text-slate-600 text-xs">
+            Please check that the Google Maps API key is properly configured in your Supabase secrets.
           </p>
         </div>
       </div>
