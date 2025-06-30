@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { MapPin, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/lib/supabase';
 
 interface GoogleMapSelectorProps {
   onLocationSelect: (location: { lat: number; lng: number; address: string }) => void;
@@ -19,12 +20,16 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
   useEffect(() => {
     const initializeMap = async () => {
       try {
-        // Use environment variable for Google Maps API key
-        const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY';
-        
-        if (!apiKey || apiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
-          throw new Error('Google Maps API key not configured. Please add VITE_GOOGLE_MAPS_API_KEY to your environment variables.');
+        // Get Google Maps API key from Supabase secrets
+        const { data, error } = await supabase.functions.invoke('get-secrets', {
+          body: { secretName: 'GOOGLE_MAPS_API_KEY' }
+        });
+
+        if (error || !data?.secret) {
+          throw new Error('Google Maps API key not found in Supabase secrets');
         }
+
+        const apiKey = data.secret;
 
         const loader = new Loader({
           apiKey,
@@ -166,7 +171,7 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           <MapPin className="h-8 w-8 text-red-500 mx-auto mb-2" />
           <p className="text-red-600 text-sm">{error}</p>
           <p className="text-slate-600 text-xs mt-2">
-            The map requires a Google Maps API key. Contact your administrator to configure this.
+            Please ensure the Google Maps API key is configured in your Supabase secrets.
           </p>
         </div>
       </div>
