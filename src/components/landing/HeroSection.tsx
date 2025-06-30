@@ -2,8 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Play, Zap, Star } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Zap, Star } from 'lucide-react';
 import SignupForm from '@/components/ui/signup-form';
 import ShareButton from '@/components/ui/ShareButton';
 
@@ -19,8 +18,6 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionProps) => {
-  const navigate = useNavigate();
-
   return (
     <div className="relative bg-gradient-to-br from-blue-50 to-blue-100">
       <div className="container mx-auto px-4 py-12 md:py-20">
@@ -46,7 +43,7 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
             Track every route, log every send, and watch your climbing progress soar. The ultimate tool for documenting your climbing journey and hitting new grades.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center mb-8 md:mb-12 px-4">
+          <div className="flex justify-center mb-8 md:mb-12 px-4">
             <Dialog open={isSignupOpen} onOpenChange={setIsSignupOpen}>
               <DialogTrigger asChild>
                 <Button 
@@ -61,16 +58,6 @@ const HeroSection = ({ isSignupOpen, setIsSignupOpen, userStats }: HeroSectionPr
                 <SignupForm />
               </DialogContent>
             </Dialog>
-            
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="border-0 text-slate-700 hover:bg-blue-50 px-8 sm:px-10 md:px-12 py-6 md:py-8 text-lg sm:text-xl md:text-2xl font-semibold transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-lg rounded-2xl"
-              onClick={() => navigate('/dashboard')}
-            >
-              <Play className="mr-2 md:mr-3 h-5 w-5 md:h-7 md:w-7" />
-              See It Work
-            </Button>
           </div>
 
           {/* Share Button */}
