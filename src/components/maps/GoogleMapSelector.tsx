@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { MapPin, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
 
 interface GoogleMapSelectorProps {
   onLocationSelect: (location: { lat: number; lng: number; address: string }) => void;
@@ -20,19 +19,11 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
   useEffect(() => {
     const initializeMap = async () => {
       try {
-        // Get Google Maps API key from Supabase secrets
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          throw new Error('Not authenticated');
-        }
-
-        const { data: secrets } = await supabase.functions.invoke('get-secrets', {
-          body: { keys: ['GOOGLE_MAPS_API_KEY'] }
-        });
-
-        const apiKey = secrets?.GOOGLE_MAPS_API_KEY;
-        if (!apiKey) {
-          throw new Error('Google Maps API key not found');
+        // Use environment variable for Google Maps API key
+        const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY';
+        
+        if (!apiKey || apiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
+          throw new Error('Google Maps API key not configured. Please add VITE_GOOGLE_MAPS_API_KEY to your environment variables.');
         }
 
         const loader = new Loader({
@@ -143,7 +134,7 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
             map.setCenter(pos);
             marker.setPosition(pos);
             
-            // Simple reverse geocoding without type issues
+            // Simple reverse geocoding
             onLocationSelect({
               ...pos,
               address: `${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`
@@ -171,9 +162,12 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
   if (error) {
     return (
       <div className="h-64 bg-red-50 rounded-lg flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center max-w-sm px-4">
           <MapPin className="h-8 w-8 text-red-500 mx-auto mb-2" />
-          <p className="text-red-600">{error}</p>
+          <p className="text-red-600 text-sm">{error}</p>
+          <p className="text-slate-600 text-xs mt-2">
+            The map requires a Google Maps API key. Contact your administrator to configure this.
+          </p>
         </div>
       </div>
     );
