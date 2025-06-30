@@ -20,27 +20,48 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
   useEffect(() => {
     const initializeMap = async () => {
       try {
-        console.log('Initializing Google Maps...');
+        console.log('🗺️ Starting Google Maps initialization...');
+        setLoading(true);
+        setError(null);
+        
+        // Check if map container exists
+        if (!mapRef.current) {
+          console.error('❌ Map container not found');
+          throw new Error('Map container not available');
+        }
+        
+        console.log('📞 Calling get-secrets function...');
         
         // Get Google Maps API key from Supabase secrets
         const { data, error: secretError } = await supabase.functions.invoke('get-secrets', {
           body: { keys: ['GOOGLE_MAPS_API_KEY'] }
         });
 
-        console.log('Secrets response:', { data, error: secretError });
+        console.log('🔑 Secrets response:', { 
+          hasData: !!data, 
+          error: secretError,
+          hasApiKey: !!data?.GOOGLE_MAPS_API_KEY 
+        });
 
         if (secretError) {
-          console.error('Error fetching secrets:', secretError);
-          throw new Error(`Failed to fetch API key: ${secretError.message}`);
+          console.error('❌ Error fetching secrets:', secretError);
+          throw new Error(`Failed to fetch API key: ${secretError.message || 'Unknown error'}`);
         }
 
-        if (!data?.GOOGLE_MAPS_API_KEY) {
-          console.error('Google Maps API key not found in secrets');
+        if (!data) {
+          console.error('❌ No data returned from get-secrets function');
+          throw new Error('No response from secrets function');
+        }
+
+        if (!data.GOOGLE_MAPS_API_KEY) {
+          console.error('❌ Google Maps API key not found in secrets');
           throw new Error('Google Maps API key not configured. Please add GOOGLE_MAPS_API_KEY to your Supabase secrets.');
         }
 
         const apiKey = data.GOOGLE_MAPS_API_KEY;
-        console.log('Got API key, loading Google Maps...');
+        console.log('✅ Got API key, length:', apiKey.length);
+
+        console.log('🚀 Loading Google Maps JavaScript API...');
 
         const loader = new Loader({
           apiKey,
@@ -49,15 +70,17 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         });
 
         const google = await loader.load();
-        console.log('Google Maps loaded successfully');
+        console.log('✅ Google Maps JavaScript API loaded successfully');
         
+        // Double-check map container still exists
         if (!mapRef.current) {
-          console.error('Map container not found');
-          return;
+          console.error('❌ Map container disappeared during loading');
+          throw new Error('Map container no longer available');
         }
 
         // Default to user's location or San Francisco
         const defaultLocation = initialLocation || { lat: 37.7749, lng: -122.4194 };
+        console.log('📍 Creating map with location:', defaultLocation);
 
         const mapInstance = new google.maps.Map(mapRef.current, {
           zoom: 13,
@@ -67,12 +90,16 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           fullscreenControl: false,
         });
 
+        console.log('✅ Google Map instance created');
+
         const markerInstance = new google.maps.Marker({
           position: defaultLocation,
           map: mapInstance,
           draggable: true,
           title: 'Click and drag to select location'
         });
+
+        console.log('✅ Map marker created');
 
         // Handle map clicks
         mapInstance.addListener('click', (event: any) => {
@@ -128,17 +155,22 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         setMarker(markerInstance);
         setLoading(false);
 
+        console.log('✅ Map initialization completed successfully');
+
         // Initial reverse geocode
         reverseGeocode(defaultLocation, google);
 
       } catch (err) {
-        console.error('Error initializing map:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load map');
+        console.error('❌ Error initializing map:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load map';
+        setError(errorMessage);
         setLoading(false);
       }
     };
 
-    initializeMap();
+    // Add a small delay to ensure DOM is ready
+    const timer = setTimeout(initializeMap, 100);
+    return () => clearTimeout(timer);
   }, [initialLocation, onLocationSelect]);
 
   const getCurrentLocation = () => {
