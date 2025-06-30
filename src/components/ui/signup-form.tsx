@@ -4,62 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { CameraService } from '@/services/cameraService';
-import CameraPermissionScreen from '@/components/auth/CameraPermissionScreen';
-import IOSInstructionsScreen from '@/components/auth/IOSInstructionsScreen';
 import EmailSignupForm from '@/components/auth/EmailSignupForm';
 import GoogleSignupButton from '@/components/auth/GoogleSignupButton';
 
 const SignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [requestingCamera, setRequestingCamera] = useState(false);
-  const [showIOSInstructions, setShowIOSInstructions] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const requestCameraPermissions = async () => {
-    setRequestingCamera(true);
-    console.log('Starting camera permission request');
-    
-    try {
-      const cameraService = new CameraService();
-      const result = await cameraService.requestCameraAccess();
-      
-      if (result.success) {
-        console.log('Camera access granted, navigating to dashboard');
-        toast({
-          title: "Camera access granted!",
-          description: "You're all set to analyze climbing routes.",
-        });
-        cameraService.stopCamera();
-        setRequestingCamera(false);
-        navigate('/dashboard');
-      } else {
-        console.log('Camera access failed:', result.error);
-        setRequestingCamera(false);
-        
-        // Show iOS instructions only if it's an iOS device and permission was denied
-        if (cameraService.isIOSDevice() && result.error?.includes('denied')) {
-          setShowIOSInstructions(true);
-        } else {
-          toast({
-            title: "Camera access needed",
-            description: result.error || "You can enable camera access later in your browser settings.",
-            variant: "destructive",
-          });
-          navigate('/dashboard');
-        }
-      }
-    } catch (error) {
-      console.error('Camera permission error:', error);
-      setRequestingCamera(false);
-      toast({
-        title: "Camera setup incomplete",
-        description: "Don't worry, you can enable camera access later for route analysis.",
-      });
-      navigate('/dashboard');
-    }
-  };
 
   const handleEmailSignup = async (email: string, password: string) => {
     setIsLoading(true);
@@ -68,6 +19,9 @@ const SignupForm = () => {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`
+        }
       });
 
       if (error) {
@@ -77,10 +31,9 @@ const SignupForm = () => {
       if (data.user) {
         toast({
           title: "Account created!",
-          description: "Let's set up camera access for route analysis.",
+          description: "Welcome to SendBoulder! You can now start tracking your climbs.",
         });
-        setIsLoading(false);
-        await requestCameraPermissions();
+        navigate('/dashboard');
       }
     } catch (error: any) {
       console.error('Signup error:', error);
@@ -89,6 +42,7 @@ const SignupForm = () => {
         description: error.message || "Failed to create account",
         variant: "destructive",
       });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -97,7 +51,6 @@ const SignupForm = () => {
     console.log('Starting Google OAuth flow');
     
     try {
-      // Get the current URL for redirect
       const redirectUrl = `${window.location.origin}/dashboard`;
       console.log('Redirect URL:', redirectUrl);
 
@@ -127,28 +80,6 @@ const SignupForm = () => {
       });
     }
   };
-
-  const handleRetryCamera = () => {
-    setShowIOSInstructions(false);
-    requestCameraPermissions();
-  };
-
-  const handleBackToSignup = () => {
-    setShowIOSInstructions(false);
-  };
-
-  if (showIOSInstructions) {
-    return (
-      <IOSInstructionsScreen 
-        onRetryCamera={handleRetryCamera}
-        onBack={handleBackToSignup}
-      />
-    );
-  }
-
-  if (requestingCamera) {
-    return <CameraPermissionScreen />;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
