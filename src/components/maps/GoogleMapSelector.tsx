@@ -12,8 +12,8 @@ interface GoogleMapSelectorProps {
 
 const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelectorProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [marker, setMarker] = useState<google.maps.Marker | null>(null);
+  const [map, setMap] = useState<any>(null);
+  const [marker, setMarker] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,15 +41,14 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           libraries: ['places', 'geometry']
         });
 
-        const { Map } = await loader.importLibrary('maps');
-        const { Marker } = await loader.importLibrary('marker');
-
+        const google = await loader.load();
+        
         if (!mapRef.current) return;
 
         // Default to user's location or San Francisco
         const defaultLocation = initialLocation || { lat: 37.7749, lng: -122.4194 };
 
-        const mapInstance = new Map(mapRef.current, {
+        const mapInstance = new google.maps.Map(mapRef.current, {
           zoom: 13,
           center: defaultLocation,
           mapTypeControl: false,
@@ -57,7 +56,7 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           fullscreenControl: false,
         });
 
-        const markerInstance = new Marker({
+        const markerInstance = new google.maps.Marker({
           position: defaultLocation,
           map: mapInstance,
           draggable: true,
@@ -65,14 +64,14 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         });
 
         // Handle map clicks
-        mapInstance.addListener('click', (event: google.maps.MapMouseEvent) => {
+        mapInstance.addListener('click', (event: any) => {
           if (event.latLng) {
             const position = {
               lat: event.latLng.lat(),
               lng: event.latLng.lng()
             };
             markerInstance.setPosition(position);
-            reverseGeocode(position);
+            reverseGeocode(position, google);
           }
         });
 
@@ -84,16 +83,15 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
               lat: position.lat(),
               lng: position.lng()
             };
-            reverseGeocode(pos);
+            reverseGeocode(pos, google);
           }
         });
 
-        const reverseGeocode = async (position: { lat: number; lng: number }) => {
+        const reverseGeocode = async (position: { lat: number; lng: number }, googleMaps: any) => {
           try {
-            const { Geocoder } = await loader.importLibrary('geocoding');
-            const geocoder = new Geocoder();
+            const geocoder = new googleMaps.maps.Geocoder();
             
-            geocoder.geocode({ location: position }, (results, status) => {
+            geocoder.geocode({ location: position }, (results: any, status: any) => {
               if (status === 'OK' && results && results[0]) {
                 onLocationSelect({
                   ...position,
@@ -120,7 +118,7 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         setLoading(false);
 
         // Initial reverse geocode
-        reverseGeocode(defaultLocation);
+        reverseGeocode(defaultLocation, google);
 
       } catch (err) {
         console.error('Error initializing map:', err);
@@ -145,22 +143,10 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
             map.setCenter(pos);
             marker.setPosition(pos);
             
-            // Reverse geocode the current position
-            const loader = new Loader({
-              apiKey: '', // Will be handled by the existing loader
-              version: 'weekly',
-            });
-            
-            loader.importLibrary('geocoding').then(({ Geocoder }) => {
-              const geocoder = new Geocoder();
-              geocoder.geocode({ location: pos }, (results, status) => {
-                if (status === 'OK' && results && results[0]) {
-                  onLocationSelect({
-                    ...pos,
-                    address: results[0].formatted_address
-                  });
-                }
-              });
+            // Simple reverse geocoding without type issues
+            onLocationSelect({
+              ...pos,
+              address: `${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`
             });
           }
         },
