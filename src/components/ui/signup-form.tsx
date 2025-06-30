@@ -51,6 +51,7 @@ const SignupForm = () => {
     console.log('Starting Google OAuth flow');
     
     try {
+      // Use current domain instead of hardcoded preview URL
       const redirectUrl = `${window.location.origin}/dashboard`;
       console.log('Redirect URL:', redirectUrl);
 
