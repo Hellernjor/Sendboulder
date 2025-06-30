@@ -6,14 +6,20 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, Plus, Navigation, Loader2 } from 'lucide-react';
 import { Location } from '@/types/location';
 import AddLocationModal from './AddLocationModal';
-import { getLocations } from '@/lib/database-functions';
+import EditLocationModal from './EditLocationModal';
+import { getLocations, updateLocation, deleteLocation } from '@/lib/database-functions';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const LocationChoice = () => {
   const [locations, setLocations] = useState<Location[]>([]);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [showAddLocation, setShowAddLocation] = useState(false);
+  const [editingLocation, setEditingLocation] = useState<Location | null>(null);
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     loadLocations();
@@ -26,6 +32,11 @@ const LocationChoice = () => {
       setLocations(data);
     } catch (error) {
       console.error('Error loading locations:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load locations. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -66,6 +77,45 @@ const LocationChoice = () => {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     const distance = R * c;
     return distance;
+  };
+
+  const handleEditLocation = async (locationData: Partial<Location>) => {
+    if (!editingLocation) return;
+    
+    try {
+      await updateLocation(editingLocation.id, locationData);
+      await loadLocations();
+      setEditingLocation(null);
+      toast({
+        title: "Success",
+        description: "Location updated successfully!",
+      });
+    } catch (error) {
+      console.error('Error updating location:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update location. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteLocation = async (locationId: string) => {
+    try {
+      await deleteLocation(locationId);
+      setLocations(locations.filter(loc => loc.id !== locationId));
+      toast({
+        title: "Success",
+        description: "Location deleted successfully!",
+      });
+    } catch (error) {
+      console.error('Error deleting location:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete location. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Sort locations by distance from user
@@ -140,12 +190,14 @@ const LocationChoice = () => {
                       location.coordinates.lat, location.coordinates.lng
                     ) : null;
 
+                  const canEdit = user && location.createdBy === user.id;
+
                   return (
                     <div 
                       key={location.id}
-                      className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors cursor-pointer"
+                      className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors"
                     >
-                      <div className="flex-1">
+                      <div className="flex-1 cursor-pointer">
                         <h3 className="text-white font-medium text-sm">{location.name}</h3>
                         <div className="flex items-center space-x-2 mt-1">
                           <Badge 
@@ -164,6 +216,27 @@ const LocationChoice = () => {
                           )}
                         </div>
                       </div>
+                      
+                      {canEdit && (
+                        <div className="flex space-x-1 ml-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditingLocation(location)}
+                            className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/30 h-8 w-8 p-0"
+                          >
+                            <MapPin className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteLocation(location.id)}
+                            className="text-red-400 hover:text-red-300 hover:bg-red-900/30 h-8 w-8 p-0"
+                          >
+                            ×
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -189,6 +262,15 @@ const LocationChoice = () => {
             setLocations([...locations, newLocation]);
             setShowAddLocation(false);
           }}
+          userLocation={userLocation}
+        />
+      )}
+
+      {editingLocation && (
+        <EditLocationModal
+          location={editingLocation}
+          onClose={() => setEditingLocation(null)}
+          onSave={handleEditLocation}
           userLocation={userLocation}
         />
       )}

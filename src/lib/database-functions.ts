@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { Location, GradeLevel } from '@/types/location';
 import type { Route, Attempt } from '@/types/route';
@@ -550,4 +551,20 @@ export const updateLocation = async (locationId: string, updates: Partial<Locati
     isGlobal: data.is_global,
     gradeSystem: [] // Grade system is handled separately via grade_levels table
   };
+};
+
+export const deleteLocation = async (locationId: string) => {
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user) throw new Error('User not authenticated');
+
+  const { data, error } = await supabase
+    .from('locations')
+    .delete()
+    .eq('id', locationId)
+    .eq('created_by', user.user.id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
 };
