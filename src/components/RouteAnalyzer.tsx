@@ -78,6 +78,18 @@ const RouteAnalyzer = () => {
     setIsRecording(false);
   };
 
+  const handleReset = () => {
+    // Clear any detected route and restart camera for new photo
+    setDetectedRoute(null);
+    setCapturedImage(null);
+    setShowAnalysisModal(false);
+    
+    // If camera is not active, restart it
+    if (!isCameraActive) {
+      startCamera();
+    }
+  };
+
   const switchCamera = async () => {
     setIsInitializing(true);
     try {
@@ -151,8 +163,9 @@ const RouteAnalyzer = () => {
             onStopRecording={handleStopRecording}
             onSwitchCamera={switchCamera}
             onCapturePhoto={capturePhoto}
-            onReset={stopCamera}
+            onReset={handleReset}
             isInitializing={isInitializing}
+            hasDetectedRoute={!!detectedRoute}
           />
 
           {/* Route Colors Reference */}

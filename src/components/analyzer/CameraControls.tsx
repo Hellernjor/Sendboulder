@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Play, Square, SwitchCamera, RotateCcw, Camera, Loader2 } from 'lucide-react';
+import { Play, Square, SwitchCamera, RotateCcw, Camera, Loader2, RefreshCw } from 'lucide-react';
 
 interface CameraControlsProps {
   isRecording: boolean;
@@ -12,6 +12,7 @@ interface CameraControlsProps {
   onCapturePhoto: () => void;
   onReset: () => void;
   isInitializing?: boolean;
+  hasDetectedRoute?: boolean;
 }
 
 const CameraControls = ({
@@ -22,7 +23,8 @@ const CameraControls = ({
   onSwitchCamera,
   onCapturePhoto,
   onReset,
-  isInitializing = false
+  isInitializing = false,
+  hasDetectedRoute = false
 }: CameraControlsProps) => {
   return (
     <div className="flex justify-center space-x-4">
@@ -41,14 +43,25 @@ const CameraControls = ({
         </Button>
       ) : (
         <>
-          <Button 
-            onClick={onCapturePhoto}
-            disabled={isInitializing}
-            className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-3 disabled:opacity-50 border-0"
-          >
-            <Camera className="h-4 w-4 mr-2" />
-            Take Picture of Route
-          </Button>
+          {hasDetectedRoute ? (
+            <Button 
+              onClick={onReset}
+              disabled={isInitializing}
+              className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-3 disabled:opacity-50 border-0"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Take New Photo
+            </Button>
+          ) : (
+            <Button 
+              onClick={onCapturePhoto}
+              disabled={isInitializing}
+              className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-3 disabled:opacity-50 border-0"
+            >
+              <Camera className="h-4 w-4 mr-2" />
+              Take Picture of Route
+            </Button>
+          )}
           
           <Button 
             onClick={onSwitchCamera}
