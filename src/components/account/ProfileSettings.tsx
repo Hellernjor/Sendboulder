@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,17 +14,35 @@ const ProfileSettings = () => {
     preferredGym: 'Brooklyn Boulders',
     avatar: ''
   });
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
     console.log('Saving profile:', profile);
     // TODO: Implement with Supabase
   };
 
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setProfile({...profile, avatar: result});
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="space-y-6">
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="bg-white border-gray-200">
         <CardHeader>
-          <CardTitle className="text-white">Profile Information</CardTitle>
+          <CardTitle className="text-slate-900">Profile Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center space-x-4">
@@ -35,52 +52,65 @@ const ProfileSettings = () => {
                 {profile.name.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <Button variant="outline" className="border-slate-600 text-slate-300">
-              <Camera className="h-4 w-4 mr-2" />
-              Change Photo
-            </Button>
+            <div>
+              <Button 
+                variant="outline" 
+                className="border-slate-300 text-slate-700"
+                onClick={triggerFileInput}
+              >
+                <Camera className="h-4 w-4 mr-2" />
+                Change Photo
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                className="hidden"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="name" className="text-slate-300">Full Name</Label>
+              <Label htmlFor="name" className="text-slate-700">Full Name</Label>
               <Input
                 id="name"
                 value={profile.name}
                 onChange={(e) => setProfile({...profile, name: e.target.value})}
-                className="bg-slate-700/50 border-slate-600 text-white"
+                className="bg-white border-slate-300 text-slate-900"
               />
             </div>
             
             <div>
-              <Label htmlFor="email" className="text-slate-300">Email</Label>
+              <Label htmlFor="email" className="text-slate-700">Email</Label>
               <Input
                 id="email"
                 type="email"
                 value={profile.email}
                 onChange={(e) => setProfile({...profile, email: e.target.value})}
-                className="bg-slate-700/50 border-slate-600 text-white"
+                className="bg-white border-slate-300 text-slate-900"
               />
             </div>
 
             <div>
-              <Label htmlFor="grade" className="text-slate-300">Current Grade</Label>
+              <Label htmlFor="grade" className="text-slate-700">Current Grade</Label>
               <Input
                 id="grade"
                 value={profile.climbingGrade}
                 onChange={(e) => setProfile({...profile, climbingGrade: e.target.value})}
-                className="bg-slate-700/50 border-slate-600 text-white"
+                className="bg-white border-slate-300 text-slate-900"
                 placeholder="e.g., V6, 5.11a"
               />
             </div>
 
             <div>
-              <Label htmlFor="gym" className="text-slate-300">Preferred Gym</Label>
+              <Label htmlFor="gym" className="text-slate-700">Preferred Gym</Label>
               <Input
                 id="gym"
                 value={profile.preferredGym}
                 onChange={(e) => setProfile({...profile, preferredGym: e.target.value})}
-                className="bg-slate-700/50 border-slate-600 text-white"
+                className="bg-white border-slate-300 text-slate-900"
               />
             </div>
           </div>
