@@ -20,7 +20,7 @@ const SignupForm = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`
+          emailRedirectTo: 'https://sendboulder.com/dashboard'
         }
       });
 
@@ -51,14 +51,10 @@ const SignupForm = () => {
     console.log('Starting Google OAuth flow');
     
     try {
-      // Use current domain instead of hardcoded preview URL
-      const redirectUrl = `${window.location.origin}/dashboard`;
-      console.log('Redirect URL:', redirectUrl);
-
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: redirectUrl,
+          redirectTo: 'https://sendboulder.com/dashboard',
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
