@@ -55,7 +55,7 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
 
         if (!data.GOOGLE_API_KEY) {
           console.error('❌ Google API key not found in secrets');
-          throw new Error('Google API key not configured. Please add GOOGLE_API_KEY to your Supabase secrets.');
+          throw new Error('Google API key not found in Supabase secrets');
         }
 
         const apiKey = data.GOOGLE_API_KEY;
@@ -219,7 +219,7 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           <p className="text-red-600 text-sm font-medium mb-2">Map Loading Error</p>
           <p className="text-red-600 text-xs mb-3">{error}</p>
           <p className="text-slate-600 text-xs">
-            Please check that the Google API key is properly configured in your Supabase secrets.
+            Please check that the GOOGLE_API_KEY is properly configured in your Supabase secrets.
           </p>
         </div>
       </div>
