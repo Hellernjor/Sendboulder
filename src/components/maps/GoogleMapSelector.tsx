@@ -28,30 +28,26 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           throw new Error('Map container not available');
         }
         
-        console.log('📞 Fetching GOOGLE_API_KEY from Supabase secrets...');
+        console.log('📞 Fetching GOOGLE_API_KEY from Supabase function...');
         
-        const { data, error: secretError } = await supabase.functions.invoke('get-secrets', {
+        const { data, error: functionError } = await supabase.functions.invoke('get-secrets', {
           body: { keys: ['GOOGLE_API_KEY'] }
         });
 
-        console.log('🔑 Secrets response:', { 
-          data, 
-          error: secretError,
-          hasApiKey: !!data?.GOOGLE_API_KEY
-        });
+        console.log('🔑 Function response:', { data, error: functionError });
 
-        if (secretError) {
-          console.error('❌ Error fetching secrets:', secretError);
-          throw new Error(`Failed to fetch Google API key: ${secretError.message}`);
+        if (functionError) {
+          console.error('❌ Function error:', functionError);
+          throw new Error(`Failed to fetch API key: ${functionError.message}`);
         }
 
-        if (!data?.GOOGLE_API_KEY) {
-          console.error('❌ GOOGLE_API_KEY not found in response');
-          throw new Error('GOOGLE_API_KEY not configured in Supabase secrets');
+        if (!data || !data.GOOGLE_API_KEY) {
+          console.error('❌ No GOOGLE_API_KEY in response');
+          throw new Error('GOOGLE_API_KEY not found. Please configure it in Supabase Edge Function Secrets.');
         }
 
         const apiKey = data.GOOGLE_API_KEY;
-        console.log('✅ Retrieved GOOGLE_API_KEY successfully');
+        console.log('✅ Retrieved GOOGLE_API_KEY, length:', apiKey.length);
 
         const loader = new Loader({
           apiKey,
@@ -195,7 +191,7 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           <p className="text-red-600 text-sm font-medium mb-2">Google Maps Error</p>
           <p className="text-red-600 text-xs mb-3">{error}</p>
           <p className="text-slate-600 text-xs">
-            Please ensure GOOGLE_API_KEY is configured in Supabase secrets.
+            Make sure GOOGLE_API_KEY is configured in Supabase Edge Function Secrets.
           </p>
         </div>
       </div>
