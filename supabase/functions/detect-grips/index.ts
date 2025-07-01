@@ -17,11 +17,11 @@ serve(async (req) => {
     const { image } = await req.json()
     console.log('📝 Received image data, length:', image ? image.length : 0);
     
-    // Get Google Vision API key from environment
-    const apiKey = Deno.env.get('GOOGLE_VISION_API_KEY')
+    // Get Google API key from environment (same key used for Maps and Vision)
+    const apiKey = Deno.env.get('GOOGLE_API_KEY')
     
     if (!apiKey) {
-      console.error('❌ Google Vision API key not configured');
+      console.error('❌ Google API key not configured');
       // Return mock data as fallback
       const mockGrips = [
         { x: 0.3, y: 0.4, confidence: 0.85, name: "crimp" },
