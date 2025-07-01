@@ -30,7 +30,7 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           throw new Error('Map container not available');
         }
         
-        console.log('📞 Calling get-secrets function...');
+        console.log('📞 Calling get-secrets function for GOOGLE_API_KEY...');
         
         // Get Google API key from Supabase secrets
         const { data, error: secretError } = await supabase.functions.invoke('get-secrets', {
@@ -40,12 +40,13 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         console.log('🔑 Secrets response:', { 
           hasData: !!data, 
           error: secretError,
-          hasApiKey: !!data?.GOOGLE_API_KEY 
+          hasApiKey: !!data?.GOOGLE_API_KEY,
+          keyLength: data?.GOOGLE_API_KEY ? data.GOOGLE_API_KEY.length : 0
         });
 
         if (secretError) {
-          console.error('❌ Error fetching secrets:', secretError);
-          throw new Error(`Failed to fetch API key: ${secretError.message || 'Unknown error'}`);
+          console.error('❌ Error fetching GOOGLE_API_KEY:', secretError);
+          throw new Error(`Failed to fetch Google API key: ${secretError.message || 'Unknown error'}`);
         }
 
         if (!data) {
@@ -54,12 +55,12 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         }
 
         if (!data.GOOGLE_API_KEY) {
-          console.error('❌ Google API key not found in secrets');
-          throw new Error('Google API key not found in Supabase secrets');
+          console.error('❌ GOOGLE_API_KEY not found in Supabase secrets');
+          throw new Error('GOOGLE_API_KEY not found in Supabase secrets');
         }
 
         const apiKey = data.GOOGLE_API_KEY;
-        console.log('✅ Got API key, length:', apiKey.length);
+        console.log('✅ Got GOOGLE_API_KEY, length:', apiKey.length);
 
         console.log('🚀 Loading Google Maps JavaScript API...');
 
@@ -161,8 +162,8 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         reverseGeocode(defaultLocation, google);
 
       } catch (err) {
-        console.error('❌ Error initializing map:', err);
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load map';
+        console.error('❌ Error initializing Google Maps:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load Google Maps';
         setError(errorMessage);
         setLoading(false);
       }
@@ -205,7 +206,7 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
       <div className="h-64 bg-slate-100 rounded-lg flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p className="text-slate-600">Loading map...</p>
+          <p className="text-slate-600">Loading Google Maps...</p>
         </div>
       </div>
     );
@@ -216,10 +217,10 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
       <div className="h-64 bg-red-50 rounded-lg flex items-center justify-center border border-red-200">
         <div className="text-center max-w-sm px-4">
           <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-          <p className="text-red-600 text-sm font-medium mb-2">Map Loading Error</p>
+          <p className="text-red-600 text-sm font-medium mb-2">Google Maps Loading Error</p>
           <p className="text-red-600 text-xs mb-3">{error}</p>
           <p className="text-slate-600 text-xs">
-            Please check that the GOOGLE_API_KEY is properly configured in your Supabase secrets.
+            Please ensure the GOOGLE_API_KEY is configured in your Supabase secrets.
           </p>
         </div>
       </div>
