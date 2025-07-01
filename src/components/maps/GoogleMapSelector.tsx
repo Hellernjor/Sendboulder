@@ -24,45 +24,34 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         setLoading(true);
         setError(null);
         
-        // Check if map container exists
         if (!mapRef.current) {
-          console.error('❌ Map container not found');
           throw new Error('Map container not available');
         }
         
-        console.log('📞 Calling get-secrets function for GOOGLE_API_KEY...');
+        console.log('📞 Fetching GOOGLE_API_KEY from Supabase secrets...');
         
-        // Get Google API key from Supabase secrets
         const { data, error: secretError } = await supabase.functions.invoke('get-secrets', {
           body: { keys: ['GOOGLE_API_KEY'] }
         });
 
         console.log('🔑 Secrets response:', { 
-          hasData: !!data, 
+          data, 
           error: secretError,
-          hasApiKey: !!data?.GOOGLE_API_KEY,
-          keyLength: data?.GOOGLE_API_KEY ? data.GOOGLE_API_KEY.length : 0
+          hasApiKey: !!data?.GOOGLE_API_KEY
         });
 
         if (secretError) {
-          console.error('❌ Error fetching GOOGLE_API_KEY:', secretError);
-          throw new Error(`Failed to fetch Google API key: ${secretError.message || 'Unknown error'}`);
+          console.error('❌ Error fetching secrets:', secretError);
+          throw new Error(`Failed to fetch Google API key: ${secretError.message}`);
         }
 
-        if (!data) {
-          console.error('❌ No data returned from get-secrets function');
-          throw new Error('No response from secrets function');
-        }
-
-        if (!data.GOOGLE_API_KEY) {
-          console.error('❌ GOOGLE_API_KEY not found in Supabase secrets');
-          throw new Error('GOOGLE_API_KEY not found in Supabase secrets');
+        if (!data?.GOOGLE_API_KEY) {
+          console.error('❌ GOOGLE_API_KEY not found in response');
+          throw new Error('GOOGLE_API_KEY not configured in Supabase secrets');
         }
 
         const apiKey = data.GOOGLE_API_KEY;
-        console.log('✅ Got GOOGLE_API_KEY, length:', apiKey.length);
-
-        console.log('🚀 Loading Google Maps JavaScript API...');
+        console.log('✅ Retrieved GOOGLE_API_KEY successfully');
 
         const loader = new Loader({
           apiKey,
@@ -71,17 +60,13 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         });
 
         const google = await loader.load();
-        console.log('✅ Google Maps JavaScript API loaded successfully');
+        console.log('✅ Google Maps JavaScript API loaded');
         
-        // Double-check map container still exists
         if (!mapRef.current) {
-          console.error('❌ Map container disappeared during loading');
           throw new Error('Map container no longer available');
         }
 
-        // Default to user's location or San Francisco
         const defaultLocation = initialLocation || { lat: 37.7749, lng: -122.4194 };
-        console.log('📍 Creating map with location:', defaultLocation);
 
         const mapInstance = new google.maps.Map(mapRef.current, {
           zoom: 13,
@@ -91,8 +76,6 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           fullscreenControl: false,
         });
 
-        console.log('✅ Google Map instance created');
-
         const markerInstance = new google.maps.Marker({
           position: defaultLocation,
           map: mapInstance,
@@ -100,35 +83,9 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           title: 'Click and drag to select location'
         });
 
-        console.log('✅ Map marker created');
-
-        // Handle map clicks
-        mapInstance.addListener('click', (event: any) => {
-          if (event.latLng) {
-            const position = {
-              lat: event.latLng.lat(),
-              lng: event.latLng.lng()
-            };
-            markerInstance.setPosition(position);
-            reverseGeocode(position, google);
-          }
-        });
-
-        // Handle marker drag
-        markerInstance.addListener('dragend', () => {
-          const position = markerInstance.getPosition();
-          if (position) {
-            const pos = {
-              lat: position.lat(),
-              lng: position.lng()
-            };
-            reverseGeocode(pos, google);
-          }
-        });
-
-        const reverseGeocode = async (position: { lat: number; lng: number }, googleMaps: any) => {
+        const reverseGeocode = async (position: { lat: number; lng: number }) => {
           try {
-            const geocoder = new googleMaps.maps.Geocoder();
+            const geocoder = new google.maps.Geocoder();
             
             geocoder.geocode({ location: position }, (results: any, status: any) => {
               if (status === 'OK' && results && results[0]) {
@@ -152,24 +109,43 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           }
         };
 
+        mapInstance.addListener('click', (event: any) => {
+          if (event.latLng) {
+            const position = {
+              lat: event.latLng.lat(),
+              lng: event.latLng.lng()
+            };
+            markerInstance.setPosition(position);
+            reverseGeocode(position);
+          }
+        });
+
+        markerInstance.addListener('dragend', () => {
+          const position = markerInstance.getPosition();
+          if (position) {
+            const pos = {
+              lat: position.lat(),
+              lng: position.lng()
+            };
+            reverseGeocode(pos);
+          }
+        });
+
         setMap(mapInstance);
         setMarker(markerInstance);
         setLoading(false);
 
-        console.log('✅ Map initialization completed successfully');
-
-        // Initial reverse geocode
-        reverseGeocode(defaultLocation, google);
+        console.log('✅ Map initialization completed');
+        reverseGeocode(defaultLocation);
 
       } catch (err) {
-        console.error('❌ Error initializing Google Maps:', err);
+        console.error('❌ Map initialization error:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load Google Maps';
         setError(errorMessage);
         setLoading(false);
       }
     };
 
-    // Add a small delay to ensure DOM is ready
     const timer = setTimeout(initializeMap, 100);
     return () => clearTimeout(timer);
   }, [initialLocation, onLocationSelect]);
@@ -187,7 +163,6 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
             map.setCenter(pos);
             marker.setPosition(pos);
             
-            // Simple reverse geocoding
             onLocationSelect({
               ...pos,
               address: `${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`
@@ -217,10 +192,10 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
       <div className="h-64 bg-red-50 rounded-lg flex items-center justify-center border border-red-200">
         <div className="text-center max-w-sm px-4">
           <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-          <p className="text-red-600 text-sm font-medium mb-2">Google Maps Loading Error</p>
+          <p className="text-red-600 text-sm font-medium mb-2">Google Maps Error</p>
           <p className="text-red-600 text-xs mb-3">{error}</p>
           <p className="text-slate-600 text-xs">
-            Please ensure the GOOGLE_API_KEY is configured in your Supabase secrets.
+            Please ensure GOOGLE_API_KEY is configured in Supabase secrets.
           </p>
         </div>
       </div>
