@@ -12,32 +12,34 @@ const KPISection = () => {
   // Get user stats
   const { data: stats, isLoading: statsLoading, error: statsError } = useQuery({
     queryKey: ['user-stats'],
-    queryFn: () => {
+    queryFn: async () => {
       Logger.db('KPISection', 'Fetching user stats');
-      return getUserStats();
+      const result = await getUserStats();
+      Logger.success('KPISection', 'User stats loaded', result);
+      return result;
     },
-    onSuccess: (data) => {
-      Logger.success('KPISection', 'User stats loaded', data);
-    },
-    onError: (error) => {
-      Logger.error('KPISection', 'Failed to load user stats', error);
-    }
   });
 
   // Get user attempts for session count
   const { data: attempts, isLoading: attemptsLoading, error: attemptsError } = useQuery({
     queryKey: ['user-attempts'],
-    queryFn: () => {
+    queryFn: async () => {
       Logger.db('KPISection', 'Fetching user attempts');
-      return getUserAttempts();
+      const result = await getUserAttempts();
+      Logger.success('KPISection', `Loaded ${result?.length || 0} attempts`, result);
+      return result;
     },
-    onSuccess: (data) => {
-      Logger.success('KPISection', `Loaded ${data?.length || 0} attempts`, data);
-    },
-    onError: (error) => {
-      Logger.error('KPISection', 'Failed to load user attempts', error);
-    }
   });
+
+  // Log errors if they occur
+  React.useEffect(() => {
+    if (statsError) {
+      Logger.error('KPISection', 'Failed to load user stats', statsError);
+    }
+    if (attemptsError) {
+      Logger.error('KPISection', 'Failed to load user attempts', attemptsError);
+    }
+  }, [statsError, attemptsError]);
 
   // Calculate sessions (group attempts by date)
   const totalSessions = React.useMemo(() => {

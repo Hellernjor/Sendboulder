@@ -21,12 +21,12 @@ export class Logger {
     console.log(`✅ [${component}] ${message}`, data || '');
   }
 
-  static network(component: string, action: string, url: string, data?: any) {
-    console.log(`🌐 [${component}] ${action} -> ${url}`, data || '');
+  static network(component: string, action: string, data?: any) {
+    console.log(`🌐 [${component}] ${action}`, data || '');
   }
 
-  static db(component: string, action: string, table?: string, data?: any) {
-    console.log(`🗄️ [${component}] ${action}${table ? ` on ${table}` : ''}`, data || '');
+  static db(component: string, action: string, data?: any) {
+    console.log(`🗄️ [${component}] ${action}`, data || '');
   }
 
   static auth(component: string, action: string, data?: any) {

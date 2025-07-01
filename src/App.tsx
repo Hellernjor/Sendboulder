@@ -14,24 +14,11 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      onError: (error) => {
-        Logger.error('ReactQuery', 'Query error', error);
-      },
-      onSuccess: (data, query) => {
-        Logger.success('ReactQuery', `Query success: ${query.queryKey.join('-')}`, {
-          dataType: typeof data,
-          isArray: Array.isArray(data),
-          length: Array.isArray(data) ? data.length : undefined
-        });
-      }
+      retry: 3,
+      refetchOnWindowFocus: false,
     },
     mutations: {
-      onError: (error, variables, context) => {
-        Logger.error('ReactQuery', 'Mutation error', { error, variables, context });
-      },
-      onSuccess: (data, variables, context) => {
-        Logger.success('ReactQuery', 'Mutation success', { data, variables, context });
-      }
+      retry: 1,
     }
   }
 });
