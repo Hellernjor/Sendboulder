@@ -12,16 +12,22 @@ serve(async (req) => {
   }
 
   try {
+    console.log('🔍 get-secrets function called');
+    
     const { keys } = await req.json()
+    console.log('📝 Requested keys:', keys);
     
     const secrets: Record<string, string> = {}
     
     for (const key of keys) {
       const value = Deno.env.get(key)
+      console.log(`🔑 Checking secret: ${key}, found: ${!!value}, length: ${value ? value.length : 0}`);
       if (value) {
         secrets[key] = value
       }
     }
+
+    console.log('✅ Returning secrets:', Object.keys(secrets));
 
     return new Response(
       JSON.stringify(secrets),
@@ -31,6 +37,7 @@ serve(async (req) => {
       },
     )
   } catch (error) {
+    console.error('❌ Error in get-secrets function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
