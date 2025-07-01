@@ -32,15 +32,15 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
         
         console.log('📞 Calling get-secrets function...');
         
-        // Get Google Maps API key from Supabase secrets
+        // Get Google API key from Supabase secrets
         const { data, error: secretError } = await supabase.functions.invoke('get-secrets', {
-          body: { keys: ['GOOGLE_MAPS_API_KEY'] }
+          body: { keys: ['GOOGLE_API_KEY'] }
         });
 
         console.log('🔑 Secrets response:', { 
           hasData: !!data, 
           error: secretError,
-          hasApiKey: !!data?.GOOGLE_MAPS_API_KEY 
+          hasApiKey: !!data?.GOOGLE_API_KEY 
         });
 
         if (secretError) {
@@ -53,12 +53,12 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           throw new Error('No response from secrets function');
         }
 
-        if (!data.GOOGLE_MAPS_API_KEY) {
-          console.error('❌ Google Maps API key not found in secrets');
-          throw new Error('Google Maps API key not configured. Please add GOOGLE_MAPS_API_KEY to your Supabase secrets.');
+        if (!data.GOOGLE_API_KEY) {
+          console.error('❌ Google API key not found in secrets');
+          throw new Error('Google API key not configured. Please add GOOGLE_API_KEY to your Supabase secrets.');
         }
 
-        const apiKey = data.GOOGLE_MAPS_API_KEY;
+        const apiKey = data.GOOGLE_API_KEY;
         console.log('✅ Got API key, length:', apiKey.length);
 
         console.log('🚀 Loading Google Maps JavaScript API...');
@@ -219,7 +219,7 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           <p className="text-red-600 text-sm font-medium mb-2">Map Loading Error</p>
           <p className="text-red-600 text-xs mb-3">{error}</p>
           <p className="text-slate-600 text-xs">
-            Please check that the Google Maps API key is properly configured in your Supabase secrets.
+            Please check that the Google API key is properly configured in your Supabase secrets.
           </p>
         </div>
       </div>
