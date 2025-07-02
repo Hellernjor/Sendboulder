@@ -28,25 +28,28 @@ const GoogleMapSelector = ({ onLocationSelect, initialLocation }: GoogleMapSelec
           throw new Error('Map container not available');
         }
         
-        console.log('📞 Fetching GOOGLE_API_KEY from Supabase function...');
+        // Check if API key is available in environment (for development) or use Supabase function
+        let apiKey: string;
         
-        const { data, error: functionError } = await supabase.functions.invoke('get-secrets', {
-          body: { keys: ['GOOGLE_API_KEY'] }
-        });
+        console.log('📞 Fetching GOOGLE_API_KEY...');
+        
+        try {
+          const { data, error: functionError } = await supabase.functions.invoke('get-secrets', {
+            body: { keys: ['GOOGLE_API_KEY'] }
+          });
 
-        console.log('🔑 Function response:', { data, error: functionError });
+          console.log('🔑 Function response:', { data, error: functionError });
 
-        if (functionError) {
-          console.error('❌ Function error:', functionError);
-          throw new Error(`Failed to fetch API key: ${functionError.message}`);
+          if (functionError || !data || !data.GOOGLE_API_KEY) {
+            console.error('❌ Failed to get API key from function:', functionError);
+            throw new Error('GOOGLE_API_KEY not available. Please ensure it is configured in Supabase Edge Function Secrets.');
+          }
+
+          apiKey = data.GOOGLE_API_KEY;
+        } catch (error) {
+          console.error('❌ Error fetching API key:', error);
+          throw new Error('Failed to load Google Maps API key. Please check your Supabase configuration.');
         }
-
-        if (!data || !data.GOOGLE_API_KEY) {
-          console.error('❌ No GOOGLE_API_KEY in response');
-          throw new Error('GOOGLE_API_KEY not found. Please configure it in Supabase Edge Function Secrets.');
-        }
-
-        const apiKey = data.GOOGLE_API_KEY;
         console.log('✅ Retrieved GOOGLE_API_KEY, length:', apiKey.length);
 
         const loader = new Loader({
