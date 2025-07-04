@@ -62,7 +62,7 @@ const RouteCard = ({ route, attempts, location, onLogAttempt }: RouteCardProps) 
                   <GradeBadge 
                     gradeName={gradeName}
                     difficultyLabel={difficultyLabel}
-                    isPersonal={true}
+                    isPersonal={route.personalRoute}
                     isActive={route.isActive}
                   />
                 </div>

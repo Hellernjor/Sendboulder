@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Target, Plus, User, Loader2, MapPin } from 'lucide-react';
+import { Target, Plus, User, Loader2, MapPin, Settings, Zap } from 'lucide-react';
 import { Location, GradeLevel } from '@/types/location';
 import { Route, Attempt } from '@/types/route';
 import LocationSelector from './route/LocationSelector';
@@ -11,6 +11,7 @@ import LocationInfo from './route/LocationInfo';
 import AddRouteForm from './route/AddRouteForm';
 import RoutesList from './route/RoutesList';
 import QuickScoreSection from './route/QuickScoreSection';
+import SimpleLoggingMode from './route/SimpleLoggingMode';
 import AddLocationForm from './location/AddLocationForm';
 import GradeSystemManager from './location/GradeSystemManager';
 import { getLocations, createRoute, getUserRoutes, getUserAttempts, createAttempt, createLocation, updateLocation } from '@/lib/database-functions';
@@ -21,6 +22,7 @@ const RouteTracker = () => {
   const [showAddRoute, setShowAddRoute] = useState(false);
   const [showAddLocation, setShowAddLocation] = useState(false);
   const [showGradeSetup, setShowGradeSetup] = useState(false);
+  const [isSimpleMode, setIsSimpleMode] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
   const [routes, setRoutes] = useState<Route[]>([]);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
@@ -72,7 +74,7 @@ const RouteTracker = () => {
       await createRoute({
         ...routeData,
         isActive: true,
-        personalRoute: true
+        personalRoute: false
       });
       await loadRoutes();
       setShowAddRoute(false);
@@ -124,7 +126,7 @@ const RouteTracker = () => {
         gradeId,
         locationId: selectedLocation,
         isActive: true,
-        personalRoute: true
+        personalRoute: false
       });
 
       await createAttempt({
@@ -148,6 +150,62 @@ const RouteTracker = () => {
       toast({
         title: "Error",
         description: "Failed to log quick score. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleQuickSession = async (gradeId: string, totalAttempts: number, completedCount: number, notes?: string) => {
+    try {
+      const gradeName = selectedLocationData?.gradeSystem?.find(g => g.id === gradeId)?.name || 'Unknown';
+      
+      // Create a session route entry
+      const sessionRoute = await createRoute({
+        name: `${gradeName} Session - ${new Date().toLocaleDateString()}`,
+        color: selectedLocationData?.gradeSystem?.find(g => g.id === gradeId)?.color || '#666666',
+        gradeId,
+        locationId: selectedLocation,
+        isActive: true,
+        personalRoute: false
+      });
+
+      // Log completed attempts
+      if (completedCount > 0) {
+        await createAttempt({
+          routeId: sessionRoute.id,
+          locationId: selectedLocation,
+          completed: true,
+          attempts: completedCount,
+          date: new Date(),
+          notes: notes ? `${notes} (${completedCount}/${totalAttempts} completed)` : `${completedCount}/${totalAttempts} completed`
+        });
+      }
+
+      // Log failed attempts if any
+      const failedCount = totalAttempts - completedCount;
+      if (failedCount > 0) {
+        await createAttempt({
+          routeId: sessionRoute.id,
+          locationId: selectedLocation,
+          completed: false,
+          attempts: failedCount,
+          date: new Date(),
+          notes: notes ? `${notes} (${failedCount}/${totalAttempts} failed)` : `${failedCount}/${totalAttempts} failed`
+        });
+      }
+
+      await loadRoutes();
+      await loadAttempts();
+      
+      toast({
+        title: "Session Logged! 🎉",
+        description: `${completedCount}/${totalAttempts} ${gradeName} routes completed`,
+      });
+    } catch (error) {
+      console.error('Error logging session:', error);
+      toast({
+        title: "Error",
+        description: "Failed to log session. Please try again.",
         variant: "destructive",
       });
     }
@@ -226,13 +284,36 @@ const RouteTracker = () => {
     <Card className="bg-slate-800/50 border-slate-700">
       <CardHeader>
         <CardTitle className="flex items-center justify-between text-white">
-          <div className="flex items-center space-x-2">
-            <Target className="h-5 w-5" />
-            <span>Your Personal Routes</span>
-            <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
-              <User className="h-3 w-3 mr-1" />
-              Personal tracking
-            </Badge>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Target className="h-5 w-5" />
+              <span>Route Tracking</span>
+              <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs">
+                Public routes
+              </Badge>
+            </div>
+            {selectedLocation && (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant={isSimpleMode ? "outline" : "default"}
+                  size="sm"
+                  onClick={() => setIsSimpleMode(false)}
+                  className={!isSimpleMode ? "bg-blue-600 hover:bg-blue-700" : "border-slate-600 text-slate-300"}
+                >
+                  <Settings className="h-3 w-3 mr-1" />
+                  Advanced
+                </Button>
+                <Button
+                  variant={isSimpleMode ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setIsSimpleMode(true)}
+                  className={isSimpleMode ? "bg-yellow-600 hover:bg-yellow-700" : "border-slate-600 text-slate-300"}
+                >
+                  <Zap className="h-3 w-3 mr-1" />
+                  Simple
+                </Button>
+              </div>
+            )}
           </div>
         </CardTitle>
       </CardHeader>
@@ -262,40 +343,49 @@ const RouteTracker = () => {
               <>
                 <LocationInfo location={selectedLocationData} />
 
-                {selectedLocationData.type === 'gym' && (
-                  <QuickScoreSection 
+                {isSimpleMode ? (
+                  <SimpleLoggingMode 
                     location={selectedLocationData}
-                    onLogAttempt={handleQuickScore}
-                    onSetupGrades={handleSetupGrades}
+                    onLogQuickSession={handleQuickSession}
                   />
-                )}
+                ) : (
+                  <>
+                    {selectedLocationData.type === 'gym' && (
+                      <QuickScoreSection 
+                        location={selectedLocationData}
+                        onLogAttempt={handleQuickScore}
+                        onSetupGrades={handleSetupGrades}
+                      />
+                    )}
 
-                {showAddRoute && (
-                  <AddRouteForm
-                    onAdd={handleAddRoute}
-                    onCancel={() => setShowAddRoute(false)}
-                    location={selectedLocationData}
-                  />
-                )}
+                    {showAddRoute && (
+                      <AddRouteForm
+                        onAdd={handleAddRoute}
+                        onCancel={() => setShowAddRoute(false)}
+                        location={selectedLocationData}
+                      />
+                    )}
 
-                {!showAddRoute && (
-                  <Button 
-                    onClick={() => setShowAddRoute(true)}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                    disabled={selectedLocationData.type === 'gym' && (!selectedLocationData.gradeSystem || selectedLocationData.gradeSystem.length === 0)}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Personal Route at {selectedLocationData.name}
-                  </Button>
-                )}
+                    {!showAddRoute && (
+                      <Button 
+                        onClick={() => setShowAddRoute(true)}
+                        className="w-full bg-blue-600 hover:bg-blue-700"
+                        disabled={selectedLocationData.type === 'gym' && (!selectedLocationData.gradeSystem || selectedLocationData.gradeSystem.length === 0)}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Public Route at {selectedLocationData.name}
+                      </Button>
+                    )}
 
-                <RoutesList 
-                  routes={filteredRoutes}
-                  attempts={attempts}
-                  locationName={selectedLocationData.name}
-                  location={selectedLocationData}
-                  onLogAttempt={handleLogAttempt}
-                />
+                    <RoutesList 
+                      routes={filteredRoutes}
+                      attempts={attempts}
+                      locationName={selectedLocationData.name}
+                      location={selectedLocationData}
+                      onLogAttempt={handleLogAttempt}
+                    />
+                  </>
+                )}
               </>
             )}
           </>

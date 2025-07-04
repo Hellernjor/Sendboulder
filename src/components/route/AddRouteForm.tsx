@@ -64,10 +64,10 @@ const AddRouteForm = ({ onAdd, onCancel, location }: AddRouteFormProps) => {
   return (
     <Card className="bg-white/80 border-blue-200 shadow-sm backdrop-blur-sm">
       <CardContent className="p-4 space-y-3">
-        <div className="bg-green-50/80 border border-green-200 rounded-lg p-3 mb-4">
-          <div className="flex items-center space-x-2 text-green-700">
+        <div className="bg-blue-50/80 border border-blue-200 rounded-lg p-3 mb-4">
+          <div className="flex items-center space-x-2 text-blue-700">
             <User className="h-4 w-4" />
-            <p className="text-sm">This route will be private to you but linked to this location</p>
+            <p className="text-sm">This route will be public and available for everyone at this location</p>
           </div>
         </div>
         
@@ -101,7 +101,7 @@ const AddRouteForm = ({ onAdd, onCancel, location }: AddRouteFormProps) => {
 
         <div className="flex space-x-2">
           <Button onClick={handleSubmit} className="bg-green-600 hover:bg-green-700">
-            Add Personal Route
+            Add Public Route
           </Button>
           <Button 
             onClick={onCancel} 
